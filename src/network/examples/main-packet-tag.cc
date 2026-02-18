@@ -89,7 +89,7 @@ MyTag::Deserialize(TagBuffer i)
 void
 MyTag::Print(std::ostream& os) const
 {
-    os << "v=" << (uint32_t)m_simpleValue;
+    os << "v=" << static_cast<uint32_t>(m_simpleValue);
 }
 
 void

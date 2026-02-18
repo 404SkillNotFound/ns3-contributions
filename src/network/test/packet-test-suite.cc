@@ -66,7 +66,7 @@ class ATestTagBase : public Tag
     /// @return the tag data.
     int GetData() const
     {
-        int result = (int)m_data;
+        int result = static_cast<int>(m_data);
         return result;
     }
 
@@ -199,7 +199,7 @@ class ALargeTestTag : public Tag
 
     uint32_t GetSerializedSize() const override
     {
-        return (uint32_t)m_size;
+        return static_cast<uint32_t>(m_size);
     }
 
     void Serialize(TagBuffer buf) const override
@@ -223,7 +223,7 @@ class ALargeTestTag : public Tag
 
     void Print(std::ostream& os) const override
     {
-        os << "(" << (uint16_t)m_size << ")";
+        os << "(" << static_cast<uint16_t>(m_size) << ")";
     }
 
   private:

@@ -68,14 +68,14 @@ BufferTest::EnsureWrittenBytes(Buffer b, uint32_t n, uint8_t array[])
         failure.setf(std::ios::hex, std::ios::basefield);
         for (uint32_t j = 0; j < n; j++)
         {
-            failure << (uint16_t)expected[j] << " ";
+            failure << static_cast<uint16_t>(expected[j]) << " ";
         }
         failure.setf(std::ios::dec, std::ios::basefield);
         failure << "got: ";
         failure.setf(std::ios::hex, std::ios::basefield);
         for (uint32_t j = 0; j < n; j++)
         {
-            failure << (uint16_t)got[j] << " ";
+            failure << static_cast<uint16_t>(got[j]) << " ";
         }
         failure << std::endl;
         NS_TEST_ASSERT_MSG_EQ(true, false, failure.str());
