@@ -243,7 +243,7 @@ TcFlowControlTestCase::DoRun()
         {
             checkTimeMs = 8 * (txPackets - 1) + 1; // Check 1ms after each packet is sent
             deviceQueuePackets = std::min(m_totalTxPackets - txPackets, m_deviceQueueLength);
-            qdiscPackets = std::max(m_totalTxPackets - txPackets - deviceQueuePackets, (uint32_t)0);
+            qdiscPackets = std::max(m_totalTxPackets - txPackets - deviceQueuePackets, uint32_t{0});
             if (deviceQueuePackets == m_deviceQueueLength)
             {
                 Simulator::Schedule(MilliSeconds(checkTimeMs),

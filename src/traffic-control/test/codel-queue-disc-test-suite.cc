@@ -28,9 +28,9 @@ using namespace ns3;
 static uint16_t
 _codel_Newton_step(uint16_t rec_inv_sqrt, uint32_t count)
 {
-    uint32_t invsqrt = ((uint32_t)rec_inv_sqrt) << REC_INV_SQRT_SHIFT_ns3;
-    uint32_t invsqrt2 = ((uint64_t)invsqrt * invsqrt) >> 32;
-    uint64_t val = (3LL << 32) - ((uint64_t)count * invsqrt2);
+    uint32_t invsqrt = static_cast<uint32_t>(rec_inv_sqrt) << REC_INV_SQRT_SHIFT_ns3;
+    uint32_t invsqrt2 = static_cast<uint32_t>((static_cast<uint64_t>(invsqrt) * invsqrt) >> 32);
+    uint64_t val = (3LL << 32) - (static_cast<uint64_t>(count) * invsqrt2);
 
     val >>= 2; /* avoid overflow in following multiply */
     val = (val * invsqrt) >> (32 - 2 + 1);
@@ -40,7 +40,7 @@ _codel_Newton_step(uint16_t rec_inv_sqrt, uint32_t count)
 static uint32_t
 _reciprocal_scale(uint32_t val, uint32_t ep_ro)
 {
-    return (uint32_t)(((uint64_t)val * ep_ro) >> 32);
+    return static_cast<uint32_t>((static_cast<uint64_t>(val) * ep_ro) >> 32);
 }
 
 // End Linux borrow
