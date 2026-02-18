@@ -50,7 +50,7 @@ FdNetDeviceFdReader::DoRead()
 {
     NS_LOG_FUNCTION(this);
 
-    auto buf = (uint8_t*)malloc(m_bufferSize);
+    auto buf = static_cast<uint8_t*>(malloc(m_bufferSize));
     NS_ABORT_MSG_IF(buf == nullptr, "malloc() failed");
 
     NS_LOG_LOGIC("Calling read on fd " << m_fd);
@@ -339,7 +339,7 @@ static void
 AddPIHeader(uint8_t*& buf, size_t& len)
 {
     // Synthesize PI header for our friend the kernel
-    auto buf2 = (uint8_t*)malloc(len + 4);
+    auto buf2 = static_cast<uint8_t*>(malloc(len + 4));
     memcpy(buf2 + 4, buf, len);
     len += 4;
 
@@ -361,10 +361,10 @@ AddPIHeader(uint8_t*& buf, size_t& len)
             proto = buf[12] | (buf[13] << 8);
         }
     }
-    buf2[0] = (uint8_t)flags;
-    buf2[1] = (uint8_t)(flags >> 8);
-    buf2[2] = (uint8_t)proto;
-    buf2[3] = (uint8_t)(proto >> 8);
+    buf2[0] = static_cast<uint8_t>(flags);
+    buf2[1] = static_cast<uint8_t>(flags >> 8);
+    buf2[2] = static_cast<uint8_t>(proto);
+    buf2[3] = static_cast<uint8_t>(proto >> 8);
 
     // swap buffer
     free(buf);
@@ -392,7 +392,7 @@ RemovePIHeader(uint8_t*& buf, ssize_t& len)
 uint8_t*
 FdNetDevice::AllocateBuffer(size_t len)
 {
-    return (uint8_t*)malloc(len);
+    return static_cast<uint8_t*>(malloc(len));
 }
 
 void
@@ -606,7 +606,7 @@ FdNetDevice::SendFrom(Ptr<Packet> packet,
 
     NS_LOG_LOGIC("calling write");
 
-    auto len = (size_t)packet->GetSize();
+    auto len = static_cast<size_t>(packet->GetSize());
     uint8_t* buffer = AllocateBuffer(len);
     if (!buffer)
     {
@@ -625,7 +625,7 @@ FdNetDevice::SendFrom(Ptr<Packet> packet,
     ssize_t written = Write(buffer, len);
     FreeBuffer(buffer);
 
-    if (written == -1 || (size_t)written != len)
+    if (written == -1 || static_cast<size_t>(written) != len)
     {
         m_macTxDropTrace(packet);
         return false;

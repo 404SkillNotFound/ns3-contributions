@@ -53,7 +53,7 @@ Send(Ptr<NetDevice> dev, int level, std::string emuMode)
     Ptr<Packet> packet = Create<Packet>(packetsSize);
     EthernetHeader header;
 
-    ssize_t len = (size_t)packet->GetSize();
+    ssize_t len = static_cast<ssize_t>(packet->GetSize());
     auto buffer = (uint8_t*)malloc(len);
     packet->CopyData(buffer, len);
 
