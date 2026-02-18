@@ -335,7 +335,7 @@ Int64x64InputTestCase::DoRun()
     Check("-1.0", -1, 0, tolerance);
     Check("-1.0000", -1, 0, tolerance);
     Check(" 1.000000000000000000054", 1, 1, tolerance);
-    Check("-1.000000000000000000054", (int64_t)-2, (uint64_t)-1, tolerance);
+    Check("-1.000000000000000000054", static_cast<int64_t>(-2), std::numeric_limits<uint64_t>::max(), tolerance);
 }
 
 /**
@@ -1244,7 +1244,7 @@ Int64x64DoubleTestCase::Check(const long double dec,
         Check (v, 0.5L, intPart,  0x1LL);
 
       Here we would construct value as
-        long double lowLd = (double)low / std::pow(2.0L, 64);
+        long double lowLd = static_cast<double>(low) / std::pow(2.0L, 64);
         value = dec + frac + lowLd;
 
       For underflow cases:

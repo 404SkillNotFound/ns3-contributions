@@ -90,7 +90,7 @@ Histogram(Ptr<RandomVariableStream> rndvar,
 
     for (auto hi = histogram.begin(); hi != histogram.end(); ++hi)
     {
-        data.Add(hi->first, (double)hi->second / (double)probes / precision);
+        data.Add(hi->first, static_cast<double>(hi->second) / static_cast<double>(probes) / precision);
     }
 
     return data;

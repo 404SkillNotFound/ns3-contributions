@@ -289,7 +289,7 @@ class TestCaseBase : public TestCase
             double result = ChiSquaredTest(rng);
             sum += result;
         }
-        sum /= (double)nRuns;
+        sum /= static_cast<double>(nRuns);
         return sum;
     }
 
@@ -386,7 +386,7 @@ UniformTestCase::ChiSquaredTest(Ptr<RandomVariableStream> rng) const
     // the default range for this distribution.
     gsl_histogram_set_ranges_uniform(h, 0., 1.);
 
-    std::vector<double> expected(N_BINS, ((double)N_MEASUREMENTS / (double)N_BINS));
+    std::vector<double> expected(N_BINS, (static_cast<double>(N_MEASUREMENTS) / static_cast<double>(N_BINS)));
 
     double chiSquared = ChiSquared(h, expected, rng);
     gsl_histogram_free(h);
@@ -508,7 +508,7 @@ UniformAntitheticTestCase::ChiSquaredTest(Ptr<RandomVariableStream> rng) const
     // the default range for this distribution.
     gsl_histogram_set_ranges_uniform(h, 0., 1.);
 
-    std::vector<double> expected(N_BINS, ((double)N_MEASUREMENTS / (double)N_BINS));
+    std::vector<double> expected(N_BINS, (static_cast<double>(N_MEASUREMENTS) / static_cast<double>(N_BINS)));
 
     double chiSquared = ChiSquared(h, expected, rng);
     gsl_histogram_free(h);

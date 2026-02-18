@@ -1872,7 +1872,7 @@ PointerAttributeTestCase::DoRun()
     p->GetAttribute("Pointer", ptr);
     Ptr<Derived> derived = ptr.Get<Derived>();
     NS_TEST_ASSERT_MSG_EQ(
-        (bool)derived,
+        static_cast<bool>(derived),
         false,
         "Unexpectedly found non-null pointer in newly initialized PointerValue Attribute");
 
@@ -1914,7 +1914,7 @@ PointerAttributeTestCase::DoRun()
     //
     p->GetAttribute("Pointer", ptr);
     Ptr<AttributeObjectTest> x = ptr.Get<AttributeObjectTest>();
-    NS_TEST_ASSERT_MSG_EQ((bool)x,
+    NS_TEST_ASSERT_MSG_EQ(static_cast<bool>(x),
                           false,
                           "Unexpectedly retrieved unrelated Ptr<type> from stored Ptr<Derived>");
 
