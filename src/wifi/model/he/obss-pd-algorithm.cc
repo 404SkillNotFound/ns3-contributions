@@ -97,8 +97,8 @@ ObssPdAlgorithm::ResetPhy(HeSigAParameters params)
     Ptr<HeConfiguration> heConfiguration = m_device->GetHeConfiguration();
     NS_ASSERT(heConfiguration);
     uint8_t bssColor = heConfiguration->m_bssColor;
-    NS_LOG_DEBUG("My BSS color " << (uint16_t)bssColor << " received frame "
-                                 << (uint16_t)params.bssColor);
+    NS_LOG_DEBUG("My BSS color " << +bssColor << " received frame "
+                                 << +params.bssColor);
 
     Ptr<WifiPhy> phy = m_device->GetPhy();
     if ((m_obssPdLevel > m_obssPdLevelMin) && (m_obssPdLevel <= m_obssPdLevelMax))

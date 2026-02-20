@@ -169,7 +169,7 @@ PowerRateAdaptationTest::TestParf()
     WifiTxVector txVector =
         manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     WifiMode mode = txVector.GetMode();
-    int power = (int)txVector.GetTxPowerLevel();
+    int power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -189,7 +189,7 @@ PowerRateAdaptationTest::TestParf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -206,7 +206,7 @@ PowerRateAdaptationTest::TestParf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -228,7 +228,7 @@ PowerRateAdaptationTest::TestParf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -245,7 +245,7 @@ PowerRateAdaptationTest::TestParf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -263,7 +263,7 @@ PowerRateAdaptationTest::TestParf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           48000000,
@@ -283,7 +283,7 @@ PowerRateAdaptationTest::TestParf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -300,7 +300,7 @@ PowerRateAdaptationTest::TestParf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           48000000,
@@ -320,7 +320,7 @@ PowerRateAdaptationTest::TestParf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -340,7 +340,7 @@ PowerRateAdaptationTest::TestParf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -362,7 +362,7 @@ PowerRateAdaptationTest::TestParf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -414,7 +414,7 @@ PowerRateAdaptationTest::TestAparf()
     WifiTxVector txVector =
         manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     WifiMode mode = txVector.GetMode();
-    int power = (int)txVector.GetTxPowerLevel();
+    int power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -435,7 +435,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -452,7 +452,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -472,7 +472,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -493,7 +493,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -513,7 +513,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -530,7 +530,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -550,7 +550,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -568,7 +568,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           48000000,
@@ -588,7 +588,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           48000000,
@@ -610,7 +610,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           48000000,
@@ -624,7 +624,7 @@ PowerRateAdaptationTest::TestAparf()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(mode.GetDataRate(txVector.GetChannelWidth()),
                           54000000,
@@ -708,7 +708,7 @@ PowerRateAdaptationTest::TestRrpaa()
     WifiTxVector txVector =
         manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     WifiMode mode = txVector.GetMode();
-    int power = (int)txVector.GetTxPowerLevel();
+    int power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -733,7 +733,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -748,7 +748,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -769,7 +769,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -781,7 +781,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -802,7 +802,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -817,7 +817,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -832,7 +832,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -847,7 +847,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -862,7 +862,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -877,7 +877,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -892,7 +892,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -915,7 +915,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -927,7 +927,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -949,7 +949,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -970,7 +970,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -991,7 +991,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -1012,7 +1012,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -1031,7 +1031,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -1054,7 +1054,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -1069,7 +1069,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -1084,7 +1084,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -1099,7 +1099,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),
@@ -1128,7 +1128,7 @@ PowerRateAdaptationTest::TestRrpaa()
 
     txVector = manager->GetDataTxVector(packetHeader, dev->GetPhy()->GetChannelWidth());
     mode = txVector.GetMode();
-    power = (int)txVector.GetTxPowerLevel();
+    power = static_cast<uint8_t>(txVector.GetTxPowerLevel());
 
     NS_TEST_ASSERT_MSG_EQ(
         mode.GetDataRate(txVector.GetChannelWidth(), txVector.GetGuardInterval(), 1),

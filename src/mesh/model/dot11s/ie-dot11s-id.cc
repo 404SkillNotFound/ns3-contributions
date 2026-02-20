@@ -65,10 +65,10 @@ IeMeshId::IsBroadcast() const
     return m_meshId[0] == 0;
 }
 
-char*
+const char*
 IeMeshId::PeekString() const
 {
-    return (char*)m_meshId;
+    return reinterpret_cast<const char*>(m_meshId);
 }
 
 uint16_t

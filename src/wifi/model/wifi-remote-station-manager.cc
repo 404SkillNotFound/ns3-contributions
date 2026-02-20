@@ -2394,7 +2394,7 @@ WifiRemoteStationManager::GetHeSupported(const WifiRemoteStation* station) const
 bool
 WifiRemoteStationManager::GetEhtSupported(const WifiRemoteStation* station) const
 {
-    return (bool)(station->m_state->m_ehtCapabilities);
+    return static_cast<bool>(station->m_state->m_ehtCapabilities);
 }
 
 bool
@@ -2509,7 +2509,7 @@ WifiRemoteStationManager::GetHeSupported(Mac48Address address) const
 bool
 WifiRemoteStationManager::GetEhtSupported(Mac48Address address) const
 {
-    return (bool)(LookupState(address)->m_ehtCapabilities);
+    return static_cast<bool>(LookupState(address)->m_ehtCapabilities);
 }
 
 bool
