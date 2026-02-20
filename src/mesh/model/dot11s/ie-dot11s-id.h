@@ -50,7 +50,7 @@ class IeMeshId : public WifiInformationElement
      * Peek the IeMeshId as a string value
      * @returns the mesh ID as a string
      */
-    char* PeekString() const;
+    const char* PeekString() const;
 
     // Inherited from WifiInformationElement
     WifiInformationElementId ElementId() const override;
