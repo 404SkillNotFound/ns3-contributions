@@ -87,3 +87,14 @@ build_lib_example(
     ${libflow-monitor}
     ${libtraffic-control}
 )
+
+build_lib_example(
+  NAME cake-validation
+  SOURCE_FILES cake-validation.cc
+  LIBRARIES_TO_LINK
+    ${libpoint-to-point}
+    ${libinternet}
+    ${libapplications}
+    ${libflow-monitor}
+    ${libtraffic-control}
+)
