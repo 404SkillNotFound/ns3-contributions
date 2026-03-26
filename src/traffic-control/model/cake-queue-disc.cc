@@ -180,6 +180,7 @@ CakeQueueDisc::InitFlowSlot(uint32_t idx,
     f.backlogBytes = 0;
     f.active = false;
     f.quantum = m_tins[tin].quantum;
+    f.sojournTime = Seconds(0);
 
     if (m_isolationMode != static_cast<uint32_t>(ISOLATION_NONE))
     {
@@ -369,6 +370,13 @@ CakeQueueDisc::DoEnqueue(Ptr<QueueDiscItem> item)
 {
     NS_LOG_FUNCTION(this << item);
 
+    // Stamp enqueue time for COBALT sojourn measurement.
+    CakeSojournTag sojournTag;
+    sojournTag.SetEnqueueTime(Simulator::Now());
+    item->GetPacket()->AddPacketTag(sojournTag);
+    NS_LOG_DEBUG("CakeQueueDisc::DoEnqueue stamped enqueueTime="
+                 << Simulator::Now().GetNanoSeconds() << "ns");
+
     uint8_t tin = (m_numTins > 1) ? 1 : 0;
     int32_t filterResult = Classify(item);
     if (filterResult != PacketFilter::PF_NO_MATCH)
@@ -428,7 +436,7 @@ CakeQueueDisc::DoDequeue()
         return nullptr;
     }
 
-    for (int t = static_cast<int>(m_numTins) - 1; t >= 0; --t)
+    for (auto t = static_cast<int>(m_numTins) - 1; t >= 0; --t)
     {
         auto tin = static_cast<uint32_t>(t);
         if (m_tins[tin].backlogBytes == 0)
@@ -458,6 +466,21 @@ CakeQueueDisc::DoDequeue()
                     it = fl->erase(it);
                     ReleaseHostRefs(fi);
                     continue;
+                }
+
+                // Compute per-packet sojourn time and store in flow state.
+                CakeSojournTag sojournTag;
+                if (pkt->GetPacket()->PeekPacketTag(sojournTag))
+                {
+                    Time sojourn = Simulator::Now() - sojournTag.GetEnqueueTime();
+                    if (sojourn < Seconds(0))
+                    {
+                        sojourn = Seconds(0);
+                    }
+                    flow.sojournTime = sojourn;
+                    NS_LOG_DEBUG("CakeQueueDisc::DoDequeue flow="
+                                 << fi << " sojourn=" << sojourn.GetNanoSeconds() << "ns  target="
+                                 << m_tins[tin].cobaltTarget.GetNanoSeconds() << "ns");
                 }
 
                 uint32_t sz = pkt->GetSize();

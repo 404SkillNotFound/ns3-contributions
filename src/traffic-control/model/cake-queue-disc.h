@@ -12,6 +12,7 @@
 #include "ns3/data-rate.h"
 #include "ns3/nstime.h"
 #include "ns3/random-variable-stream.h"
+#include "ns3/tag.h"
 
 #include <list>
 #include <vector>
@@ -20,18 +21,98 @@ namespace ns3
 {
 
 /**
+ * @brief Packet tag carrying the simulation time at which a packet was enqueued.
+ *
+ * DoEnqueue() stamps every packet with this tag.  DoDequeue() peeks it,
+ * computes sojourn = Now() - enqueueTime, and stores the result in
+ * CakeFlow::sojournTime.
+ */
+class CakeSojournTag : public Tag
+{
+  public:
+    /**
+     * @brief Get the TypeId for CakeSojournTag.
+     * @return The TypeId.
+     */
+    static TypeId GetTypeId()
+    {
+        static TypeId tid = TypeId("ns3::CakeSojournTag")
+                                .SetParent<Tag>()
+                                .SetGroupName("TrafficControl")
+                                .AddConstructor<CakeSojournTag>();
+        return tid;
+    }
+
+    TypeId GetInstanceTypeId() const override
+    {
+        return GetTypeId();
+    }
+
+    /**
+     * @brief Serialised size: one int64 nanosecond timestamp.
+     * @return The serialized size in bytes.
+     */
+    uint32_t GetSerializedSize() const override
+    {
+        return 8;
+    }
+
+    /**
+     * @brief Serialise the tag content into a buffer.
+     * @param buf The buffer to write to.
+     */
+    void Serialize(TagBuffer buf) const override
+    {
+        buf.WriteU64(static_cast<uint64_t>(m_enqueueTime.GetNanoSeconds()));
+    }
+
+    /**
+     * @brief Deserialise the tag content from a buffer.
+     * @param buf The buffer to read from.
+     */
+    void Deserialize(TagBuffer buf) override
+    {
+        m_enqueueTime = NanoSeconds(static_cast<int64_t>(buf.ReadU64()));
+    }
+
+    /**
+     * @brief Print the tag content.
+     * @param os The output stream to print to.
+     */
+    void Print(std::ostream& os) const override
+    {
+        os << "CakeSojournTag enqueueTime=" << m_enqueueTime.GetNanoSeconds() << "ns";
+    }
+
+    /**
+     * @brief Set the enqueue timestamp.
+     * @param t The simulation time to set as enqueue time.
+     */
+    void SetEnqueueTime(Time t)
+    {
+        m_enqueueTime = t;
+    }
+
+    /**
+     * @brief Retrieve the enqueue timestamp.
+     * @return The simulation time when the packet was enqueued.
+     */
+    Time GetEnqueueTime() const
+    {
+        return m_enqueueTime;
+    }
+
+  private:
+    Time m_enqueueTime{Seconds(0)}; //!< Wall-clock time of enqueue.
+};
+
+/**
  * @ingroup traffic-control
+ * @brief CAKE (Common Applications Kept Enhanced) Queue Discipline.
  *
- * @brief CAKE (Common Applications Kept Enhanced) queue discipline.
- *
- * Implements the four components of the CAKE framework described in
- * "Piece of CAKE: A Comprehensive Queue Management Solution for Home
- * Gateways" (Høiland-Jørgensen et al., arXiv:1804.07617):
- * a virtual-clock rate shaper, 8-way set-associative flow hashing,
- * per-host DRR fairness, and DiffServ tin prioritisation.
- *
- * DSCP-to-tin classification is delegated to a PacketFilter subclass,
- * following the same pattern used by FqCoDelQueueDisc.
+ * Implements the four framework pillars: rate-based shaping, 8-way flow hashing,
+ * per-host DRR fairness, and DiffServ priority tins [cite: 21-25, 94].
+ * DSCP-to-tin classification is handled via PacketFilter subclasses[cite: 96].
  */
 class CakeQueueDisc : public QueueDisc
 {
@@ -79,6 +160,10 @@ class CakeQueueDisc : public QueueDisc
         uint32_t backlogBytes{0}; //!< Bytes currently queued for this flow.
         uint8_t tinIndex{0};      //!< DiffServ tin this flow belongs to.
         bool active{false};       //!< Whether the flow has queued packets.
+
+        // Most-recently measured sojourn time for this flow.
+        // Populated by DoDequeue() using CakeSojournTag.
+        Time sojournTime{Seconds(0)}; //!< Last measured queue sojourn time.
     };
 
     /**
@@ -113,9 +198,26 @@ class CakeQueueDisc : public QueueDisc
     ~CakeQueueDisc() override;
 
   protected:
+    /**
+     * @brief Enqueue a packet into the CAKE queue disc.
+     * @param item The packet to enqueue.
+     * @return True if the packet was enqueued, false otherwise.
+     */
     bool DoEnqueue(Ptr<QueueDiscItem> item) override;
+
+    /**
+     * @brief Dequeue a packet from the CAKE queue disc.
+     * @return The dequeued packet, or nullptr if none available.
+     */
     Ptr<QueueDiscItem> DoDequeue() override;
+
+    /**
+     * @brief Check the configuration of the CAKE queue disc.
+     * @return True if the configuration is valid, false otherwise.
+     */
     bool CheckConfig() override;
+
+    /** @brief Initialize the CAKE queue disc parameters. */
     void InitializeParams() override;
 
   private:
