@@ -15,6 +15,7 @@
 #include "ns3/point-to-point-module.h"
 #include "ns3/traffic-control-module.h"
 
+#include <algorithm>
 #include <fstream>
 #include <iomanip>
 #include <map>
@@ -57,7 +58,7 @@ SampleThroughput(Time stopTime)
 
     // Collect data flows only (destination port == SINK_PORT), ordered by
     // first-transmission time so columns match the staggered start order.
-    std::map<Time, std::pair<FlowId, double>> ordered;
+    std::vector<std::tuple<Time, FlowId, double>> ordered;
 
     for (const auto& kv : stats)
     {
@@ -91,16 +92,19 @@ SampleThroughput(Time stopTime)
                    1e6; // Mbps
         }
 
-        ordered[kv.second.timeFirstTxPacket] = {fid, tput};
+        ordered.emplace_back(kv.second.timeFirstTxPacket, fid, tput);
     }
-
+    // Sort flows by first transmission time to ensure consistent column ordering
+    std::sort(ordered.begin(), ordered.end(), [](const auto& a, const auto& b) {
+        return std::get<0>(a) < std::get<0>(b);
+    });
     // Write one line: timestamp + g_numFlows throughput columns.
     g_outFile << std::fixed << std::setprecision(3) << now.GetSeconds();
 
     uint32_t col = 0;
     for (const auto& entry : ordered)
     {
-        g_outFile << "\t" << std::setprecision(4) << entry.second.second;
+        g_outFile << "\t" << std::setprecision(4) << std::get<2>(entry);
         ++col;
     }
     while (col < g_numFlows)
@@ -243,6 +247,10 @@ main(int argc, char* argv[])
 
     g_monitor = g_flowMonHelper.InstallAll();
     g_classifier = DynamicCast<Ipv4FlowClassifier>(g_flowMonHelper.GetClassifier());
+    if (!g_classifier)
+    {
+        NS_FATAL_ERROR("Failed to get Ipv4FlowClassifier");
+    }
 
     g_outFile.open(outputFile);
     if (!g_outFile.is_open())

@@ -186,7 +186,6 @@ class CakeShaperTest : public TestCase
 };
 
 /** @brief Test suite registering all CakeQueueDisc unit tests. */
-/** @brief Test suite registering all CakeQueueDisc unit tests. */
 class CakeQueueDiscTestSuite : public TestSuite
 {
   public:
