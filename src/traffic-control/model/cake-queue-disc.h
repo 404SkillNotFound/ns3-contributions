@@ -139,7 +139,7 @@ class CakeQueueDisc : public QueueDisc
         ISOLATION_TRIPLE = 3, //!< Isolate by max of src and dst refcount.
     };
 
-    /** @brief TCP ACK filter aggressiveness. */
+    /** @brief TCP ACK filter aggressiveness. Not yet implemented. */
     enum AckFilterMode : uint32_t
     {
         ACK_FILTER_NONE = 0,         //!< No ACK filtering.
@@ -186,6 +186,15 @@ class CakeQueueDisc : public QueueDisc
         Time cobaltInterval{MilliSeconds(100)}; //!< COBALT control interval.
         uint32_t backlogBytes{0}; //!< Total bytes queued across all flows in this tin.
         uint32_t quantum{1514};   //!< DRR quantum for flows in this tin.
+
+        // COBALT (CoDel + BLUE) AQM state — one instance per tin.
+        bool cobaltDropping{false}; //!< CoDel dropping state active.
+        Time cobaltFirstAboveTime{
+            Seconds(0)};                 //!< When sojourn first exceeded target; 0 = not above.
+        Time cobaltDropNext{Seconds(0)}; //!< Scheduled time of next CoDel drop.
+        uint32_t cobaltCount{0};         //!< Drop count for CoDel control law.
+        double blueProb{0.0};            //!< BLUE drop probability in [0, 1].
+        Time blueTimer{Seconds(0)};      //!< Last BLUE probability update time.
     };
 
     /**
@@ -284,6 +293,28 @@ class CakeQueueDisc : public QueueDisc
 
     /** @brief Called by Simulator::Schedule when the shaper gate opens. */
     void ShaperWakeup();
+
+    /**
+     * @brief Compute the next CoDel drop time using the control law.
+     * @param t Base time (last drop or now).
+     * @param interval COBALT control interval for this tin.
+     * @param count Current drop count.
+     * @return Scheduled time for the next drop event.
+     */
+    Time CobaltControlLaw(Time t, Time interval, uint32_t count) const;
+
+    /**
+     * @brief Run the COBALT state machine for one dequeued packet.
+     *
+     * Updates per-tin CoDel and BLUE state.  Attempts ECN marking before
+     * dropping.  Must be called after the tin backlog has been decremented.
+     *
+     * @param tin  Tin index.
+     * @param sojourn Measured sojourn time of the packet.
+     * @param item The dequeued packet (may be ECN-marked in-place).
+     * @return True if the packet should be dropped.
+     */
+    bool CobaltShouldDrop(uint32_t tin, Time sojourn, Ptr<QueueDiscItem> item);
 
     DataRate m_bandwidth;     //!< Target shaper rate.
     Time m_target;            //!< AQM sojourn target.
