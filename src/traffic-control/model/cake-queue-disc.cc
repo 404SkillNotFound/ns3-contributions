@@ -7,6 +7,7 @@
 #include "cake-queue-disc.h"
 
 #include "ns3/drop-tail-queue.h"
+#include "ns3/ipv4-queue-disc-item.h"
 #include "ns3/log.h"
 #include "ns3/object-factory.h"
 #include "ns3/simulator.h"
@@ -14,6 +15,7 @@
 #include "ns3/uinteger.h"
 
 #include <algorithm>
+#include <cmath>
 
 namespace ns3
 {
@@ -23,6 +25,10 @@ NS_OBJECT_ENSURE_REGISTERED(CakeQueueDisc);
 
 /** Drop reason used when the internal queue is full. */
 static constexpr const char* LIMIT_EXCEEDED_DROP = "Queue disc limit exceeded";
+/**
+ * @brief Drop reason string used for COBALT AQM drops.
+ */
+static constexpr const char* COBALT_DROP = "COBALT AQM drop";
 
 TypeId
 CakeQueueDisc::GetTypeId()
@@ -324,6 +330,9 @@ CakeQueueDisc::InitializeParams()
 {
     NS_LOG_FUNCTION(this);
 
+    NS_ABORT_MSG_IF(m_ackFilterMode != static_cast<uint32_t>(ACK_FILTER_NONE),
+                    "CakeQueueDisc: ACK filtering is not yet implemented");
+
     switch (m_diffServMode)
     {
     case DIFFSERV_BESTEFFORT:
@@ -377,7 +386,7 @@ CakeQueueDisc::DoEnqueue(Ptr<QueueDiscItem> item)
     NS_LOG_DEBUG("CakeQueueDisc::DoEnqueue stamped enqueueTime="
                  << Simulator::Now().GetNanoSeconds() << "ns");
 
-    uint8_t tin = (m_numTins > 1) ? 1 : 0;
+    uint8_t tin = 0;
     int32_t filterResult = Classify(item);
     if (filterResult != PacketFilter::PF_NO_MATCH)
     {
@@ -386,6 +395,17 @@ CakeQueueDisc::DoEnqueue(Ptr<QueueDiscItem> item)
         {
             tin = candidate;
         }
+    }
+    else if (m_numTins > 1)
+    {
+        // No PacketFilter matched; use internal DSCP-to-tin mapping.
+        uint8_t dscp = 0;
+        Ptr<const Ipv4QueueDiscItem> ipv4Item = DynamicCast<const Ipv4QueueDiscItem>(item);
+        if (ipv4Item)
+        {
+            dscp = ipv4Item->GetHeader().GetDscp();
+        }
+        tin = DscpToTin(dscp);
     }
 
     uint32_t flowH = FlowHash(item);
@@ -419,6 +439,95 @@ CakeQueueDisc::DoEnqueue(Ptr<QueueDiscItem> item)
     }
 
     return true;
+}
+
+Time
+CakeQueueDisc::CobaltControlLaw(Time t, Time interval, uint32_t count) const
+{
+    return t + Time(static_cast<int64_t>(static_cast<double>(interval.GetTimeStep()) /
+                                         std::sqrt(static_cast<double>(count))));
+}
+
+bool
+CakeQueueDisc::CobaltShouldDrop(uint32_t tin, Time sojourn, Ptr<QueueDiscItem> item)
+{
+    CakeTin& tk = m_tins[tin];
+    Time now = Simulator::Now();
+    bool drop = false;
+
+    // CoDel: track how long sojourn has been above target.
+    if (sojourn > tk.cobaltTarget)
+    {
+        if (tk.cobaltFirstAboveTime == Seconds(0))
+        {
+            tk.cobaltFirstAboveTime = now + tk.cobaltInterval;
+        }
+        else if (now >= tk.cobaltFirstAboveTime)
+        {
+            drop = true;
+        }
+    }
+    else
+    {
+        tk.cobaltFirstAboveTime = Seconds(0);
+    }
+
+    if (tk.cobaltDropping)
+    {
+        if (!drop)
+        {
+            // Sojourn recovered — leave dropping state.
+            tk.cobaltDropping = false;
+        }
+        else if (now >= tk.cobaltDropNext)
+        {
+            tk.cobaltCount++;
+            tk.cobaltDropNext =
+                CobaltControlLaw(tk.cobaltDropNext, tk.cobaltInterval, tk.cobaltCount);
+            // BLUE: persist probability while queue stays full.
+            if (now - tk.blueTimer >= MilliSeconds(1))
+            {
+                tk.blueProb = std::min(tk.blueProb + 0.0025, 1.0);
+                tk.blueTimer = now;
+            }
+            // Prefer ECN mark over hard drop.
+            return !item->Mark();
+        }
+    }
+    else if (drop && now >= tk.cobaltDropNext)
+    {
+        // Enter dropping state; back-calculate count from how overdue we are.
+        tk.cobaltDropping = true;
+        uint32_t delta = 0;
+        if (tk.cobaltCount > 0 && tk.cobaltDropNext > Seconds(0))
+        {
+            Time overdue = now - tk.cobaltDropNext;
+            delta = static_cast<uint32_t>((overdue / tk.cobaltInterval).GetHigh());
+        }
+        tk.cobaltCount = (delta > 1) ? delta : 1;
+        tk.cobaltDropNext = CobaltControlLaw(now, tk.cobaltInterval, tk.cobaltCount);
+        if (now - tk.blueTimer >= MilliSeconds(1))
+        {
+            tk.blueProb = std::min(tk.blueProb + 0.0025, 1.0);
+            tk.blueTimer = now;
+        }
+        return !item->Mark();
+    }
+
+    // BLUE: decay probability when the tin drains.
+    if (tk.backlogBytes == 0 && tk.blueProb > 0.0 && now - tk.blueTimer >= MilliSeconds(1))
+    {
+        tk.blueProb = std::max(tk.blueProb - 0.00025, 0.0);
+        tk.blueTimer = now;
+    }
+
+    // BLUE: probabilistic drop (not ECN — BLUE is a safety valve, not a hint).
+    if (tk.blueProb > 0.0 && m_uv->GetValue() < tk.blueProb)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 Ptr<QueueDiscItem>
@@ -469,10 +578,11 @@ CakeQueueDisc::DoDequeue()
                 }
 
                 // Compute per-packet sojourn time and store in flow state.
+                Time sojourn{Seconds(0)};
                 CakeSojournTag sojournTag;
                 if (pkt->GetPacket()->PeekPacketTag(sojournTag))
                 {
-                    Time sojourn = Simulator::Now() - sojournTag.GetEnqueueTime();
+                    sojourn = Simulator::Now() - sojournTag.GetEnqueueTime();
                     if (sojourn < Seconds(0))
                     {
                         sojourn = Seconds(0);
@@ -502,6 +612,14 @@ CakeQueueDisc::DoDequeue()
                     auto delaySec = static_cast<double>(adjBytes * 8) /
                                     static_cast<double>(m_bandwidth.GetBitRate());
                     m_tNext = Simulator::Now() + Seconds(delaySec);
+                }
+
+                // COBALT AQM decision — backlog already decremented for accurate
+                // BLUE empty-queue detection.
+                if (CobaltShouldDrop(tin, sojourn, pkt))
+                {
+                    DropAfterDequeue(pkt, COBALT_DROP);
+                    continue;
                 }
 
                 return pkt;
