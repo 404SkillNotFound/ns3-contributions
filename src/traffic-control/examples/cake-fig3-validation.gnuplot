@@ -16,6 +16,6 @@ set yrange [0:11]
 set arrow from 10,0 to 10,11 nohead dt 2 lc rgb "gray"
 set arrow from 20,0 to 20,11 nohead dt 2 lc rgb "gray"
 
-plot "cake-validation.dat" using 1:2 with lines lw 2 title "Flow 1 (0s)", \
+plot "cake-fig3-validation.dat" using 1:2 with lines lw 2 title "Flow 1 (0s)", \
      "" using 1:3 with lines lw 2 title "Flow 2 (10s)", \
      "" using 1:4 with lines lw 2 title "Flow 3 (20s)"
