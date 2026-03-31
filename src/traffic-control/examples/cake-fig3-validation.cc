@@ -129,7 +129,7 @@ SampleThroughput(Time stopTime)
 int
 main(int argc, char* argv[])
 {
-    std::string outputFile = "cake-validation.dat";
+    std::string outputFile = "cake-fig3-validation.dat";
     DataRate bottleneckRate("10Mbps");
     // Bandwidth=0 disables CAKE's software shaper.  The PointToPoint link
     // at bottleneckRate is the physical bottleneck; CAKE's DRR scheduler
@@ -267,7 +267,7 @@ main(int argc, char* argv[])
     NS_LOG_INFO("Starting validation simulation …");
     Simulator::Run();
 
-    g_monitor->SerializeToXmlFile("cake-validation-flowmon.xml", true, true);
+    g_monitor->SerializeToXmlFile("cake-fig3-validation-flowmon.xml", true, true);
     NS_LOG_INFO("Results written to " << outputFile);
     g_outFile.close();
     Simulator::Destroy();

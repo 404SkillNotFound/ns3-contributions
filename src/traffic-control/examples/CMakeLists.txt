@@ -89,8 +89,8 @@ build_lib_example(
 )
 
 build_lib_example(
-  NAME cake-validation
-  SOURCE_FILES cake-validation.cc
+  NAME cake-fig3-validation
+  SOURCE_FILES cake-fig3-validation.cc
   LIBRARIES_TO_LINK
     ${libpoint-to-point}
     ${libinternet}
