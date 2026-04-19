@@ -7,7 +7,6 @@
 #include "cake-queue-disc.h"
 
 #include "ns3/drop-tail-queue.h"
-#include "ns3/ipv4-queue-disc-item.h"
 #include "ns3/log.h"
 #include "ns3/object-factory.h"
 #include "ns3/simulator.h"
@@ -399,13 +398,9 @@ CakeQueueDisc::DoEnqueue(Ptr<QueueDiscItem> item)
     else if (m_numTins > 1)
     {
         // No PacketFilter matched; use internal DSCP-to-tin mapping.
-        uint8_t dscp = 0;
-        Ptr<const Ipv4QueueDiscItem> ipv4Item = DynamicCast<const Ipv4QueueDiscItem>(item);
-        if (ipv4Item)
-        {
-            dscp = ipv4Item->GetHeader().GetDscp();
-        }
-        tin = DscpToTin(dscp);
+        uint8_t dsField = 0;
+        item->GetUint8Value(QueueItem::IP_DSFIELD, dsField);
+        tin = DscpToTin(dsField >> 2);
     }
 
     uint32_t flowH = FlowHash(item);
