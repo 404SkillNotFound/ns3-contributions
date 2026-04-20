@@ -49,7 +49,7 @@ FlameHeader::GetInstanceTypeId() const
 void
 FlameHeader::Print(std::ostream& os) const
 {
-    os << "Cost= " << (uint16_t)m_cost << ", Sequence number= " << m_seqno
+    os << "Cost= " << +m_cost << ", Sequence number= " << m_seqno
        << ", Orig Destination= " << m_origDst << ", Orig Source= " << m_origSrc;
 }
 
@@ -93,7 +93,7 @@ FlameHeader::Deserialize(Buffer::Iterator start)
 void
 FlameHeader::AddCost(uint8_t cost)
 {
-    m_cost = (((uint16_t)cost + (uint16_t)m_cost) > 255) ? 255 : cost + m_cost;
+    m_cost = ((+cost + +m_cost) > 255) ? 255 : cost + m_cost;
 }
 
 uint8_t

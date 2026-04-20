@@ -419,7 +419,7 @@ HwmpProtocol::ReceivePreq(IePreq preq,
     bool freshInfo(true);
     if (i != m_hwmpSeqnoMetricDatabase.end())
     {
-        if ((int32_t)(i->second.first - preq.GetOriginatorSeqNumber()) > 0)
+        if (static_cast<int32_t>(i->second.first - preq.GetOriginatorSeqNumber()) > 0)
         {
             return;
         }
@@ -520,7 +520,7 @@ HwmpProtocol::ReceivePreq(IePreq preq,
                 SendPrep(GetAddress(),
                          preq.GetOriginatorAddress(),
                          from,
-                         (uint32_t)0,
+                         uint32_t{0},
                          preq.GetOriginatorSeqNumber(),
                          GetNextHwmpSeqno(),
                          preq.GetLifetime(),
@@ -533,7 +533,7 @@ HwmpProtocol::ReceivePreq(IePreq preq,
             SendPrep(GetAddress(),
                      preq.GetOriginatorAddress(),
                      from,
-                     (uint32_t)0,
+                     uint32_t{0},
                      preq.GetOriginatorSeqNumber(),
                      GetNextHwmpSeqno(),
                      preq.GetLifetime(),
@@ -549,7 +549,7 @@ HwmpProtocol::ReceivePreq(IePreq preq,
         {
             // have a valid information and can answer
             uint32_t lifetime = result.lifetime.GetMicroSeconds() / 1024;
-            if ((lifetime > 0) && ((int32_t)(result.seqnum - (*i)->GetDestSeqNumber()) >= 0))
+            if ((lifetime > 0) && (static_cast<int32_t>(result.seqnum - (*i)->GetDestSeqNumber()) >= 0))
             {
                 SendPrep((*i)->GetDestinationAddress(),
                          preq.GetOriginatorAddress(),
@@ -606,7 +606,7 @@ HwmpProtocol::ReceivePrep(IePrep prep,
     uint32_t sequence = prep.GetDestinationSeqNumber();
     if (i != m_hwmpSeqnoMetricDatabase.end())
     {
-        if ((int32_t)(i->second.first - sequence) > 0)
+        if (static_cast<int32_t>(i->second.first - sequence) > 0)
         {
             return;
         }
@@ -715,7 +715,7 @@ HwmpProtocol::ReceivePerr(std::vector<FailedDestination> destinations,
     {
         result = m_rtable->LookupReactiveExpired(destinations[i].destination);
         if (!((result.retransmitter != from) || (result.ifIndex != interface) ||
-              ((int32_t)(result.seqnum - destinations[i].seqnum) > 0)))
+              (static_cast<int32_t>(result.seqnum - destinations[i].seqnum) > 0)))
         {
             retval.push_back(destinations[i]);
         }
@@ -827,7 +827,7 @@ HwmpProtocol::DropDataFrame(uint32_t seqno, Mac48Address source)
     }
     else
     {
-        if ((int32_t)(i->second - seqno) >= 0)
+        if (static_cast<int32_t>(i->second - seqno) >= 0)
         {
             NS_LOG_DEBUG("Dropping seqno " << seqno << "; stale frame");
             return true;
@@ -1102,7 +1102,7 @@ HwmpProtocol::ShouldSendPreq(Mac48Address dst)
 void
 HwmpProtocol::RetryPathDiscovery(Mac48Address dst, uint8_t numOfRetry)
 {
-    NS_LOG_FUNCTION(this << dst << (uint16_t)numOfRetry);
+    NS_LOG_FUNCTION(this << dst << +numOfRetry);
     HwmpRtable::LookupResult result = m_rtable->LookupReactive(dst);
     if (result.retransmitter == Mac48Address::GetBroadcast())
     {
@@ -1306,7 +1306,7 @@ HwmpProtocol::Report(std::ostream& os) const
           "address=\""
        << m_address << "\"" << std::endl
        << "maxQueueSize=\"" << m_maxQueueSize << "\"" << std::endl
-       << "Dot11MeshHWMPmaxPREQretries=\"" << (uint16_t)m_dot11MeshHWMPmaxPREQretries << "\""
+       << "Dot11MeshHWMPmaxPREQretries=\"" << +m_dot11MeshHWMPmaxPREQretries << "\""
        << std::endl
        << "Dot11MeshHWMPnetDiameterTraversalTime=\""
        << m_dot11MeshHWMPnetDiameterTraversalTime.GetSeconds() << "\"" << std::endl
@@ -1323,10 +1323,10 @@ HwmpProtocol::Report(std::ostream& os) const
        << "Dot11MeshHWMPrannInterval=\"" << m_dot11MeshHWMPrannInterval.GetSeconds() << "\""
        << std::endl
        << "isRoot=\"" << m_isRoot << "\"" << std::endl
-       << "maxTtl=\"" << (uint16_t)m_maxTtl << "\"" << std::endl
-       << "unicastPerrThreshold=\"" << (uint16_t)m_unicastPerrThreshold << "\"" << std::endl
-       << "unicastPreqThreshold=\"" << (uint16_t)m_unicastPreqThreshold << "\"" << std::endl
-       << "unicastDataThreshold=\"" << (uint16_t)m_unicastDataThreshold << "\"" << std::endl
+       << "maxTtl=\"" << +m_maxTtl << "\"" << std::endl
+       << "unicastPerrThreshold=\"" << +m_unicastPerrThreshold << "\"" << std::endl
+       << "unicastPreqThreshold=\"" << +m_unicastPreqThreshold << "\"" << std::endl
+       << "unicastDataThreshold=\"" << +m_unicastDataThreshold << "\"" << std::endl
        << "doFlag=\"" << m_doFlag << "\"" << std::endl
        << "rfFlag=\"" << m_rfFlag << "\">" << std::endl;
     m_stats.Print(os);

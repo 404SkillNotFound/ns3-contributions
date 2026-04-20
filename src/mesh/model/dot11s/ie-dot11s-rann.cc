@@ -161,8 +161,8 @@ IeRann::GetInformationFieldSize() const
 void
 IeRann::Print(std::ostream& os) const
 {
-    os << "RANN=(flags=" << (int)m_flags << ", hop count=" << (int)m_hopcount
-       << ", TTL=" << (int)m_ttl << ", originator address=" << m_originatorAddress
+    os << "RANN=(flags=" << +m_flags << ", hop count=" << +m_hopcount
+       << ", TTL=" << +m_ttl << ", originator address=" << m_originatorAddress
        << ", dst seq. number=" << m_destSeqNumber << ", metric=" << m_metric << ")";
 }
 
