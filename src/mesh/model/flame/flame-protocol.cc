@@ -358,7 +358,7 @@ FlameProtocol::HandleDataFrame(uint16_t seqno,
     }
     FlameRtable::LookupResult result = m_rtable->Lookup(source);
     if ((result.retransmitter != Mac48Address::GetBroadcast()) &&
-        ((int16_t)(result.seqnum - seqno) >= 0))
+        (static_cast<int16_t>(result.seqnum - seqno) >= 0))
     {
         return true;
     }
@@ -408,7 +408,7 @@ FlameProtocol::Report(std::ostream& os) const
           "address=\""
        << m_address << "\"" << std::endl
        << "broadcastInterval=\"" << m_broadcastInterval.GetSeconds() << "\"" << std::endl
-       << "maxCost=\"" << (uint16_t)m_maxCost << "\">" << std::endl;
+       << "maxCost=\"" << +m_maxCost << "\">" << std::endl;
     m_stats.Print(os);
     for (auto plugin = m_interfaces.begin(); plugin != m_interfaces.end(); plugin++)
     {

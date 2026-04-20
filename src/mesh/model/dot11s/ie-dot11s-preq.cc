@@ -350,8 +350,8 @@ IePreq::GetInformationFieldSize() const
 void
 IePreq::Print(std::ostream& os) const
 {
-    os << "PREQ=(originator address=" << m_originatorAddress << ", TTL=" << (uint16_t)m_ttl
-       << ", hop count=" << (uint16_t)m_hopCount << ", metric=" << m_metric
+    os << "PREQ=(originator address=" << m_originatorAddress << ", TTL=" << +m_ttl
+       << ", hop count=" << +m_hopCount << ", metric=" << m_metric
        << ", seqno=" << m_originatorSeqNumber << ", lifetime=" << m_lifetime
        << ", preq ID=" << m_preqId << ", Destinations=(";
     for (int j = 0; j < m_destCount; j++)

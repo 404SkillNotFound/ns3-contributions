@@ -178,7 +178,7 @@ MeshHeader::Deserialize(Buffer::Iterator start)
 void
 MeshHeader::Print(std::ostream& os) const
 {
-    os << "flags=" << (uint16_t)m_meshFlags << ", ttl=" << (uint16_t)m_meshTtl
+    os << "flags=" << +m_meshFlags << ", ttl=" << +m_meshTtl
        << ", seqno=" << m_meshSeqno << ", addr4=" << m_addr4 << ", addr5=" << m_addr5
        << ", addr6=" << m_addr6;
 }

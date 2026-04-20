@@ -155,7 +155,7 @@ IePeerManagement::DeserializeInformationField(Buffer::Iterator start, uint16_t l
 void
 IePeerManagement::Print(std::ostream& os) const
 {
-    os << "PeerMgmt=(Subtype=" << (uint16_t)m_subtype << ", Length=" << (uint16_t)m_length
+    os << "PeerMgmt=(Subtype=" << +m_subtype << ", Length=" << +m_length
        << ", LocalLinkId=" << m_localLinkId << ", PeerLinkId=" << m_peerLinkId
        << ", ReasonCode=" << m_reasonCode << ")";
 }

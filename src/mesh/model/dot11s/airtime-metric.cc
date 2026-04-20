@@ -81,7 +81,7 @@ AirtimeLinkMetricCalculator::CalculateMetric(Mac48Address peerAddress,
     if (failAvg == 1)
     {
         // Return max metric value when frame error rate equals to 1
-        return (uint32_t)0xffffffff;
+        return uint32_t{0xffffffff};
     }
     NS_ASSERT(failAvg < 1.0);
     WifiTxVector txVector;
@@ -89,7 +89,7 @@ AirtimeLinkMetricCalculator::CalculateMetric(Mac48Address peerAddress,
     txVector.SetPreambleType(WIFI_PREAMBLE_LONG);
     // calculate metric
     uint32_t metric =
-        (uint32_t)((double)(/*Overhead + payload*/
+        static_cast<uint32_t>(static_cast<double>(/*Overhead + payload*/
                             // DIFS + SIFS + AckTxTime = 2 * SIFS + 2 * SLOT + AckTxTime
                             2 * mac->GetWifiPhy()->GetSifs() + 2 * mac->GetWifiPhy()->GetSlot() +
                             GetEstimatedAckTxTime(txVector) +

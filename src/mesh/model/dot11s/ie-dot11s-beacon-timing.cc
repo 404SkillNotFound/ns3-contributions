@@ -140,10 +140,10 @@ IeBeaconTiming::GetInformationFieldSize() const
 void
 IeBeaconTiming::Print(std::ostream& os) const
 {
-    os << "BeaconTiming=(Number of units=" << (uint16_t)m_numOfUnits;
+    os << "BeaconTiming=(Number of units=" << +m_numOfUnits;
     for (auto j = m_neighbours.begin(); j != m_neighbours.end(); j++)
     {
-        os << "(AID=" << (uint16_t)(*j)->GetAid() << ", Last beacon at=" << (*j)->GetLastBeacon()
+        os << "(AID=" << +(*j)->GetAid() << ", Last beacon at=" << (*j)->GetLastBeacon()
            << ", with beacon interval=" << (*j)->GetBeaconInterval() << ")";
     }
     os << ")";
@@ -179,19 +179,19 @@ IeBeaconTiming::DeserializeInformationField(Buffer::Iterator start, uint16_t len
 uint16_t
 IeBeaconTiming::TimestampToU16(Time t)
 {
-    return ((uint16_t)((t.GetMicroSeconds() >> 8) & 0xffff));
+    return static_cast<uint16_t>((t.GetMicroSeconds() >> 8) & 0xffff);
 }
 
 uint16_t
 IeBeaconTiming::BeaconIntervalToU16(Time t)
 {
-    return ((uint16_t)(t.GetMicroSeconds() >> 10) & 0xffff);
+    return static_cast<uint16_t>(t.GetMicroSeconds() >> 10) & 0xffff;
 }
 
 uint8_t
 IeBeaconTiming::AidToU8(uint16_t x)
 {
-    return (uint8_t)(x & 0xff);
+    return static_cast<uint8_t>(x & 0xff);
 }
 
 bool
