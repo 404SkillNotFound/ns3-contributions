@@ -127,7 +127,7 @@ IcmpEchoReplyTestCase::SendData(Ptr<Socket> socket, Ipv4Address dst)
     Address realTo = InetSocketAddress(dst, 1234);
 
     NS_TEST_EXPECT_MSG_EQ(socket->SendTo(p, 0, realTo),
-                          (int)p->GetSize(),
+                          static_cast<int>(p->GetSize()),
                           " Unable to send ICMP Echo Packet");
 }
 
@@ -256,7 +256,7 @@ IcmpTimeExceedTestCase::SendData(Ptr<Socket> socket, Ipv4Address dst)
     Address realTo = InetSocketAddress(dst, 1234);
 
     NS_TEST_EXPECT_MSG_EQ(socket->SendTo(p, 0, realTo),
-                          (int)p->GetSize(),
+                          static_cast<int>(p->GetSize()),
                           " Unable to send ICMP Echo Packet");
 }
 
@@ -401,7 +401,7 @@ IcmpV6EchoReplyTestCase::SendData(Ptr<Socket> socket, Ipv6Address dst)
     Address realTo = Inet6SocketAddress(dst, 1234);
 
     NS_TEST_EXPECT_MSG_EQ(socket->SendTo(p, 0, realTo),
-                          (int)p->GetSize(),
+                          static_cast<int>(p->GetSize()),
                           " Unable to send ICMP Echo Packet");
 }
 

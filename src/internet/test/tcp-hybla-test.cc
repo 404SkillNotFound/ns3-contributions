@@ -122,7 +122,7 @@ TcpHyblaIncrementTest::DoRun()
     {
         // We expect an increment of rho^2 / cWnd
         uint32_t segCwnd = m_cWnd / m_segmentSize;
-        double inc = std::pow(m_rho, 2) / ((double)segCwnd);
+        double inc = std::pow(m_rho, 2) / static_cast<double>(segCwnd);
         uint32_t cWndExpected = m_cWnd + (inc * m_segmentSize);
 
         if (inc >= 1.0)

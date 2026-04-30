@@ -142,7 +142,7 @@ TcpYeahIncrementTest::IncreaseWindow(Ptr<TcpYeah> cong)
     { // Fast mode, follow STCP increment rule
         UintegerValue aiFactor;
         cong->GetAttribute("StcpAiFactor", aiFactor);
-        uint32_t w = std::min(segCwnd, (uint32_t)aiFactor.Get());
+        uint32_t w = std::min(segCwnd, static_cast<uint32_t>(aiFactor.Get()));
         uint32_t delta = m_segmentsAcked / w;
         m_cWnd += delta * m_segmentSize;
         NS_LOG_INFO("In Fast mode, updated to cwnd " << m_cWnd << " ssthresh " << m_ssThresh);
@@ -188,7 +188,7 @@ TcpYeahIncrementTest::IncreaseWindow(Ptr<TcpYeah> cong)
                 if (queue > alpha.Get() && segCwnd > m_renoCount)
                 { // Precautionary decongestion
                     uint32_t reduction =
-                        std::min(queue / (uint32_t)gamma.Get(), segCwnd >> (uint32_t)epsilon.Get());
+                        std::min(queue / static_cast<uint32_t>(gamma.Get()), segCwnd >> static_cast<uint32_t>(epsilon.Get()));
                     segCwnd -= reduction;
                     segCwnd = std::max(segCwnd, m_renoCount);
                     m_cWnd = segCwnd * m_segmentSize;
@@ -332,12 +332,12 @@ TcpYeahDecrementTest::CalculateSsThresh(Ptr<TcpYeah> cong)
     if (m_doingRenoNow < m_rho.Get())
     {
         reduction = std::max(queue, segCwnd >> delta.Get());
-        reduction = std::min(reduction, std::max(segCwnd >> 1, (uint32_t)2));
+        reduction = std::min(reduction, std::max(segCwnd >> 1, uint32_t{2}));
         NS_LOG_INFO("Reduction amount for yeah upon loss = " << reduction);
     }
     else
     {
-        reduction = std::max(segCwnd >> 1, (uint32_t)2);
+        reduction = std::max(segCwnd >> 1, uint32_t{2});
         NS_LOG_INFO("Reduction amount for reno upon loss = " << reduction);
     }
 

@@ -7,6 +7,7 @@
  *         Faker Moatamri <faker.moatamri@sophia.inria.fr>
  */
 #include "ns3/boolean.h"
+#include <limits>
 #include "ns3/icmpv6-l4-protocol.h"
 #include "ns3/inet6-socket-address.h"
 #include "ns3/ipv6-interface.h"
@@ -124,7 +125,7 @@ Ipv6L3ProtocolTestCase::DoRun()
     NS_TEST_ASSERT_MSG_EQ(index, 2, "Number of addresses should be 2??");
 
     index = ipv6->GetInterfaceForAddress("2001:ffff:5678:9000::1"); /* address we just remove */
-    NS_TEST_ASSERT_MSG_EQ(index, (uint32_t)-1, "Address should not be found??");
+    NS_TEST_ASSERT_MSG_EQ(index, std::numeric_limits<uint32_t>::max(), "Address should not be found??");
 
     /* Test Ipv6Interface()::RemoveAddress(address) */
     output = interface->RemoveAddress(Ipv6Address("2001:1234:5678:9000::1"));

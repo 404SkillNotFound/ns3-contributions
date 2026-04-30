@@ -82,7 +82,7 @@ TcpScalableIncrementTest::DoRun()
     // To see an increase of 1 MSS, the number of segments ACKed has to be at least
     // min (segCwnd, aiFactor).
 
-    uint32_t w = std::min(segCwnd, (uint32_t)aiFactor.Get());
+    uint32_t w = std::min(segCwnd, static_cast<uint32_t>(aiFactor.Get()));
     uint32_t delta = m_segmentsAcked / w;
 
     cong->IncreaseWindow(m_state, m_segmentsAcked);

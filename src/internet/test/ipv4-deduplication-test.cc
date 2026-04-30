@@ -344,7 +344,7 @@ Ipv4DeduplicationTest::DoRun()
         //// many Unix variants.
         //// So, we just log it and fall through to LookupStatic ()
         auto ipv4 = (*iter)->GetObject<Ipv4>();
-        NS_TEST_ASSERT_MSG_EQ((bool)ipv4,
+        NS_TEST_ASSERT_MSG_EQ(static_cast<bool>(ipv4),
                               true,
                               "Node " << Names::FindName(*iter) << " does not have Ipv4 aggregate");
         auto routing = staticRouting.GetStaticRouting(ipv4);
@@ -655,7 +655,7 @@ Ipv4DeduplicationPerformanceTest::DoRun()
         //// many Unix variants.
         //// So, we just log it and fall through to LookupStatic ()
         auto ipv4 = (*iter)->GetObject<Ipv4>();
-        NS_TEST_ASSERT_MSG_EQ((bool)ipv4,
+        NS_TEST_ASSERT_MSG_EQ(static_cast<bool>(ipv4),
                               true,
                               "Node " << (*iter)->GetId() << " does not have Ipv4 aggregate");
         auto routing = staticRouting.GetStaticRouting(ipv4);

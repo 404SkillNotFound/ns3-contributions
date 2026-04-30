@@ -137,7 +137,7 @@ TcpVegasTest::IncreaseWindow(Ptr<TcpVegas> cong)
     // Calculate expected throughput
     uint64_t expectedCwnd;
     expectedCwnd =
-        (uint64_t)segCwnd * (double)baseRtt.GetMilliSeconds() / (double)m_rtt.GetMilliSeconds();
+        static_cast<uint64_t>(segCwnd) * static_cast<double>(baseRtt.GetMilliSeconds()) / static_cast<double>(m_rtt.GetMilliSeconds());
 
     // Calculate the difference between actual and expected throughput
     uint32_t diff;
@@ -153,7 +153,7 @@ TcpVegasTest::IncreaseWindow(Ptr<TcpVegas> cong)
 
     if (diff > gamma.Get() && (m_cWnd < m_ssThresh))
     { // Change from slow-start to linear increase/decrease mode
-        segCwnd = std::min(segCwnd, (uint32_t)expectedCwnd + 1);
+        segCwnd = std::min(segCwnd, static_cast<uint32_t>(expectedCwnd) + 1);
         m_cWnd = segCwnd * m_segmentSize;
         GetSsThresh(cong);
     }

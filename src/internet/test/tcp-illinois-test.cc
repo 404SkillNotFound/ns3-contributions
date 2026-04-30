@@ -233,8 +233,8 @@ TcpIllinoisTest::RecalcParam(Ptr<TcpIllinois> cong)
     }
     else if (m_cntRtt > 0)
     {
-        double dm = (double)CalculateMaxDelay().GetMilliSeconds();
-        double da = (double)CalculateAvgDelay().GetMilliSeconds();
+        double dm = static_cast<double>(CalculateMaxDelay().GetMilliSeconds());
+        double da = static_cast<double>(CalculateAvgDelay().GetMilliSeconds());
 
         NS_LOG_INFO("Updated to dm = " << dm << " da = " << da);
 
