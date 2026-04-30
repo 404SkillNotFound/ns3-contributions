@@ -165,7 +165,7 @@ TestProbabilistic(Ptr<PropagationLossModel> model,
 
             for (auto i = rxPowerMap.begin(); i != rxPowerMap.end(); ++i)
             {
-                dataset.Add(distance, i->first, (double)i->second / (double)samples);
+                dataset.Add(distance, i->first, static_cast<double>(i->second) / static_cast<double>(samples));
             }
             dataset.AddEmptyLine();
         }
