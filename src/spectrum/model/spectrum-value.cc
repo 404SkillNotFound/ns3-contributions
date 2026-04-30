@@ -213,12 +213,12 @@ void
 SpectrumValue::ShiftLeft(int n)
 {
     int i = 0;
-    while (i < (int)m_values.size() - n)
+    while (i < static_cast<int>m_values.size() - n)
     {
         m_values.at(i) = m_values.at(i + n);
         i++;
     }
-    while (i < (int)m_values.size())
+    while (i < static_cast<int>m_values.size())
     {
         m_values.at(i) = 0;
         i++;
