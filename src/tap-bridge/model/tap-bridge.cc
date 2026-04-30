@@ -46,7 +46,7 @@ TapBridgeFdReader::DoRead()
     NS_LOG_FUNCTION(this);
 
     uint32_t bufferSize = 65536;
-    auto buf = (uint8_t*)std::malloc(bufferSize);
+    auto buf = reinterpret_cast<uint8_t*>(std::malloc(bufferSize));
     NS_ABORT_MSG_IF(buf == nullptr, "malloc() failed");
 
     NS_LOG_LOGIC("Calling read on tap device fd " << m_fd);
@@ -344,7 +344,7 @@ TapBridge::CreateTap()
     //
     // Now encode that socket name (family and path) as a string of hex digits
     //
-    std::string path = TapBufferToString((uint8_t*)&un, len);
+    std::string path = TapBufferToString(reinterpret_cast<uint8_t*>(&un), len);
     NS_LOG_INFO("Encoded Unix socket as \"" << path << "\"");
 
     //
@@ -515,7 +515,7 @@ TapBridge::CreateTap()
                           ossMode.str().c_str(),       // argv[5] (-o<operating mode>)
                           ossPath.str().c_str(),       // argv[6] (-p<path>)
                           ossVerbose.str().c_str(),    // argv[7] (-v)
-                          (char*)nullptr);
+                          reinterpret_cast<char*>(nullptr));
 
         //
         // If the execlp successfully completes, it never returns.  If it returns it failed or the
@@ -637,7 +637,7 @@ TapBridge::CreateTap()
                 if (magic == TAP_MAGIC)
                 {
                     NS_LOG_INFO("Got SCM_RIGHTS with correct magic " << magic);
-                    int* rawSocket = (int*)CMSG_DATA(cmsg);
+                    int* rawSocket = reinterpret_cast<int*>(CMSG_DATA(cmsg));
                     NS_LOG_INFO("Got the socket from the socket creator = " << *rawSocket);
                     m_sock = *rawSocket;
                     break;
@@ -668,7 +668,7 @@ TapBridge::CreateTap()
             if (ioctlResult == 0)
             {
                 Mac48Address learnedMac;
-                learnedMac.CopyFrom((uint8_t*)s.ifr_hwaddr.sa_data);
+                learnedMac.CopyFrom(reinterpret_cast<uint8_t*>(s.ifr_hwaddr.sa_data));
                 NS_LOG_INFO("Learned Tap device MacAddr is "
                             << learnedMac << ": setting ns-3 device to use this address");
                 m_bridgedDevice->SetAddress(learnedMac);
