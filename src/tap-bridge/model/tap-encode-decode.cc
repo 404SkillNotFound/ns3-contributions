@@ -38,7 +38,7 @@ TapBufferToString(uint8_t* buffer, uint32_t len)
     //
     for (uint32_t i = 0; i < len; i++)
     {
-        oss << ":" << std::setw(2) << (uint32_t)buffer[i];
+        oss << ":" << std::setw(2) << static_cast<uint32_t>(buffer[i]);
     }
     return oss.str();
 }

@@ -87,7 +87,7 @@ SendSocket(const char* path, int fd)
     struct sockaddr_un clientAddr;
 
     LOG("Decode address " << path);
-    bool rc = ns3::TapStringToBuffer(path, (uint8_t*)&clientAddr, &clientAddrLen);
+    bool rc = ns3::TapStringToBuffer(path, reinterpret_cast<uint8_t*>(&clientAddr), &clientAddrLen);
     ABORT_IF(rc == false, "Unable to decode path", 0);
 
     LOG("Connect");
@@ -176,7 +176,7 @@ SendSocket(const char* path, int fd)
     // Finally, we get a pointer to the start of the ancillary data array and
     // put our file descriptor in.
     //
-    int* fdptr = (int*)(CMSG_DATA(cmsg));
+    int* fdptr = reinterpret_cast<int*>(CMSG_DATA(cmsg));
     *fdptr = fd; //
 
     //
@@ -210,7 +210,7 @@ CreateTap(const char* dev, const char* ip, const char* mac, const char* mode, co
     int status = ioctl(tap, TUNSETIFF, (void*)&ifr);
     ABORT_IF(status == -1, "Could not allocate tap device", true);
 
-    std::string tapDeviceName = (char*)ifr.ifr_name;
+    std::string tapDeviceName = reinterpret_cast<char*>(ifr.ifr_name);
     LOG("Allocated TAP device " << tapDeviceName);
 
     //
@@ -229,7 +229,7 @@ CreateTap(const char* dev, const char* ip, const char* mac, const char* mode, co
     // Set the hardware (MAC) address of the new device
     //
     ifr.ifr_hwaddr.sa_family = 1; // this is ARPHRD_ETHER from if_arp.h
-    ns3::Mac48Address(mac).CopyTo((uint8_t*)ifr.ifr_hwaddr.sa_data);
+    ns3::Mac48Address(mac).CopyTo(reinterpret_cast<uint8_t*>(ifr.ifr_hwaddr.sa_data));
     status = ioctl(tap, SIOCSIFHWADDR, &ifr);
     ABORT_IF(status == -1, "Could not set MAC address", true);
     LOG("Set device MAC address to " << mac);
@@ -269,7 +269,7 @@ int
 main(int argc, char* argv[])
 {
     int c;
-    char* dev = (char*)"";
+    char* dev = const_cast<char*>("");
     char* ip = nullptr;
     char* mac = nullptr;
     char* netmask = nullptr;
