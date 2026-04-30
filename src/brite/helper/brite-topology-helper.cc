@@ -101,17 +101,17 @@ BriteTopologyHelper::BuildBriteNodeInfoList()
         {
         case brite::NodeConf::RT_NODE:
 
-            if (((brite::RouterNodeConf*)(g->GetNodePtr(i)->GetNodeInfo()))->GetASId() == -1)
+            if ((static_cast<brite::RouterNodeConf*>(g->GetNodePtr(i)->GetNodeInfo()))->GetASId() == -1)
             {
                 m_numAs = nodeInfo.asId = 0;
             }
             else
             {
                 m_numAs = nodeInfo.asId =
-                    ((brite::RouterNodeConf*)(g->GetNodePtr(i)->GetNodeInfo()))->GetASId();
+                    (static_cast<brite::RouterNodeConf*>(g->GetNodePtr(i)->GetNodeInfo()))->GetASId();
             }
 
-            switch (((brite::RouterNodeConf*)(g->GetNodePtr(i)->GetNodeInfo()))->GetRouterType())
+            switch ((static_cast<brite::RouterNodeConf*>(g->GetNodePtr(i)->GetNodeInfo()))->GetRouterType())
             {
             case brite::RouterNodeConf::RT_NONE:
                 nodeInfo.type = "RT_NONE ";
@@ -136,9 +136,9 @@ BriteTopologyHelper::BuildBriteNodeInfoList()
 
         case brite::NodeConf::AS_NODE:
             m_numAs = nodeInfo.asId =
-                ((brite::ASNodeConf*)(g->GetNodePtr(i)->GetNodeInfo()))->GetASId();
+                (static_cast<brite::ASNodeConf*>(g->GetNodePtr(i)->GetNodeInfo()))->GetASId();
 
-            switch (((brite::ASNodeConf*)(g->GetNodePtr(i)->GetNodeInfo()))->GetASType())
+            switch ((static_cast<brite::ASNodeConf*>(g->GetNodePtr(i)->GetNodeInfo()))->GetASType())
             {
             case brite::ASNodeConf::AS_NONE:
                 nodeInfo.type = "AS_NONE ";
@@ -188,24 +188,24 @@ BriteTopologyHelper::BuildBriteEdgeInfoList()
         switch ((*el)->GetConf()->GetEdgeType())
         {
         case brite::EdgeConf::RT_EDGE:
-            edgeInfo.delay = ((brite::RouterEdgeConf*)((*el)->GetConf()))->GetDelay();
+            edgeInfo.delay = (static_cast<brite::RouterEdgeConf*>((*el)->GetConf()))->GetDelay();
             edgeInfo.bandwidth = (*el)->GetConf()->GetBW();
             // If there is only one AS, BRITE will use -1 as AS Number.  We want it to be 0 instead.
             edgeInfo.asFrom =
-                (((brite::RouterNodeConf*)((*el)->GetSrc()->GetNodeInfo()))->GetASId() == -1)
+                ((static_cast<brite::RouterNodeConf*>((*el)->GetSrc()->GetNodeInfo()))->GetASId() == -1)
                     ? 0
-                    : ((brite::RouterNodeConf*)((*el)->GetSrc()->GetNodeInfo()))->GetASId();
+                    : (static_cast<brite::RouterNodeConf*>((*el)->GetSrc()->GetNodeInfo()))->GetASId();
             edgeInfo.asTo =
-                (((brite::RouterNodeConf*)((*el)->GetDst()->GetNodeInfo()))->GetASId() == -1)
+                ((static_cast<brite::RouterNodeConf*>((*el)->GetDst()->GetNodeInfo()))->GetASId() == -1)
                     ? 0
-                    : ((brite::RouterNodeConf*)((*el)->GetDst()->GetNodeInfo()))->GetASId();
+                    : (static_cast<brite::RouterNodeConf*>((*el)->GetDst()->GetNodeInfo()))->GetASId();
             break;
 
         case brite::EdgeConf::AS_EDGE:
             edgeInfo.delay = -1; /* No delay for AS Edges */
             edgeInfo.bandwidth = (*el)->GetConf()->GetBW();
-            edgeInfo.asFrom = ((brite::ASNodeConf*)((*el)->GetSrc()->GetNodeInfo()))->GetASId();
-            edgeInfo.asTo = ((brite::ASNodeConf*)((*el)->GetDst()->GetNodeInfo()))->GetASId();
+            edgeInfo.asFrom = (static_cast<brite::ASNodeConf*>((*el)->GetSrc()->GetNodeInfo()))->GetASId();
+            edgeInfo.asTo = (static_cast<brite::ASNodeConf*>((*el)->GetDst()->GetNodeInfo()))->GetASId();
             break;
 
         default:
@@ -215,7 +215,7 @@ BriteTopologyHelper::BuildBriteEdgeInfoList()
         switch ((*el)->GetConf()->GetEdgeType())
         {
         case brite::EdgeConf::RT_EDGE:
-            switch (((brite::RouterEdgeConf*)(*el)->GetConf())->GetRouterEdgeType())
+            switch ((static_cast<brite::RouterEdgeConf*>((*el)->GetConf()))->GetRouterEdgeType())
             {
             case brite::RouterEdgeConf::RT_NONE:
                 edgeInfo.type = "E_RT_NONE ";
@@ -235,7 +235,7 @@ BriteTopologyHelper::BuildBriteEdgeInfoList()
             break;
 
         case brite::EdgeConf::AS_EDGE:
-            switch (((brite::ASEdgeConf*)((*el)->GetConf()))->GetASEdgeType())
+            switch ((static_cast<brite::ASEdgeConf*>((*el)->GetConf()))->GetASEdgeType())
             {
             case brite::ASEdgeConf::AS_NONE:
                 edgeInfo.type = "E_AS_NONE ";
