@@ -99,7 +99,7 @@ class HierarchicalMobilityModel : public MobilityModel
     void DoSetPosition(const Vector& position) override;
     Vector DoGetVelocity() const override;
     void DoInitialize() override;
-    int64_t DoAssignStreams(int64_t) override;
+    int64_t DoAssignStreamsstatic_cast<int64_t> override;
 
     /**
      * Callback for when parent mobility model course change occurs

@@ -86,7 +86,7 @@ class SteadyStateRandomWaypointMobilityModel : public MobilityModel
     Vector DoGetPosition() const override;
     void DoSetPosition(const Vector& position) override;
     Vector DoGetVelocity() const override;
-    int64_t DoAssignStreams(int64_t) override;
+    int64_t DoAssignStreamsstatic_cast<int64_t> override;
 
     ConstantVelocityHelper m_helper;            //!< helper for velocity computations
     double m_maxSpeed;                          //!< maximum speed value (m/s)
