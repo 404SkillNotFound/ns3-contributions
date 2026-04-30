@@ -659,7 +659,7 @@ main(int argc, char* argv[])
                 ApplicationContainer sinkApp = sinkHelper.Install(nodes_net2LAN[z][i][j].Get(0));
                 sinkApp.Start(Seconds(0));
                 // Sources
-                r1 = 2 + (int)(4 * urng->GetValue());
+                r1 = 2 + static_cast<int>(4 * urng->GetValue());
                 r2 = 10 * urng->GetValue();
                 OnOffHelper client("ns3::TcpSocketFactory", Address());
                 AddressValue remoteAddress(ifs2LanRemoteAddress[z][i][j]);
@@ -680,7 +680,7 @@ main(int argc, char* argv[])
                 ApplicationContainer sinkApp = sinkHelper.Install(nodes_net3LAN[z][i][j].Get(0));
                 sinkApp.Start(Seconds(0));
                 // Sources
-                r1 = 2 + (int)(4 * urng->GetValue());
+                r1 = 2 + static_cast<int>(4 * urng->GetValue());
                 r2 = 10 * urng->GetValue();
                 OnOffHelper client("ns3::TcpSocketFactory", Address());
                 AddressValue remoteAddress(ifs3LanRemoteAddress[z][i][j]);
