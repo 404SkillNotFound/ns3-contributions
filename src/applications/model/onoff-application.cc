@@ -270,8 +270,8 @@ OnOffApplication::SendPacket()
         packet = Create<Packet>(m_pktSize);
     }
 
-    int actual = m_socket->Send(packet);
-    if ((unsigned)actual == m_pktSize)
+    uint32_t actual = m_socket->Send(packet);
+    if (actual == m_pktSize)
     {
         m_txTrace(packet);
         m_totBytes += m_pktSize;

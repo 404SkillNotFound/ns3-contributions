@@ -327,7 +327,7 @@ UdpEchoClientSetFillTestCase::DoRun()
     {
         array[i] = i;
     }
-    echoClient.SetFill(clientApps.Get(0), &(array[0]), (uint32_t)64, (uint32_t)64);
+    echoClient.SetFill(clientApps.Get(0), &(array[0]), static_cast<uint32_t>(64), static_cast<uint32_t>(64));
 
     clientApps.Start(Seconds(2));
     clientApps.Stop(Seconds(10));
