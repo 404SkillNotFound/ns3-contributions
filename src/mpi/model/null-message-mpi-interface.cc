@@ -303,7 +303,7 @@ NullMessageMpiInterface::SendNullMessage(const Time& guarantee_update,
     g_pendingTx.push_back(sendBuf);
     auto iter = g_pendingTx.rbegin(); // Points to the last element
 
-    uint32_t bufferSize = 2 * sizeof(uint64_t) + 2 * sizeof(uint32_t);
+    uint32_t bufferSize = 2 * sizeofstatic_cast<uint64_t> + 2 * sizeof(uint32_t);
     auto buffer = new uint8_t[bufferSize];
     iter->SetBuffer(buffer);
     // Add the time, dest node and dest device
