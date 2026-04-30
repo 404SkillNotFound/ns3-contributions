@@ -204,7 +204,7 @@ Ipv4ClickRouting::GetInterfaceId(const char* ifname)
     // more interfaces defined in the Click graph
     // for a Click node than are defined for it in
     // the simulation script
-    if (retval >= (int)m_ipv4->GetNInterfaces())
+    if (retval >= static_cast<int>(m_ipv4->GetNInterfaces()))
     {
         return -1;
     }
@@ -340,7 +340,7 @@ Ipv4ClickRouting::HandlePacketFromClick(int ifid, int ptype, const unsigned char
         Ipv4Header ipHeader;
         p->RemoveHeader(ipHeader);
 
-        ipv4l3->LocalDeliver(p, ipHeader, (uint32_t)ifid);
+        ipv4l3->LocalDeliver(p, ipHeader, static_cast<uint32_t>(ifid));
     }
     else if (ifid)
     {
@@ -592,7 +592,7 @@ simstrlcpy(char* buf, int len, const std::string& s)
     {
         len--;
 
-        if ((unsigned)len > s.length())
+        if (static_cast<unsigned>(len) > s.length())
         {
             len = s.length();
         }
