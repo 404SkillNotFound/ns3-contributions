@@ -628,7 +628,7 @@ class RerrHeader : public Header
      */
     uint8_t GetDestCount() const
     {
-        return (uint8_t)m_unreachableDstSeqNo.size();
+        return static_cast<uint8_t>(m_unreachableDstSeqNo.size());
     }
 
     /**

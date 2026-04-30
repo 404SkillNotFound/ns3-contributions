@@ -163,7 +163,7 @@ AodvExample::Report(std::ostream&)
 void
 AodvExample::CreateNodes()
 {
-    std::cout << "Creating " << (unsigned)size << " nodes " << step << " m apart.\n";
+    std::cout << "Creating " << static_cast<unsigned>(size) << " nodes " << step << " m apart.\n";
     nodes.Create(size);
     // Name nodes
     for (uint32_t i = 0; i < size; ++i)

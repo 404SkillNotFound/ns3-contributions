@@ -56,7 +56,7 @@ TypeHeader::GetSerializedSize() const
 void
 TypeHeader::Serialize(Buffer::Iterator i) const
 {
-    i.WriteU8((uint8_t)m_type);
+    i.WriteU8(static_cast<uint8_t>(m_type));
 }
 
 uint32_t
@@ -71,7 +71,7 @@ TypeHeader::Deserialize(Buffer::Iterator start)
     case AODVTYPE_RREP:
     case AODVTYPE_RERR:
     case AODVTYPE_RREP_ACK: {
-        m_type = (MessageType)type;
+        m_type = static_cast<MessageType>(type);
         break;
     }
     default:
