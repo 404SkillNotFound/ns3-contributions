@@ -470,7 +470,7 @@ RoutingProtocol::DeferredRouteOutput(Ptr<const Packet> p,
     if (result)
     {
         NS_LOG_LOGIC("Add packet " << p->GetUid() << " to queue. Protocol "
-                                   << (uint16_t)header.GetProtocol());
+                                   << static_cast<uint16_t>header.GetProtocol());
         RoutingTableEntry rt;
         bool result = m_routingTable.LookupRoute(header.GetDestination(), rt);
         if (!result || ((rt.GetFlag() != IN_SEARCH) && result))
@@ -572,7 +572,7 @@ RoutingProtocol::RouteInput(Ptr<const Packet> p,
                 }
                 if (header.GetTtl() > 1)
                 {
-                    NS_LOG_LOGIC("Forward broadcast. TTL " << (uint16_t)header.GetTtl());
+                    NS_LOG_LOGIC("Forward broadcast. TTL " << static_cast<uint16_t>header.GetTtl());
                     RoutingTableEntry toBroadcast;
                     if (m_routingTable.LookupRoute(dst, toBroadcast))
                     {
