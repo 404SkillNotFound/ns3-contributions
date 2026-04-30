@@ -86,13 +86,13 @@ Stats::DoDump(Ptr<OpenFlowSwitchNetDevice> swtch, void* state, ofpbuf* buffer)
     case OFPST_DESC:
         return DescStatsDump(state, buffer);
     case OFPST_FLOW:
-        return FlowStatsDump(swtch, (FlowStatsState*)state, buffer);
+        return FlowStatsDump(swtch, reinterpret_cast<FlowStatsState*>(state), buffer);
     case OFPST_AGGREGATE:
-        return AggregateStatsDump(swtch, (ofp_aggregate_stats_request*)state, buffer);
+        return AggregateStatsDump(swtch, reinterpret_cast<ofp_aggregate_stats_request*>(state), buffer);
     case OFPST_TABLE:
         return TableStatsDump(swtch, state, buffer);
     case OFPST_PORT:
-        return PortStatsDump(swtch, (PortStatsState*)state, buffer);
+        return PortStatsDump(swtch, reinterpret_cast<PortStatsState*>(state), buffer);
     case OFPST_PORT_TABLE:
         return PortTableStatsDump(swtch, state, buffer);
     case OFPST_VENDOR:
@@ -110,16 +110,16 @@ Stats::DoCleanup(void* state)
     case OFPST_DESC:
         break;
     case OFPST_FLOW:
-        free((FlowStatsState*)state);
+        free(reinterpret_cast<FlowStatsState*>(state));
         break;
     case OFPST_AGGREGATE:
-        free((ofp_aggregate_stats_request*)state);
+        free(reinterpret_cast<ofp_aggregate_stats_request*>(state));
         break;
     case OFPST_TABLE:
         break;
     case OFPST_PORT:
-        free(((PortStatsState*)state)->ports);
-        free((PortStatsState*)state);
+        free(reinterpret_cast<PortStatsState*>(state)->ports);
+        free(reinterpret_cast<PortStatsState*>(state));
         break;
     case OFPST_PORT_TABLE:
         break;
@@ -131,7 +131,7 @@ Stats::DoCleanup(void* state)
 int
 Stats::DescStatsDump(void* state, ofpbuf* buffer)
 {
-    ofp_desc_stats* ods = (ofp_desc_stats*)ofpbuf_put_zeros(buffer, sizeof *ods);
+    ofp_desc_stats* ods = reinterpret_cast<ofp_desc_stats*>(ofpbuf_put_zeros(buffer, sizeof *ods));
     strncpy(ods->mfr_desc,
             OpenFlowSwitchNetDevice::GetManufacturerDescription(),
             sizeof ods->mfr_desc);
@@ -146,8 +146,8 @@ Stats::DescStatsDump(void* state, ofpbuf* buffer)
 int
 Stats::FlowStatsInit(const void* body, int body_len, void** state)
 {
-    const ofp_flow_stats_request* fsr = (ofp_flow_stats_request*)body;
-    auto s = (FlowStatsState*)xmalloc(sizeof(FlowStatsState));
+    const ofp_flow_stats_request* fsr = reinterpret_cast<ofp_flow_stats_request*>(body);
+    auto s = reinterpret_cast<FlowStatsState*>(xmalloc(sizeof(FlowStatsState)));
 
     s->table_idx = fsr->table_id == 0xff ? 0 : fsr->table_id;
     memset(&s->position, 0, sizeof s->position);
@@ -159,12 +159,12 @@ Stats::FlowStatsInit(const void* body, int body_len, void** state)
 int
 Stats_FlowDumpCallback(sw_flow* flow, void* state)
 {
-    auto s = (Stats::FlowStatsState*)state;
+    auto s = reinterpret_cast<Stats::FlowStatsState*>(state);
 
     // Fill Flow Stats
     ofp_flow_stats* ofs;
     int length = sizeof *ofs + flow->sf_acts->actions_len;
-    ofs = (ofp_flow_stats*)ofpbuf_put_zeros(s->buffer, length);
+    ofs = reinterpret_cast<ofp_flow_stats*>(ofpbuf_put_zeros(s->buffer, length));
     ofs->length = htons(length);
     ofs->table_id = s->table_idx;
     ofs->match.wildcards = htonl(flow->key.wildcards);
@@ -223,14 +223,14 @@ int
 Stats::AggregateStatsInit(const void* body, int body_len, void** state)
 {
     // ofp_aggregate_stats_request *s = (ofp_aggregate_stats_request*)body;
-    *state = (ofp_aggregate_stats_request*)body;
+    *state = reinterpret_cast<ofp_aggregate_stats_request*>(body);
     return 0;
 }
 
 int
 Stats_AggregateDumpCallback(sw_flow* flow, void* state)
 {
-    ofp_aggregate_stats_reply* s = (ofp_aggregate_stats_reply*)state;
+    ofp_aggregate_stats_reply* s = reinterpret_cast<ofp_aggregate_stats_reply*>(state);
     s->packet_count += flow->packet_count;
     s->byte_count += flow->byte_count;
     s->flow_count++;
@@ -244,7 +244,7 @@ Stats::AggregateStatsDump(Ptr<OpenFlowSwitchNetDevice> swtch,
 {
     ofp_aggregate_stats_request* rq = s;
     ofp_aggregate_stats_reply* rpy =
-        (ofp_aggregate_stats_reply*)ofpbuf_put_zeros(buffer, sizeof *rpy);
+        reinterpret_cast<ofp_aggregate_stats_reply*>(ofpbuf_put_zeros(buffer, sizeof *rpy));
     sw_flow_key match_key;
     flow_extract_match(&match_key, &rq->match);
     int table_idx = rq->table_id == 0xff ? 0 : rq->table_id;
@@ -283,7 +283,7 @@ Stats::TableStatsDump(Ptr<OpenFlowSwitchNetDevice> swtch, void* state, ofpbuf* b
     sw_chain* ft = swtch->GetChain();
     for (int i = 0; i < ft->n_tables; i++)
     {
-        ofp_table_stats* ots = (ofp_table_stats*)ofpbuf_put_zeros(buffer, sizeof *ots);
+        ofp_table_stats* ots = reinterpret_cast<ofp_table_stats*>(ofpbuf_put_zeros(buffer, sizeof *ots));
         sw_table_stats stats;
         ft->tables[i]->stats(ft->tables[i], &stats);
         strncpy(ots->name, stats.name, sizeof ots->name);
@@ -301,7 +301,7 @@ Stats::TableStatsDump(Ptr<OpenFlowSwitchNetDevice> swtch, void* state, ofpbuf* b
 int
 Stats::PortTableStatsDump(Ptr<OpenFlowSwitchNetDevice> swtch, void* state, ofpbuf* buffer)
 {
-    ofp_vport_table_stats* opts = (ofp_vport_table_stats*)ofpbuf_put_zeros(buffer, sizeof *opts);
+    ofp_vport_table_stats* opts = reinterpret_cast<ofp_vport_table_stats*>(ofpbuf_put_zeros(buffer, sizeof *opts));
     opts->max_vports = htonl(swtch->GetVPortTable().max_vports);
     opts->active_vports = htonl(swtch->GetVPortTable().active_vports);
     opts->lookup_count = htonll(swtch->GetVPortTable().lookup_count);
@@ -314,10 +314,10 @@ Stats::PortTableStatsDump(Ptr<OpenFlowSwitchNetDevice> swtch, void* state, ofpbu
 int
 Stats::PortStatsInit(const void* body, int body_len, void** state)
 {
-    auto s = (PortStatsState*)xmalloc(sizeof(PortStatsState));
+    auto s = reinterpret_cast<PortStatsState*>(xmalloc(sizeof(PortStatsState)));
 
     // the body contains a list of port numbers
-    s->ports = (uint32_t*)xmalloc(body_len);
+    s->ports = reinterpret_cast<uint32_t*>(xmalloc(body_len));
     memcpy(s->ports, body, body_len);
     s->num_ports = body_len / sizeof(uint32_t);
 
@@ -345,7 +345,7 @@ Stats::PortStatsDump(Ptr<OpenFlowSwitchNetDevice> swtch, PortStatsState* s, ofpb
                 continue;
             }
 
-            ops = (ofp_port_stats*)ofpbuf_put_zeros(buffer, sizeof *ops);
+            ops = reinterpret_cast<ofp_port_stats*>(ofpbuf_put_zeros(buffer, sizeof *ops));
             ops->port_no = htonl(swtch->GetSwitchPortIndex(p));
             ops->rx_packets = htonll(p.rx_packets);
             ops->tx_packets = htonll(p.tx_packets);
@@ -373,7 +373,7 @@ Stats::PortStatsDump(Ptr<OpenFlowSwitchNetDevice> swtch, PortStatsState* s, ofpb
                 continue;
             }
             // only tx_packets and tx_bytes are really relevant for virtual ports
-            ops = (ofp_port_stats*)ofpbuf_put_zeros(buffer, sizeof *ops);
+            ops = reinterpret_cast<ofp_port_stats*>(ofpbuf_put_zeros(buffer, sizeof *ops));
             ops->port_no = htonl(vpe->vport);
             ops->rx_packets = htonll(-1);
             ops->tx_packets = htonll(vpe->packet_count);
@@ -433,7 +433,7 @@ Action::Validate(ofp_action_type type,
             return OFPBAC_BAD_LEN;
         }
 
-        ofp_action_output* oa = (ofp_action_output*)ah;
+        ofp_action_output* oa = reinterpret_cast<ofp_action_output*>(ah);
 
         // To prevent loops, make sure there's no action to send to the OFP_TABLE virtual port.
 
@@ -576,22 +576,22 @@ VPortAction::Execute(ofp_vport_action_type type,
     switch (type)
     {
     case OFPPAT_POP_MPLS: {
-        ofp_vport_action_pop_mpls* opapm = (ofp_vport_action_pop_mpls*)ah;
+        ofp_vport_action_pop_mpls* opapm = reinterpret_cast<ofp_vport_action_pop_mpls*>(ah);
         pop_mpls_act(nullptr, buffer, key, &opapm->apm);
         break;
     }
     case OFPPAT_PUSH_MPLS: {
-        ofp_vport_action_push_mpls* opapm = (ofp_vport_action_push_mpls*)ah;
+        ofp_vport_action_push_mpls* opapm = reinterpret_cast<ofp_vport_action_push_mpls*>(ah);
         push_mpls_act(nullptr, buffer, key, &opapm->apm);
         break;
     }
     case OFPPAT_SET_MPLS_LABEL: {
-        ofp_vport_action_set_mpls_label* oparml = (ofp_vport_action_set_mpls_label*)ah;
+        ofp_vport_action_set_mpls_label* oparml = reinterpret_cast<ofp_vport_action_set_mpls_label*>(ah);
         set_mpls_label_act(buffer, key, oparml->label_out);
         break;
     }
     case OFPPAT_SET_MPLS_EXP: {
-        ofp_vport_action_set_mpls_exp* oparme = (ofp_vport_action_set_mpls_exp*)ah;
+        ofp_vport_action_set_mpls_exp* oparme = reinterpret_cast<ofp_vport_action_set_mpls_exp*>(ah);
         set_mpls_exp_act(buffer, key, oparme->exp);
         break;
     }
@@ -646,12 +646,12 @@ EricssonAction::Execute(er_action_type type,
     switch (type)
     {
     case ERXT_POP_MPLS: {
-        er_action_pop_mpls* erapm = (er_action_pop_mpls*)ah;
+        er_action_pop_mpls* erapm = reinterpret_cast<er_action_pop_mpls*>(ah);
         pop_mpls_act(nullptr, buffer, key, &erapm->apm);
         break;
     }
     case ERXT_PUSH_MPLS: {
-        er_action_push_mpls* erapm = (er_action_push_mpls*)ah;
+        er_action_push_mpls* erapm = reinterpret_cast<er_action_push_mpls*>(ah);
         push_mpls_act(nullptr, buffer, key, &erapm->apm);
         break;
     }
@@ -710,7 +710,7 @@ Controller::BuildFlow(sw_flow_key key,
                       int idle_timeout,
                       int hard_timeout)
 {
-    ofp_flow_mod* ofm = (ofp_flow_mod*)malloc(sizeof(ofp_flow_mod) + actions_len);
+    ofp_flow_mod* ofm = reinterpret_cast<ofp_flow_mod*>(malloc(sizeof(ofp_flow_mod) + actions_len));
     ofm->header.version = OFP_VERSION;
     ofm->header.type = OFPT_FLOW_MOD;
     ofm->header.length = htons(sizeof(ofp_flow_mod) + actions_len);
@@ -746,7 +746,7 @@ Controller::BuildFlow(sw_flow_key key,
 uint8_t
 Controller::GetPacketType(ofpbuf* buffer)
 {
-    ofp_header* hdr = (ofp_header*)ofpbuf_try_pull(buffer, sizeof(ofp_header));
+    ofp_header* hdr = reinterpret_cast<ofp_header*>(ofpbuf_try_pull(buffer, sizeof(ofp_header)));
     uint8_t type = hdr->type;
     ofpbuf_push_uninit(buffer, sizeof(ofp_header));
     return type;
@@ -800,7 +800,7 @@ DropController::ReceiveFromSwitch(Ptr<OpenFlowSwitchNetDevice> swtch, ofpbuf* bu
     if (type == OFPT_PACKET_IN) // The switch didn't understand the packet it received, so it
                                 // forwarded it to the controller.
     {
-        ofp_packet_in* opi = (ofp_packet_in*)ofpbuf_try_pull(buffer, offsetof(ofp_packet_in, data));
+        ofp_packet_in* opi = reinterpret_cast<ofp_packet_in*>(ofpbuf_try_pull(buffer, offsetof(ofp_packet_in, data)));
         int port = ntohs(opi->in_port);
 
         // Create matching key.
@@ -851,7 +851,7 @@ LearningController::ReceiveFromSwitch(Ptr<OpenFlowSwitchNetDevice> swtch, ofpbuf
     if (type == OFPT_PACKET_IN) // The switch didn't understand the packet it received, so it
                                 // forwarded it to the controller.
     {
-        ofp_packet_in* opi = (ofp_packet_in*)ofpbuf_try_pull(buffer, offsetof(ofp_packet_in, data));
+        ofp_packet_in* opi = reinterpret_cast<ofp_packet_in*>(ofpbuf_try_pull(buffer, offsetof(ofp_packet_in, data)));
         int port = ntohs(opi->in_port);
 
         // Create matching key.
@@ -952,7 +952,7 @@ ExecuteActions(Ptr<OpenFlowSwitchNetDevice> swtch,
     int prev_port;
     size_t max_len = 0;                   // Initialize to make compiler happy
     uint16_t in_port = key->flow.in_port; // ntohs(key->flow.in_port);
-    auto p = (uint8_t*)actions;
+    auto p = reinterpret_cast<uint8_t*>(actions);
 
     prev_port = -1;
 
@@ -966,7 +966,7 @@ ExecuteActions(Ptr<OpenFlowSwitchNetDevice> swtch,
      * in our sanity-checking. */
     while (actions_len > 0)
     {
-        ofp_action_header* ah = (ofp_action_header*)p;
+        ofp_action_header* ah = reinterpret_cast<ofp_action_header*>(p);
         size_t len = htons(ah->len);
 
         if (prev_port != -1)
@@ -977,7 +977,7 @@ ExecuteActions(Ptr<OpenFlowSwitchNetDevice> swtch,
 
         if (ah->type == htons(OFPAT_OUTPUT))
         {
-            ofp_action_output* oa = (ofp_action_output*)p;
+            ofp_action_output* oa = reinterpret_cast<ofp_action_output*>(p);
 
             // port is now 32-bits
             prev_port = oa->port; // ntohl(oa->port);
@@ -988,9 +988,9 @@ ExecuteActions(Ptr<OpenFlowSwitchNetDevice> swtch,
         {
             uint16_t type = ntohs(ah->type);
             if (Action::IsValidType(
-                    (ofp_action_type)type)) // Execute a built-in OpenFlow action against 'buffer'.
+                    static_cast<ofp_action_type>(type)) // Execute a built-in OpenFlow action against 'buffer'.
             {
-                Action::Execute((ofp_action_type)type, buffer, key, ah);
+                Action::Execute(static_cast<ofp_action_type>(type), buffer, key, ah);
             }
             else if (type == OFPAT_VENDOR)
             {
@@ -1011,12 +1011,12 @@ ExecuteActions(Ptr<OpenFlowSwitchNetDevice> swtch,
 uint16_t
 ValidateActions(const sw_flow_key* key, const ofp_action_header* actions, size_t actions_len)
 {
-    auto p = (uint8_t*)actions;
+    auto p = reinterpret_cast<uint8_t*>(actions);
     int err;
 
     while (actions_len >= sizeof(ofp_action_header))
     {
-        ofp_action_header* ah = (ofp_action_header*)p;
+        ofp_action_header* ah = reinterpret_cast<ofp_action_header*>(p);
         size_t len = ntohs(ah->len);
         uint16_t type;
 
@@ -1028,9 +1028,9 @@ ValidateActions(const sw_flow_key* key, const ofp_action_header* actions, size_t
         }
 
         type = ntohs(ah->type);
-        if (Action::IsValidType((ofp_action_type)type)) // Validate built-in OpenFlow actions.
+        if (Action::IsValidType(static_cast<ofp_action_type>(type))) // Validate built-in OpenFlow actions.
         {
-            err = Action::Validate((ofp_action_type)type, len, key, ah);
+            err = Action::Validate(static_cast<ofp_action_type>(type), len, key, ah);
             if (err != ACT_VALIDATION_OK)
             {
                 return err;
@@ -1077,7 +1077,7 @@ ExecuteVPortActions(Ptr<OpenFlowSwitchNetDevice> swtch,
     int prev_port;
     size_t max_len = 0; // Initialize to make compiler happy
     uint16_t in_port = ntohs(key->flow.in_port);
-    auto p = (uint8_t*)actions;
+    auto p = reinterpret_cast<uint8_t*>(actions);
     uint16_t type;
     ofp_action_output* oa;
 
@@ -1086,7 +1086,7 @@ ExecuteVPortActions(Ptr<OpenFlowSwitchNetDevice> swtch,
      * in our sanity-checking. */
     while (actions_len > 0)
     {
-        ofp_action_header* ah = (ofp_action_header*)p;
+        ofp_action_header* ah = reinterpret_cast<ofp_action_header*>(p);
         size_t len = htons(ah->len);
         if (prev_port != -1)
         {
@@ -1103,7 +1103,7 @@ ExecuteVPortActions(Ptr<OpenFlowSwitchNetDevice> swtch,
         else
         {
             type = ah->type; // ntohs(ah->type);
-            VPortAction::Execute((ofp_vport_action_type)type, buffer, key, ah);
+            VPortAction::Execute(static_cast<ofp_vport_action_type>(type), buffer, key, ah);
         }
 
         p += len;
@@ -1119,12 +1119,12 @@ ExecuteVPortActions(Ptr<OpenFlowSwitchNetDevice> swtch,
 uint16_t
 ValidateVPortActions(const ofp_action_header* actions, size_t actions_len)
 {
-    auto p = (uint8_t*)actions;
+    auto p = reinterpret_cast<uint8_t*>(actions);
     int err;
 
     while (actions_len >= sizeof(ofp_action_header))
     {
-        ofp_action_header* ah = (ofp_action_header*)p;
+        ofp_action_header* ah = reinterpret_cast<ofp_action_header*>(p);
         size_t len = ntohs(ah->len);
         uint16_t type;
 
@@ -1137,9 +1137,9 @@ ValidateVPortActions(const ofp_action_header* actions, size_t actions_len)
 
         type = ntohs(ah->type);
         if (VPortAction::IsValidType(
-                (ofp_vport_action_type)type)) // Validate "built-in" OpenFlow port table actions.
+                static_cast<ofp_vport_action_type>(type)) // Validate "built-in" OpenFlow port table actions.
         {
-            err = VPortAction::Validate((ofp_vport_action_type)type, len, ah);
+            err = VPortAction::Validate(static_cast<ofp_vport_action_type>(type), len, ah);
             if (err != ACT_VALIDATION_OK)
             {
                 return err;
@@ -1166,7 +1166,7 @@ ValidateVPortActions(const ofp_action_header* actions, size_t actions_len)
 void
 ExecuteVendor(ofpbuf* buffer, const sw_flow_key* key, const ofp_action_header* ah)
 {
-    ofp_action_vendor_header* avh = (ofp_action_vendor_header*)ah;
+    ofp_action_vendor_header* avh = reinterpret_cast<ofp_action_vendor_header*>(ah);
 
     switch (ntohl(avh->vendor))
     {
@@ -1174,8 +1174,8 @@ ExecuteVendor(ofpbuf* buffer, const sw_flow_key* key, const ofp_action_header* a
         // Nothing to execute yet.
         break;
     case ER_VENDOR_ID: {
-        const er_action_header* erah = (const er_action_header*)avh;
-        EricssonAction::Execute((er_action_type)ntohs(erah->subtype), buffer, key, erah);
+        const er_action_header* erah = reinterpret_cast<const er_action_header*>(avh);
+        EricssonAction::Execute(static_cast<er_action_type>(ntohs(erah->subtype)), buffer, key, erah);
         break;
     }
     default:
@@ -1196,7 +1196,7 @@ ValidateVendor(const sw_flow_key* key, const ofp_action_header* ah, uint16_t len
         return OFPBAC_BAD_LEN;
     }
 
-    avh = (ofp_action_vendor_header*)ah;
+    avh = reinterpret_cast<ofp_action_vendor_header*>(ah);
 
     switch (ntohl(avh->vendor))
     {
@@ -1205,8 +1205,8 @@ ValidateVendor(const sw_flow_key* key, const ofp_action_header* ah, uint16_t len
         break;
     case ER_VENDOR_ID: // Validate Ericsson OpenFlow actions.
     {
-        const er_action_header* erah = (const er_action_header*)avh;
-        ret = EricssonAction::Validate((er_action_type)ntohs(erah->subtype), len);
+        const er_action_header* erah = reinterpret_cast<const er_action_header*>(avh);
+        ret = EricssonAction::Validate(static_cast<er_action_type>(ntohs(erah->subtype)), len);
         break;
     }
     default:

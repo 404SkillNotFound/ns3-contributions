@@ -165,7 +165,7 @@ SwitchFlowTableTestCase::DoRun()
 
     uint16_t priority = key.wildcards ? ntohs(ofm.priority) : -1;
     NS_TEST_ASSERT_MSG_EQ(
-        chain_modify(m_chain, &key, priority, false, (const ofp_action_header*)acts, sizeof(acts)),
+        chain_modify(m_chain, &key, priority, false, reinterpret_cast<const ofp_action_header*>(acts), sizeof(acts)),
         1,
         "Flow table failed to modify Flow.");
 
