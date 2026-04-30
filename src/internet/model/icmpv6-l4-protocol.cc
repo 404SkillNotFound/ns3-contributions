@@ -1178,7 +1178,7 @@ Icmpv6L4Protocol::HandleParameterError(Ptr<Packet> p,
 void
 Icmpv6L4Protocol::SendMessage(Ptr<Packet> packet, Ipv6Address src, Ipv6Address dst, uint8_t ttl)
 {
-    NS_LOG_FUNCTION(this << packet << src << dst << (uint32_t)ttl);
+    NS_LOG_FUNCTION(this << packet << src << dst << +ttl);
     Ptr<Ipv6L3Protocol> ipv6 = m_node->GetObject<Ipv6L3Protocol>();
     SocketIpv6HopLimitTag tag;
     NS_ASSERT(ipv6);
@@ -1194,7 +1194,7 @@ Icmpv6L4Protocol::DelayedSendMessage(Ptr<Packet> packet,
                                      Ipv6Address dst,
                                      uint8_t ttl)
 {
-    NS_LOG_FUNCTION(this << packet << src << dst << (uint32_t)ttl);
+    NS_LOG_FUNCTION(this << packet << src << dst << +ttl);
     SendMessage(packet, src, dst, ttl);
 }
 
@@ -1204,7 +1204,7 @@ Icmpv6L4Protocol::SendMessage(Ptr<Packet> packet,
                               Icmpv6Header& icmpv6Hdr,
                               uint8_t ttl)
 {
-    NS_LOG_FUNCTION(this << packet << dst << icmpv6Hdr << (uint32_t)ttl);
+    NS_LOG_FUNCTION(this << packet << dst << icmpv6Hdr << +ttl);
     Ptr<Ipv6L3Protocol> ipv6 = m_node->GetObject<Ipv6L3Protocol>();
     NS_ASSERT(ipv6 && ipv6->GetRoutingProtocol());
     Ipv6Header header;
@@ -1435,12 +1435,12 @@ Icmpv6L4Protocol::SendErrorDestinationUnreachable(Ptr<Packet> malformedPacket,
                                                   Ipv6Address dst,
                                                   uint8_t code)
 {
-    NS_LOG_FUNCTION(this << malformedPacket << dst << (uint32_t)code);
+    NS_LOG_FUNCTION(this << malformedPacket << dst << +code);
     uint32_t malformedPacketSize = malformedPacket->GetSize();
     Icmpv6DestinationUnreachable header;
     header.SetCode(code);
 
-    NS_LOG_LOGIC("Send Destination Unreachable ( to " << dst << " code " << (uint32_t)code << " )");
+    NS_LOG_LOGIC("Send Destination Unreachable ( to " << dst << " code " << +code << " )");
 
     /* 48 = sizeof IPv6 header + sizeof ICMPv6 error header */
     if (malformedPacketSize <= 1280 - 48)
@@ -1489,7 +1489,7 @@ Icmpv6L4Protocol::SendErrorTimeExceeded(Ptr<Packet> malformedPacket, Ipv6Address
     Icmpv6TimeExceeded header;
     header.SetCode(code);
 
-    NS_LOG_LOGIC("Send Time Exceeded ( to " << dst << " code " << (uint32_t)code << " )");
+    NS_LOG_LOGIC("Send Time Exceeded ( to " << dst << " code " << +code << " )");
 
     /* 48 = sizeof IPv6 header + sizeof ICMPv6 error header */
     if (malformedPacketSize <= 1280 - 48)
@@ -1517,7 +1517,7 @@ Icmpv6L4Protocol::SendErrorParameterError(Ptr<Packet> malformedPacket,
     header.SetCode(code);
     header.SetPtr(ptr);
 
-    NS_LOG_LOGIC("Send Parameter Error ( to " << dst << " code " << (uint32_t)code << " )");
+    NS_LOG_LOGIC("Send Parameter Error ( to " << dst << " code " << +code << " )");
 
     /* 48 = sizeof IPv6 header + sizeof ICMPv6 error header */
     if (malformedPacketSize <= 1280 - 48)
@@ -1599,7 +1599,7 @@ Icmpv6L4Protocol::SendRedirection(Ptr<Packet> redirectedPacket,
 NdiscCache::Ipv6PayloadHeaderPair
 Icmpv6L4Protocol::ForgeNA(Ipv6Address src, Ipv6Address dst, Address* hardwareAddress, uint8_t flags)
 {
-    NS_LOG_FUNCTION(this << src << dst << hardwareAddress << (uint32_t)flags);
+    NS_LOG_FUNCTION(this << src << dst << hardwareAddress << +flags);
     Ptr<Packet> p = Create<Packet>();
     Ipv6Header ipHeader;
     Icmpv6NA na;
