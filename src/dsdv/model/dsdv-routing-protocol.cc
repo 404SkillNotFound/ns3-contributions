@@ -444,7 +444,7 @@ RoutingProtocol::RouteInput(Ptr<const Packet> p,
                 }
                 if (header.GetTtl() > 1)
                 {
-                    NS_LOG_LOGIC("Forward broadcast. TTL " << (uint16_t)header.GetTtl());
+                    NS_LOG_LOGIC("Forward broadcast. TTL " << +header.GetTtl());
                     RoutingTableEntry toBroadcast;
                     if (m_routingTable.LookupRoute(dst, toBroadcast, true))
                     {

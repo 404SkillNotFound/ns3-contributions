@@ -298,7 +298,7 @@ DsdvManetExample::CaseRun(uint32_t nWifis,
 void
 DsdvManetExample::CreateNodes()
 {
-    std::cout << "Creating " << (unsigned)m_nWifis << " nodes.\n";
+    std::cout << "Creating " << static_cast<unsigned>(m_nWifis) << " nodes.\n";
     nodes.Create(m_nWifis);
     NS_ASSERT_MSG(m_nWifis > m_nSinks,
                   "Sinks must be less or equal to the number of nodes in network");
