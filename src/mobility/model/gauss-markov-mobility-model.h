@@ -98,7 +98,7 @@ class GaussMarkovMobilityModel : public MobilityModel
     Vector DoGetPosition() const override;
     void DoSetPosition(const Vector& position) override;
     Vector DoGetVelocity() const override;
-    int64_t DoAssignStreams(int64_t) override;
+    int64_t DoAssignStreams(int64_t stream) override;
     ConstantVelocityHelper m_helper; //!< constant velocity helper
     Time m_timeStep;                 //!< duraiton after which direction and speed should change
     double m_alpha;                  //!< tunable constant in the model

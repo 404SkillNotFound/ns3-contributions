@@ -108,14 +108,14 @@ WaypointMobilityModelNotifyTest::DoRun()
     }
 
     // Schedule updates at non-waypoint times to make sure lazy notifications don't happen
-    for (double updateTime = 0.5; updateTime <= ((double)waypointCount + 1.5); updateTime += 1.0)
+    for (double updateTime = 0.5; updateTime <= (static_cast<double>(waypointCount) + 1.5); updateTime += 1.0)
     {
         Simulator::Schedule(Seconds(updateTime),
                             &WaypointMobilityModelNotifyTest::ForceUpdates,
                             this);
     }
 
-    Simulator::Stop(Seconds((double)waypointCount + 2.0));
+    Simulator::Stop(Seconds(static_cast<double>(waypointCount) + 2.0));
     Simulator::Run();
     Simulator::Destroy();
 }
@@ -143,14 +143,14 @@ WaypointMobilityModelNotifyTest::CourseChangeCallback(Ptr<const MobilityModel> m
     {
         // All waypoints are on second boundaries only
         NS_TEST_EXPECT_MSG_EQ(
-            sec - ((double)((int)sec)) + sec,
+            sec - (static_cast<double>(static_cast<int>(sec))) + sec,
             sec,
             "Course didn't change on one second time boundary with NON-LAZY notifications");
     }
     else
     {
         // Updates should happen at the times they are forced, in between waypoints.
-        NS_TEST_EXPECT_MSG_EQ(sec - ((double)((int)sec)),
+        NS_TEST_EXPECT_MSG_EQ(sec - (static_cast<double>(static_cast<int>(sec))),
                               0.5,
                               "Course didn't change between waypoints with LAZY notifications");
     }
@@ -217,7 +217,7 @@ WaypointMobilityModelAddWaypointTest::DoRun()
     Waypoint m_nextWaypoint(Seconds(m_waypointCounter), Vector(0.0, 0.0, 0.0));
     mob->AddWaypoint(m_nextWaypoint);
 
-    Simulator::Stop(Seconds((double)m_waypointCount + 2.0));
+    Simulator::Stop(Seconds(static_cast<double>(m_waypointCount) + 2.0));
     Simulator::Run();
     Simulator::Destroy();
 }
@@ -232,7 +232,7 @@ WaypointMobilityModelAddWaypointTest::CourseChangeCallback(Ptr<const MobilityMod
 
     NS_TEST_EXPECT_MSG_EQ(now, Seconds(m_waypointCounter), "Waypoint time not properly set");
 
-    if (now < Seconds((double)m_waypointCount))
+    if (now < Seconds(static_cast<double>(m_waypointCount)))
     {
         m_waypointCounter++;
         m_nextWaypoint = Waypoint(Seconds(m_waypointCounter), Vector(0.0, 0.0, 0.0));

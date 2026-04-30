@@ -71,7 +71,7 @@ class RandomWaypointMobilityModel : public MobilityModel
     Vector DoGetPosition() const override;
     void DoSetPosition(const Vector& position) override;
     Vector DoGetVelocity() const override;
-    int64_t DoAssignStreams(int64_t) override;
+    int64_t DoAssignStreams(int64_t stream) override;
 
     ConstantVelocityHelper m_helper;   //!< helper for velocity computations
     Ptr<PositionAllocator> m_position; //!< pointer to position allocator
