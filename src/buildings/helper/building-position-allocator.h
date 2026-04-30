@@ -202,7 +202,7 @@ class SameRoomPositionAllocator : public PositionAllocator
      * @param stream first stream index to use
      * @return the number of stream indices assigned by this model
      */
-    int64_t AssignStreams(int64_t) override;
+    int64_t AssignStreams(int64_t stream) override;
 
   private:
     NodeContainer m_nodes;                    //!< Nodes container
@@ -245,7 +245,7 @@ class FixedRoomPositionAllocator : public PositionAllocator
      * @param stream first stream index to use
      * @return the number of stream indices assigned by this model
      */
-    int64_t AssignStreams(int64_t) override;
+    int64_t AssignStreams(int64_t stream) override;
 
   private:
     uint32_t roomx; //!< Index of the room on the x-axis
