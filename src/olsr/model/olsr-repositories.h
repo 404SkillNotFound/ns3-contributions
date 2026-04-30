@@ -258,7 +258,7 @@ inline std::ostream&
 operator<<(std::ostream& os, const TopologyTuple& tuple)
 {
     os << "TopologyTuple(destAddr=" << tuple.destAddr << ", lastAddr=" << tuple.lastAddr
-       << ", sequenceNumber=" << (int)tuple.sequenceNumber
+       << ", sequenceNumber=" << static_cast<int>tuple.sequenceNumber
        << ", expirationTime=" << tuple.expirationTime << ")";
     return os;
 }
