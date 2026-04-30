@@ -5,6 +5,7 @@
  */
 
 #include "openflow-switch-net-device.h"
+#include <limits>
 
 #include "ns3/tcp-l4-protocol.h"
 #include "ns3/udp-l4-protocol.h"
@@ -469,7 +470,7 @@ OpenFlowSwitchNetDevice::BufferFromPacket(Ptr<const Packet> constPacket,
     const int headroom = 128 + 2;
     const int hard_header = VLAN_ETH_HEADER_LEN;
     ofpbuf* buffer = ofpbuf_new(headroom + hard_header + mtu);
-    buffer->data = (char*)buffer->data + headroom + hard_header;
+    buffer->data = reinterpret_cast<char*>(buffer->data) + headroom + hard_header;
 
     int l2_length = 0;
     int l3_length = 0;
@@ -477,7 +478,7 @@ OpenFlowSwitchNetDevice::BufferFromPacket(Ptr<const Packet> constPacket,
 
     // Parse Ethernet header
     buffer->l2 = new eth_header;
-    eth_header* eth_h = (eth_header*)buffer->l2;
+    eth_header* eth_h = reinterpret_cast<eth_header*>(buffer->l2);
     dst.CopyTo(eth_h->eth_dst); // Destination Mac Address
     src.CopyTo(eth_h->eth_src); // Source Mac Address
     if (protocol == ArpL3Protocol::PROT_NUMBER)
@@ -504,7 +505,7 @@ OpenFlowSwitchNetDevice::BufferFromPacket(Ptr<const Packet> constPacket,
         if (packet->PeekHeader(ip_hd))
         {
             buffer->l3 = new ip_header;
-            ip_header* ip_h = (ip_header*)buffer->l3;
+            ip_header* ip_h = reinterpret_cast<ip_header*>(buffer->l3);
             ip_h->ip_ihl_ver = IP_IHL_VER(5, IP_VERSION); // Version
             ip_h->ip_tos = ip_hd.GetTos();                // Type of Service/Differentiated Services
             ip_h->ip_tot_len = packet->GetSize();         // Total Length
@@ -529,7 +530,7 @@ OpenFlowSwitchNetDevice::BufferFromPacket(Ptr<const Packet> constPacket,
         if (packet->PeekHeader(arp_hd))
         {
             buffer->l3 = new arp_eth_header;
-            arp_eth_header* arp_h = (arp_eth_header*)buffer->l3;
+            arp_eth_header* arp_h = reinterpret_cast<arp_eth_header*>(buffer->l3);
             arp_h->ar_hrd = ARP_HRD_ETHERNET; // Hardware type.
             arp_h->ar_pro = ARP_PRO_IP;       // Protocol type.
             arp_h->ar_op = arp_hd.m_type;     // Opcode.
@@ -549,14 +550,14 @@ OpenFlowSwitchNetDevice::BufferFromPacket(Ptr<const Packet> constPacket,
 
     if (protocol == Ipv4L3Protocol::PROT_NUMBER)
     {
-        ip_header* ip_h = (ip_header*)buffer->l3;
+        ip_header* ip_h = reinterpret_cast<ip_header*>(buffer->l3);
         if (ip_h->ip_proto == TcpL4Protocol::PROT_NUMBER)
         {
             TcpHeader tcp_hd;
             if (packet->PeekHeader(tcp_hd))
             {
                 buffer->l4 = new tcp_header;
-                tcp_header* tcp_h = (tcp_header*)buffer->l4;
+                tcp_header* tcp_h = reinterpret_cast<tcp_header*>(buffer->l4);
                 tcp_h->tcp_src = htons(tcp_hd.GetSourcePort());         // Source Port
                 tcp_h->tcp_dst = htons(tcp_hd.GetDestinationPort());    // Destination Port
                 tcp_h->tcp_seq = tcp_hd.GetSequenceNumber().GetValue(); // Sequence Number
@@ -577,12 +578,12 @@ OpenFlowSwitchNetDevice::BufferFromPacket(Ptr<const Packet> constPacket,
             if (packet->PeekHeader(udp_hd))
             {
                 buffer->l4 = new udp_header;
-                udp_header* udp_h = (udp_header*)buffer->l4;
+                udp_header* udp_h = reinterpret_cast<udp_header*>(buffer->l4);
                 udp_h->udp_src = htons(udp_hd.GetSourcePort());      // Source Port
                 udp_h->udp_dst = htons(udp_hd.GetDestinationPort()); // Destination Port
                 udp_h->udp_len = htons(UDP_HEADER_LEN + packet->GetSize());
 
-                ip_header* ip_h = (ip_header*)buffer->l3;
+                ip_header* ip_h = reinterpret_cast<ip_header*>(buffer->l3);
                 uint32_t udp_csum = csum_add32(0, ip_h->ip_src);
                 udp_csum = csum_add32(udp_csum, ip_h->ip_dst);
                 udp_csum = csum_add16(udp_csum, IP_TYPE_UDP << 8);
@@ -599,22 +600,22 @@ OpenFlowSwitchNetDevice::BufferFromPacket(Ptr<const Packet> constPacket,
     }
 
     // Load any remaining packet data into buffer data
-    packet->CopyData((uint8_t*)buffer->data, packet->GetSize());
+    packet->CopyData(reinterpret_cast<uint8_t*>(buffer->data), packet->GetSize());
 
     if (buffer->l4)
     {
         ofpbuf_push(buffer, buffer->l4, l4_length);
-        delete (tcp_header*)buffer->l4;
+        delete reinterpret_cast<tcp_header*>(buffer->l4);
     }
     if (buffer->l3)
     {
         ofpbuf_push(buffer, buffer->l3, l3_length);
-        delete (ip_header*)buffer->l3;
+        delete reinterpret_cast<ip_header*>(buffer->l3);
     }
     if (buffer->l2)
     {
         ofpbuf_push(buffer, buffer->l2, l2_length);
-        delete (eth_header*)buffer->l2;
+        delete reinterpret_cast<eth_header*>(buffer->l2);
     }
 
     return buffer;
@@ -723,7 +724,7 @@ OpenFlowSwitchNetDevice::ReceiveFromDevice(Ptr<NetDevice> netdev,
             str << "] expired.";
 
             NS_LOG_INFO(str.str());
-            SendFlowExpired(f, (ofp_flow_expired_reason)f->reason);
+            SendFlowExpired(f, static_cast<ofp_flow_expired_reason>(f->reason));
             list_remove(&f->node);
             flow_free(f);
         }
@@ -741,7 +742,7 @@ OpenFlowSwitchNetDevice::OutputAll(uint32_t packet_uid, int in_port, bool flood)
     int prev_port = -1;
     for (size_t i = 0; i < m_ports.size(); i++)
     {
-        if (i == (unsigned)in_port) // Originating port
+        if (i == static_cast<unsigned>(in_port)) // Originating port
         {
             continue;
         }
@@ -872,7 +873,7 @@ OpenFlowSwitchNetDevice::OutputControl(uint32_t packet_uid, int in_port, size_t 
         buffer->size = max_len;
     }
 
-    ofp_packet_in* opi = (ofp_packet_in*)ofpbuf_push_uninit(buffer, offsetof(ofp_packet_in, data));
+    ofp_packet_in* opi = reinterpret_cast<ofp_packet_in*>(ofpbuf_push_uninit(buffer, offsetof(ofp_packet_in, data)));
     opi->header.version = OFP_VERSION;
     opi->header.type = OFPT_PACKET_IN;
     opi->header.length = htons(buffer->size);
@@ -892,7 +893,7 @@ OpenFlowSwitchNetDevice::FillPortDesc(ofi::Port p, ofp_phy_port* desc)
 
     std::ostringstream nm;
     nm << "eth" << GetSwitchPortIndex(p);
-    strncpy((char*)desc->name, nm.str().c_str(), sizeof desc->name);
+    strncpy(reinterpret_cast<char*>(desc->name), nm.str().c_str(), sizeof desc->name);
 
     p.netdev->GetAddress().CopyTo(desc->hw_addr);
     desc->config = htonl(p.config);
@@ -910,7 +911,7 @@ OpenFlowSwitchNetDevice::SendFeaturesReply()
 {
     ofpbuf* buffer;
     ofp_switch_features* ofr =
-        (ofp_switch_features*)MakeOpenflowReply(sizeof *ofr, OFPT_FEATURES_REPLY, &buffer);
+        reinterpret_cast<ofp_switch_features*>(MakeOpenflowReply(sizeof *ofr, OFPT_FEATURES_REPLY, &buffer));
     ofr->datapath_id = htonll(m_id);
     ofr->n_tables = m_chain->n_tables;
     ofr->n_buffers = htonl(N_PKT_BUFFERS);
@@ -919,7 +920,7 @@ OpenFlowSwitchNetDevice::SendFeaturesReply()
 
     for (size_t i = 0; i < m_ports.size(); i++)
     {
-        ofp_phy_port* opp = (ofp_phy_port*)ofpbuf_put_zeros(buffer, sizeof *opp);
+        ofp_phy_port* opp = reinterpret_cast<ofp_phy_port*>(ofpbuf_put_zeros(buffer, sizeof *opp));
         FillPortDesc(m_ports[i], opp);
     }
 
@@ -931,7 +932,7 @@ OpenFlowSwitchNetDevice::SendVPortTableFeatures()
 {
     ofpbuf* buffer;
     ofp_vport_table_features* ovtfr =
-        (ofp_vport_table_features*)MakeOpenflowReply(sizeof *ovtfr,
+        reinterpret_cast<ofp_vport_table_features*>(MakeOpenflowReply(sizeof *ovtfr,
                                                      OFPT_VPORT_TABLE_FEATURES_REPLY,
                                                      &buffer);
     ovtfr->actions = htonl(OFP_SUPPORTED_VPORT_TABLE_ACTIONS);
@@ -967,7 +968,7 @@ OpenFlowSwitchNetDevice::SendPortStatus(ofi::Port p, uint8_t status)
 {
     ofpbuf* buffer;
     ofp_port_status* ops =
-        (ofp_port_status*)MakeOpenflowReply(sizeof *ops, OFPT_PORT_STATUS, &buffer);
+        reinterpret_cast<ofp_port_status*>(MakeOpenflowReply(sizeof *ops, OFPT_PORT_STATUS, &buffer));
     ops->reason = status;
     memset(ops->pad, 0, sizeof ops->pad);
     FillPortDesc(p, &ops->desc);
@@ -981,7 +982,7 @@ OpenFlowSwitchNetDevice::SendFlowExpired(sw_flow* flow, ofp_flow_expired_reason 
 {
     ofpbuf* buffer;
     ofp_flow_expired* ofe =
-        (ofp_flow_expired*)MakeOpenflowReply(sizeof *ofe, OFPT_FLOW_EXPIRED, &buffer);
+        reinterpret_cast<ofp_flow_expired*>(MakeOpenflowReply(sizeof *ofe, OFPT_FLOW_EXPIRED, &buffer));
     flow_fill_match(&ofe->match, &flow->key);
 
     ofe->priority = htons(flow->priority);
@@ -999,7 +1000,7 @@ void
 OpenFlowSwitchNetDevice::SendErrorMsg(uint16_t type, uint16_t code, const void* data, size_t len)
 {
     ofpbuf* buffer;
-    ofp_error_msg* oem = (ofp_error_msg*)MakeOpenflowReply(sizeof(*oem) + len, OFPT_ERROR, &buffer);
+    ofp_error_msg* oem = reinterpret_cast<ofp_error_msg*>(MakeOpenflowReply(sizeof(*oem) + len, OFPT_ERROR, &buffer));
     oem->type = htons(type);
     oem->code = htons(code);
     memcpy(oem->data, data, len);
@@ -1063,7 +1064,7 @@ OpenFlowSwitchNetDevice::RunThroughFlowTable(uint32_t packet_uid, int port, bool
     if (buffer->l2_5)
     {
         mpls_header mpls_h;
-        mpls_h.value = ntohl(*((uint32_t*)buffer->l2_5));
+        mpls_h.value = ntohl(*reinterpret_cast<uint32_t*>(buffer->l2_5));
         if (mpls_h.ttl == 1)
         {
             // increment mpls drop counter
@@ -1157,7 +1158,7 @@ OpenFlowSwitchNetDevice::RunThroughVPortTable(uint32_t packet_uid, int port, uin
 int
 OpenFlowSwitchNetDevice::ReceivePortMod(const void* msg)
 {
-    ofp_port_mod* opm = (ofp_port_mod*)msg;
+    ofp_port_mod* opm = reinterpret_cast<ofp_port_mod*>(msg);
 
     int port = opm->port_no; // ntohs(opm->port_no);
     if (port < DP_MAX_PORTS)
@@ -1216,7 +1217,7 @@ OpenFlowSwitchNetDevice::ReceiveGetConfigRequest(const void* msg)
 {
     ofpbuf* buffer;
     ofp_switch_config* osc =
-        (ofp_switch_config*)MakeOpenflowReply(sizeof *osc, OFPT_GET_CONFIG_REPLY, &buffer);
+        reinterpret_cast<ofp_switch_config*>(MakeOpenflowReply(sizeof *osc, OFPT_GET_CONFIG_REPLY, &buffer));
     osc->flags = htons(m_flags);
     osc->miss_send_len = htons(m_missSendLen);
 
@@ -1226,7 +1227,7 @@ OpenFlowSwitchNetDevice::ReceiveGetConfigRequest(const void* msg)
 int
 OpenFlowSwitchNetDevice::ReceiveSetConfig(const void* msg)
 {
-    const ofp_switch_config* osc = (ofp_switch_config*)msg;
+    const ofp_switch_config* osc = reinterpret_cast<ofp_switch_config*>(msg);
 
     int n_flags = ntohs(osc->flags) & (OFPC_SEND_FLOW_EXP | OFPC_FRAG_MASK);
     if ((n_flags & OFPC_FRAG_MASK) != OFPC_FRAG_NORMAL &&
@@ -1243,7 +1244,7 @@ OpenFlowSwitchNetDevice::ReceiveSetConfig(const void* msg)
 int
 OpenFlowSwitchNetDevice::ReceivePacketOut(const void* msg)
 {
-    const ofp_packet_out* opo = (ofp_packet_out*)msg;
+    const ofp_packet_out* opo = reinterpret_cast<ofp_packet_out*>(msg);
     ofpbuf* buffer;
     size_t actions_len = ntohs(opo->actions_len);
 
@@ -1253,12 +1254,12 @@ OpenFlowSwitchNetDevice::ReceivePacketOut(const void* msg)
         return -EINVAL;
     }
 
-    if (ntohl(opo->buffer_id) == (uint32_t)-1)
+    if (ntohl(opo->buffer_id) == std::numeric_limits<uint32_t>::max())
     {
         // FIXME: can we avoid copying data here?
         int data_len = ntohs(opo->header.length) - sizeof *opo - actions_len;
         buffer = ofpbuf_new(data_len);
-        ofpbuf_put(buffer, (uint8_t*)opo->actions + actions_len, data_len);
+        ofpbuf_put(buffer, reinterpret_cast<uint8_t*>(opo->actions) + actions_len, data_len);
     }
     else
     {
@@ -1288,7 +1289,7 @@ OpenFlowSwitchNetDevice::ReceivePacketOut(const void* msg)
 int
 OpenFlowSwitchNetDevice::ReceiveVPortMod(const void* msg)
 {
-    const ofp_vport_mod* ovpm = (ofp_vport_mod*)msg;
+    const ofp_vport_mod* ovpm = reinterpret_cast<ofp_vport_mod*>(msg);
 
     uint16_t command = ntohs(ovpm->command);
     if (command == OFPVP_ADD)
@@ -1318,7 +1319,7 @@ OpenFlowSwitchNetDevice::AddFlow(const ofp_flow_mod* ofm)
     sw_flow* flow = flow_alloc(actions_len);
     if (!flow)
     {
-        if (ntohl(ofm->buffer_id) != (uint32_t)-1)
+        if (ntohl(ofm->buffer_id) != std::numeric_limits<uint32_t>::max())
         {
             discard_buffer(ntohl(ofm->buffer_id));
         }
@@ -1332,7 +1333,7 @@ OpenFlowSwitchNetDevice::AddFlow(const ofp_flow_mod* ofm)
     {
         SendErrorMsg(OFPET_BAD_ACTION, v_code, ofm, ntohs(ofm->header.length));
         flow_free(flow);
-        if (ntohl(ofm->buffer_id) != (uint32_t)-1)
+        if (ntohl(ofm->buffer_id) != std::numeric_limits<uint32_t>::max())
         {
             discard_buffer(ntohl(ofm->buffer_id));
         }
@@ -1361,7 +1362,7 @@ OpenFlowSwitchNetDevice::AddFlow(const ofp_flow_mod* ofm)
                          ntohs(ofm->header.length));
         }
         flow_free(flow);
-        if (ntohl(ofm->buffer_id) != (uint32_t)-1)
+        if (ntohl(ofm->buffer_id) != std::numeric_limits<uint32_t>::max())
         {
             discard_buffer(ntohl(ofm->buffer_id));
         }
@@ -1407,8 +1408,8 @@ OpenFlowSwitchNetDevice::ModFlow(const ofp_flow_mod* ofm)
     uint16_t v_code = ofi::ValidateActions(&key, ofm->actions, actions_len);
     if (v_code != ACT_VALIDATION_OK)
     {
-        SendErrorMsg((ofp_error_type)OFPET_BAD_ACTION, v_code, ofm, ntohs(ofm->header.length));
-        if (ntohl(ofm->buffer_id) != (uint32_t)-1)
+        SendErrorMsg(static_cast<ofp_error_type>(OFPET_BAD_ACTION), v_code, ofm, ntohs(ofm->header.length));
+        if (ntohl(ofm->buffer_id) != std::numeric_limits<uint32_t>::max())
         {
             discard_buffer(ntohl(ofm->buffer_id));
         }
@@ -1449,7 +1450,7 @@ int
 OpenFlowSwitchNetDevice::ReceiveFlow(const void* msg)
 {
     NS_LOG_FUNCTION_NOARGS();
-    const ofp_flow_mod* ofm = (ofp_flow_mod*)msg;
+    const ofp_flow_mod* ofm = reinterpret_cast<ofp_flow_mod*>(msg);
     uint16_t command = ntohs(ofm->command);
 
     if (command == OFPFC_ADD)
@@ -1492,7 +1493,7 @@ OpenFlowSwitchNetDevice::StatsDump(ofi::StatsDumpCallback* cb)
         return 0;
     }
 
-    osr = (ofp_stats_reply*)MakeOpenflowReply(sizeof *osr, OFPT_STATS_REPLY, &buffer);
+    osr = reinterpret_cast<ofp_stats_reply*>(MakeOpenflowReply(sizeof *osr, OFPT_STATS_REPLY, &buffer));
     osr->type = htons(cb->s->type);
     osr->flags = 0;
 
@@ -1506,7 +1507,7 @@ OpenFlowSwitchNetDevice::StatsDump(ofi::StatsDumpCallback* cb)
         else
         {
             // Buffer might have been reallocated, so find our data again.
-            osr = (ofp_stats_reply*)ofpbuf_at_assert(buffer, 0, sizeof *osr);
+            osr = reinterpret_cast<ofp_stats_reply*>(ofpbuf_at_assert(buffer, 0, sizeof *osr));
             osr->flags = ntohs(OFPSF_REPLY_MORE);
         }
 
@@ -1534,11 +1535,11 @@ OpenFlowSwitchNetDevice::StatsDone(ofi::StatsDumpCallback* cb)
 int
 OpenFlowSwitchNetDevice::ReceiveStatsRequest(const void* oh)
 {
-    const ofp_stats_request* rq = (ofp_stats_request*)oh;
+    const ofp_stats_request* rq = reinterpret_cast<ofp_stats_request*>(oh);
     size_t rq_len = ntohs(rq->header.length);
     int type = ntohs(rq->type);
     int body_len = rq_len - offsetof(ofp_stats_request, body);
-    ofi::Stats* st = new ofi::Stats((ofp_stats_types)type, (unsigned)body_len);
+    ofi::Stats* st = new ofi::Stats(static_cast<ofp_stats_types>(type), static_cast<unsigned>(body_len));
 
     if (!st)
     {
@@ -1547,7 +1548,7 @@ OpenFlowSwitchNetDevice::ReceiveStatsRequest(const void* oh)
 
     ofi::StatsDumpCallback cb;
     cb.done = false;
-    cb.rq = (ofp_stats_request*)xmemdup(rq, rq_len);
+    cb.rq = reinterpret_cast<ofp_stats_request*>(xmemdup(rq, rq_len));
     cb.s = st;
     cb.state = nullptr;
     cb.swtch = this;
@@ -1580,7 +1581,7 @@ OpenFlowSwitchNetDevice::ReceiveStatsRequest(const void* oh)
 int
 OpenFlowSwitchNetDevice::ReceiveEchoRequest(const void* oh)
 {
-    return SendOpenflowBuffer(make_echo_reply((ofp_header*)oh));
+    return SendOpenflowBuffer(make_echo_reply(reinterpret_cast<ofp_header*>(oh)));
 }
 
 int
@@ -1593,7 +1594,7 @@ int
 OpenFlowSwitchNetDevice::ForwardControlInput(const void* msg, size_t length)
 {
     // Check encapsulated length.
-    ofp_header* oh = (ofp_header*)msg;
+    ofp_header* oh = reinterpret_cast<ofp_header*>(msg);
     if (ntohs(oh->length) > length)
     {
         return -EINVAL;
@@ -1639,8 +1640,8 @@ OpenFlowSwitchNetDevice::ForwardControlInput(const void* msg, size_t length)
         error = length < sizeof(ofp_header) ? -EFAULT : ReceiveVPortTableFeaturesRequest(msg);
         break;
     default:
-        SendErrorMsg((ofp_error_type)OFPET_BAD_REQUEST,
-                     (ofp_bad_request_code)OFPBRC_BAD_TYPE,
+        SendErrorMsg(static_cast<ofp_error_type>(OFPET_BAD_REQUEST),
+                     static_cast<ofp_bad_request_code>(OFPBRC_BAD_TYPE),
                      msg,
                      length);
         error = -EINVAL;
@@ -1648,7 +1649,7 @@ OpenFlowSwitchNetDevice::ForwardControlInput(const void* msg, size_t length)
 
     if (msg)
     {
-        free((ofpbuf*)msg);
+        free(reinterpret_cast<ofpbuf*>(msg));
     }
     return error;
 }
