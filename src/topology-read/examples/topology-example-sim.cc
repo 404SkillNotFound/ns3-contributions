@@ -50,7 +50,7 @@ SinkRx(Ptr<const Packet> p, const Address& ad)
 {
     Ipv4Header ipv4;
     p->PeekHeader(ipv4);
-    std::cout << "TTL: " << (unsigned)ipv4.GetTtl() << std::endl;
+    std::cout << "TTL: " << static_cast<unsigned>ipv4.GetTtl() << std::endl;
 }
 
 // ----------------------------------------------------------------------

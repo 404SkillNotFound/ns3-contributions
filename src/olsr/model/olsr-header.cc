@@ -54,7 +54,7 @@ SecondsToEmf(double seconds)
     double tmp = 16 * (seconds / (OLSR_C * (1 << b)) - 1);
 
     // round it up.  This results in the value for 'a'
-    a = (int)std::ceil(tmp - 0.5);
+    a = static_cast<int>std::ceil(tmp - 0.5);
 
     // if 'a' is equal to 16: increment 'b' by one, and set 'a' to 0
     if (a == 16)
@@ -68,7 +68,7 @@ SecondsToEmf(double seconds)
     NS_ASSERT(b >= 0 && b < 16);
 
     // the field will be a byte holding the value a*16+b
-    return (uint8_t)((a << 4) | b);
+    return static_cast<uint8_t>((a << 4) | b);
 }
 
 ///
@@ -279,7 +279,7 @@ MessageHeader::Deserialize(Buffer::Iterator start)
 {
     uint32_t size;
     Buffer::Iterator i = start;
-    m_messageType = (MessageType)i.ReadU8();
+    m_messageType = static_cast<MessageType>(i.ReadU8());
     NS_ASSERT(m_messageType >= HELLO_MESSAGE && m_messageType <= HNA_MESSAGE);
     m_vTime = i.ReadU8();
     m_messageSize = i.ReadNtohU16();

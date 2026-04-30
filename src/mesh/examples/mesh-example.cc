@@ -295,7 +295,7 @@ MeshTest::InstallApplication()
     serverApps.Stop(Seconds(m_totalTime + 1));
     UdpEchoClientHelper echoClient(interfaces.GetAddress(sinkNodeId), portNumber);
     echoClient.SetAttribute("MaxPackets",
-                            UintegerValue((uint32_t)(m_totalTime * (1 / m_packetInterval))));
+                            UintegerValue(static_cast<uint32_t>(m_totalTime * (1 / m_packetInterval))));
     echoClient.SetAttribute("Interval", TimeValue(Seconds(m_packetInterval)));
     echoClient.SetAttribute("PacketSize", UintegerValue(m_packetSize));
     ApplicationContainer clientApps = echoClient.Install(nodes.Get(0));

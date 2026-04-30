@@ -158,9 +158,9 @@ AarfWifiManager::DoReportDataFailed(WifiRemoteStation* st)
         {
             // need recovery fallback
             station->m_successThreshold =
-                (int)(Min(station->m_successThreshold * m_successK, m_maxSuccessThreshold));
+                static_cast<int>(Min(station->m_successThreshold * m_successK, m_maxSuccessThreshold));
             station->m_timerTimeout =
-                (int)(Max(station->m_timerTimeout * m_timerK, m_minSuccessThreshold));
+                static_cast<int>(Max(station->m_timerTimeout * m_timerK, m_minSuccessThreshold));
             if (station->m_rate != 0)
             {
                 station->m_rate--;

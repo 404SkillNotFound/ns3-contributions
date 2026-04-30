@@ -56,7 +56,7 @@ TypeHeader::GetSerializedSize() const
 void
 TypeHeader::Serialize(Buffer::Iterator i) const
 {
-    i.WriteU8((uint8_t)m_type);
+    i.WriteU8(static_cast<uint8_t>m_type);
 }
 
 uint32_t

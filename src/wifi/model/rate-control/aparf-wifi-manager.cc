@@ -198,7 +198,7 @@ AparfWifiManager::DoReportDataFailed(WifiRemoteStation* st)
     station->m_nFailed++;
     station->m_nSuccess = 0;
     NS_LOG_DEBUG("station=" << station << ", rate=" << station->m_rateIndex
-                            << ", power=" << (int)station->m_powerLevel);
+                            << ", power=" << +station->m_powerLevel);
 
     if (station->m_aparfState == AparfWifiManager::Low)
     {

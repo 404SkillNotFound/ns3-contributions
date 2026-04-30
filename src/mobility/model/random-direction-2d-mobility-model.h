@@ -71,7 +71,7 @@ class RandomDirection2dMobilityModel : public MobilityModel
     Vector DoGetPosition() const override;
     void DoSetPosition(const Vector& position) override;
     Vector DoGetVelocity() const override;
-    int64_t DoAssignStreams(int64_t) override;
+    int64_t DoAssignStreamsstatic_cast<int64_t> override;
 
     Ptr<UniformRandomVariable> m_direction; //!< rv to control direction
     Rectangle m_bounds;                     //!< the 2D bounding area

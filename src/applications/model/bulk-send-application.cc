@@ -172,14 +172,14 @@ BulkSendApplication::SendData(const Address& from, const Address& to)
             packet = Create<Packet>(toSend);
         }
 
-        int actual = m_socket->Send(packet);
-        if ((unsigned)actual == toSend)
+        uint32_t actual = m_socket->Send(packet);
+        if (actual == toSend)
         {
             m_totBytes += actual;
             m_txTrace(packet);
             m_unsentPacket = nullptr;
         }
-        else if (actual == -1)
+        else if (actual == std::numeric_limits<uint32_t>::max())
         {
             // We exit this loop when actual < toSend as the send side
             // buffer is full. The "DataSent" callback will pop when
@@ -188,15 +188,15 @@ BulkSendApplication::SendData(const Address& from, const Address& to)
             m_unsentPacket = packet;
             break;
         }
-        else if (actual > 0 && (unsigned)actual < toSend)
+        else if (actual > 0 && actual < toSend)
         {
             // A Linux socket (non-blocking, such as in DCE) may return
             // a quantity less than the packet size.  Split the packet
             // into two, trace the sent packet, save the unsent packet
             NS_LOG_DEBUG("Packet size: " << packet->GetSize() << "; sent: " << actual
-                                         << "; fragment saved: " << toSend - (unsigned)actual);
+                                         << "; fragment saved: " << toSend - actual);
             Ptr<Packet> sent = packet->CreateFragment(0, actual);
-            Ptr<Packet> unsent = packet->CreateFragment(actual, (toSend - (unsigned)actual));
+            Ptr<Packet> unsent = packet->CreateFragment(actual, toSend - actual);
             m_totBytes += actual;
             m_txTrace(sent);
             m_unsentPacket = unsent;

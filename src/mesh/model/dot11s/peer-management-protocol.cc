@@ -421,7 +421,7 @@ PeerManagementProtocol::CheckBeaconCollisions(uint32_t interface)
         return;
     }
     // my last beacon in 256 us units
-    auto lastBeaconInTimeElement = (uint16_t)((lastBeacon->second.GetMicroSeconds() >> 8) & 0xffff);
+    auto lastBeaconInTimeElement = static_cast<uint16_t>((lastBeacon->second.GetMicroSeconds() >> 8) & 0xffff);
 
     NS_ASSERT_MSG(TuToTime(m_maxBeaconShift) <= m_beaconInterval[interface],
                   "Wrong beacon shift parameters");
@@ -447,7 +447,7 @@ PeerManagementProtocol::CheckBeaconCollisions(uint32_t interface)
                 myBeaconExists = true;
                 continue;
             }
-            if (((int16_t)((*j)->GetLastBeacon() - lastBeaconInTimeElement) >= 0) &&
+            if ((static_cast<int16_t>((*j)->GetLastBeacon() - lastBeaconInTimeElement) >= 0) &&
                 (((*j)->GetLastBeacon() - lastBeaconInTimeElement) %
                      (4 * TimeToTu(beaconInterval->second)) ==
                  0))
@@ -472,7 +472,7 @@ PeerManagementProtocol::ShiftOwnBeacon(uint32_t interface)
     int shift = 0;
     do
     {
-        shift = (int)m_beaconShift->GetValue();
+        shift = static_cast<int>(m_beaconShift->GetValue());
     } while (shift == 0);
     // Apply beacon shift parameters:
     auto plugin = m_plugins.find(interface);
@@ -489,7 +489,7 @@ PeerManagementProtocol::TuToTime(int x)
 int
 PeerManagementProtocol::TimeToTu(Time x)
 {
-    return (int)(x.GetMicroSeconds() / 1024);
+    return static_cast<int>(x.GetMicroSeconds() / 1024);
 }
 
 void

@@ -1178,7 +1178,7 @@ RoutingProtocol::RoutingTableComputation()
                 NS_LOG_LOGIC("NOT adding routing table entry based on the topology tuple: "
                              "have_destAddrEntry="
                              << have_destAddrEntry << " have_lastAddrEntry=" << have_lastAddrEntry
-                             << " lastAddrEntry.distance=" << (int)lastAddrEntry.distance
+                             << " lastAddrEntry.distance=" << static_cast<int>lastAddrEntry.distance
                              << " (h=" << h << ")");
             }
         }
@@ -2298,7 +2298,7 @@ OLSR::mac_failed(Ptr<Packet> p)
           OLSR::node_id (ra_addr ()),
           OLSR::node_id (ch->next_hop ()));
 
-    if ((uint32_t)ih->daddr () == IP_BROADCAST)
+    if (static_cast<uint32_t>ih->daddr () == IP_BROADCAST)
     {
         drop (p, DROP_RTR_MAC_CALLBACK);
         return;

@@ -527,7 +527,7 @@ main(int argc, char* argv[])
                     // Sources
                     if (systemCount == 1)
                     {
-                        r1 = 2 + (int)(4 * urng->GetValue());
+                        r1 = 2 + static_cast<int>(4 * urng->GetValue());
                         r2 = 10 * urng->GetValue();
                         OnOffHelper client("ns3::UdpSocketFactory", Address());
 
@@ -541,7 +541,7 @@ main(int argc, char* argv[])
                     }
                     else if (systemId == x % systemCount)
                     {
-                        r1 = 2 + (int)(4 * urng->GetValue());
+                        r1 = 2 + static_cast<int>(4 * urng->GetValue());
                         r2 = 10 * urng->GetValue();
                         OnOffHelper client("ns3::UdpSocketFactory", Address());
 
@@ -596,7 +596,7 @@ main(int argc, char* argv[])
                     // Sources
                     if (systemCount == 1)
                     {
-                        r1 = 2 + (int)(4 * urng->GetValue());
+                        r1 = 2 + static_cast<int>(4 * urng->GetValue());
                         r2 = 10 * urng->GetValue();
                         OnOffHelper client("ns3::UdpSocketFactory", Address());
 
@@ -610,7 +610,7 @@ main(int argc, char* argv[])
                     }
                     else if (systemId == x % systemCount)
                     {
-                        r1 = 2 + (int)(4 * urng->GetValue());
+                        r1 = 2 + static_cast<int>(4 * urng->GetValue());
                         r2 = 10 * urng->GetValue();
                         OnOffHelper client("ns3::UdpSocketFactory", Address());
 

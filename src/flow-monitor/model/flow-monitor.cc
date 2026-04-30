@@ -240,7 +240,7 @@ FlowMonitor::ReportLastRx(Ptr<FlowProbe> probe,
     }
 
     stats.rxBytes += packetSize;
-    stats.packetSizeHistogram.AddValue((double)packetSize);
+    stats.packetSizeHistogram.AddValue(static_cast<double>packetSize);
     stats.rxPackets++;
     if (stats.rxPackets == 1)
     {

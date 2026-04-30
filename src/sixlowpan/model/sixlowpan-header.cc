@@ -2219,7 +2219,7 @@ Icmpv6OptionSixLowPanCapabilityIndication::GetInstanceTypeId() const
 void
 Icmpv6OptionSixLowPanCapabilityIndication::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " Option field: ";
+    os << "( type = " << static_cast<uint32_t>GetType() << " Option field: ";
 
     if (m_capabilityOptionField & D)
     {

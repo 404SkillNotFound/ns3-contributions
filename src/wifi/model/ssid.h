@@ -61,7 +61,7 @@ class Ssid : public WifiInformationElement
      *
      * @return a pointer to SSID string
      */
-    char* PeekString() const;
+    const char* PeekString() const;
 
   private:
     uint16_t GetInformationFieldSize() const override;

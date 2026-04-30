@@ -162,18 +162,18 @@ BuildingsHelperOneTestCase::DoRun()
     if (m_pib.indoor)
     {
         NS_LOG_LOGIC(" got bid=" << buildingInfo->GetBuilding()->GetId()
-                                 << ", f=" << (uint32_t)buildingInfo->GetFloorNumber()
-                                 << ", rx=" << (uint32_t)buildingInfo->GetRoomNumberX()
-                                 << ", roomY=" << (uint32_t)buildingInfo->GetRoomNumberY());
+                                 << ", f=" << static_cast<uint32_t>buildingInfo->GetFloorNumber()
+                                 << ", rx=" << static_cast<uint32_t>buildingInfo->GetRoomNumberX()
+                                 << ", roomY=" << static_cast<uint32_t>buildingInfo->GetRoomNumberY());
         // only one building in this test, so Id will be 0
         NS_TEST_ASSERT_MSG_EQ(buildingInfo->GetBuilding()->GetId(), 0, "Building ID mismatch");
-        NS_TEST_ASSERT_MSG_EQ((uint32_t)buildingInfo->GetFloorNumber(),
+        NS_TEST_ASSERT_MSG_EQ(static_cast<uint32_t>buildingInfo->GetFloorNumber(),
                               m_pib.fn,
                               "floor number mismatch");
-        NS_TEST_ASSERT_MSG_EQ((uint32_t)buildingInfo->GetRoomNumberX(),
+        NS_TEST_ASSERT_MSG_EQ(static_cast<uint32_t>buildingInfo->GetRoomNumberX(),
                               m_pib.rx,
                               "x room number mismatch");
-        NS_TEST_ASSERT_MSG_EQ((uint32_t)buildingInfo->GetRoomNumberY(),
+        NS_TEST_ASSERT_MSG_EQ(static_cast<uint32_t>buildingInfo->GetRoomNumberY(),
                               m_pib.ry,
                               "y room number mismatch");
     }

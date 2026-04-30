@@ -172,7 +172,7 @@ Icmpv6SixLowPanExtendedDuplicateAddressReqOrConf::Print(std::ostream& os) const
     oldState.copyfmt(os);
     uint8_t rovrLength = m_rovr.size();
 
-    os << "( type = " << (uint32_t)GetType() << " status " << (uint32_t)m_status << " TID " << m_tid
+    os << "( type = " << static_cast<uint32_t>GetType() << " status " << static_cast<uint32_t>m_status << " TID " << m_tid
        << " lifetime " << m_regTime << " ROVR len " << rovrLength;
     for (uint8_t index = 0; index < rovrLength; index++)
     {
@@ -433,8 +433,8 @@ Icmpv6OptionSixLowPanExtendedAddressRegistration::Print(std::ostream& os) const
     oldState.copyfmt(os);
     uint8_t rovrLength = m_rovr.size();
 
-    os << "(type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength() << " status "
-       << (uint32_t)m_status << " lifetime " << m_regTime << " ROVR (" << +rovrLength << ") ";
+    os << "(type = " << static_cast<uint32_t>GetType() << " length = " << static_cast<uint32_t>GetLength() << " status "
+       << static_cast<uint32_t>m_status << " lifetime " << m_regTime << " ROVR (" << +rovrLength << ") ";
     for (uint8_t index = 0; index < rovrLength; index++)
     {
         os << std::hex << +m_rovr[index];
@@ -659,9 +659,9 @@ void
 Icmpv6OptionSixLowPanContext::Print(std::ostream& os) const
 {
     NS_LOG_FUNCTION(this << &os);
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength()
-       << " context length = " << (uint32_t)m_contextLen << " flag C = " << m_c
-       << " CID = " << (uint32_t)m_cid << " lifetime = " << m_validTime
+    os << "( type = " << static_cast<uint32_t>GetType() << " length = " << static_cast<uint32_t>GetLength()
+       << " context length = " << static_cast<uint32_t>m_contextLen << " flag C = " << m_c
+       << " CID = " << static_cast<uint32_t>m_cid << " lifetime = " << m_validTime
        << " context prefix = " << m_prefix.ConvertToIpv6Address() << "/"
        << +m_prefix.GetPrefixLength() << ")";
 }
@@ -689,7 +689,7 @@ Icmpv6OptionSixLowPanContext::Serialize(Buffer::Iterator start) const
     i.WriteU8(m_contextLen);
 
     bitfield |= m_cid;
-    bitfield |= (uint8_t)(m_c << 4);
+    bitfield |= static_cast<uint8_t>(m_c << 4);
 
     i.WriteU8(bitfield);
     i.WriteU16(0);
@@ -722,7 +722,7 @@ Icmpv6OptionSixLowPanContext::Deserialize(Buffer::Iterator start)
 
     bitfield = i.ReadU8();
     m_c = false;
-    if (bitfield & (uint8_t)(1 << 4))
+    if (bitfield & static_cast<uint8_t>(1 << 4))
     {
         m_c = true;
     }
@@ -845,7 +845,7 @@ void
 Icmpv6OptionSixLowPanAuthoritativeBorderRouter::Print(std::ostream& os) const
 {
     NS_LOG_FUNCTION(this << &os);
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength()
+    os << "( type = " << static_cast<uint32_t>GetType() << " length = " << static_cast<uint32_t>GetLength()
        << " version = " << m_version << " lifetime = " << m_validTime
        << " router address = " << m_routerAddress << ")";
 }
@@ -872,10 +872,10 @@ Icmpv6OptionSixLowPanAuthoritativeBorderRouter::Serialize(Buffer::Iterator start
     i.WriteU8(GetLength());
 
     versionL &= 0xFFFF;
-    i.WriteU16((uint16_t)versionL);
+    i.WriteU16(static_cast<uint16_t>versionL);
     versionH >>= 16;
     versionH &= 0xFFFF;
-    i.WriteU16((uint16_t)versionH);
+    i.WriteU16(static_cast<uint16_t>versionH);
 
     i.WriteU16(m_validTime);
 
@@ -897,8 +897,8 @@ Icmpv6OptionSixLowPanAuthoritativeBorderRouter::Deserialize(Buffer::Iterator sta
     SetType(i.ReadU8());
     SetLength(i.ReadU8());
 
-    versionL = (uint32_t)i.ReadU16();
-    versionH = (uint32_t)i.ReadU16();
+    versionL = static_cast<uint32_t>i.ReadU16();
+    versionH = static_cast<uint32_t>i.ReadU16();
     versionH <<= 16;
     m_version = (versionL &= 0xFFFF) + (versionH &= 0xFFFF0000);
 

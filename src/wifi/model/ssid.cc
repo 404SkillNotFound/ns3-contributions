@@ -63,12 +63,12 @@ Ssid::IsBroadcast() const
     return m_ssid[0] == 0;
 }
 
-char*
+const char*
 Ssid::PeekString() const
 {
     // It is safe to return a pointer to the buffer because it is
     // guaranteed to be zero-terminated.
-    return (char*)m_ssid;
+    return reinterpret_cast<const char*>(m_ssid);
 }
 
 WifiInformationElementId

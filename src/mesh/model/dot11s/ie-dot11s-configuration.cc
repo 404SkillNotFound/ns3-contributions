@@ -165,12 +165,12 @@ IeConfiguration::DeserializeInformationField(Buffer::Iterator i, uint16_t length
 void
 IeConfiguration::Print(std::ostream& os) const
 {
-    os << "MeshConfiguration=(neighbors=" << (uint16_t)m_neighbors
-       << ", Active Path Selection Protocol ID=" << (uint32_t)m_APSPId
-       << ", Active Path Selection Metric ID=" << (uint32_t)m_APSMId
-       << ", Congestion Control Mode ID=" << (uint32_t)m_CCMId
-       << ", Synchronize protocol ID=" << (uint32_t)m_SPId
-       << ", Authentication protocol ID=" << (uint32_t)m_APId
+    os << "MeshConfiguration=(neighbors=" << +m_neighbors
+       << ", Active Path Selection Protocol ID=" << +m_APSPId
+       << ", Active Path Selection Metric ID=" << +m_APSMId
+       << ", Congestion Control Mode ID=" << +m_CCMId
+       << ", Synchronize protocol ID=" << +m_SPId
+       << ", Authentication protocol ID=" << +m_APId
        << ", Capabilities=" << m_meshCap.GetUint8();
     os << ")";
 }
