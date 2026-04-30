@@ -99,11 +99,11 @@ main(int argc, char** argv)
             {
                 if (i != j)
                 {
-                    routeMap[{i, j}] = {(int)i, (int)j};
+                    routeMap[{i, j}] = {static_cast<int>i, static_cast<int>j};
                 }
                 else
                 {
-                    routeMap[{i, j}] = std::vector<int>{(int)i};
+                    routeMap[{i, j}] = std::vector<int>{static_cast<int>i};
                 }
             }
         }
@@ -149,14 +149,14 @@ main(int argc, char** argv)
     }
 
     // Now we can print the shortest route between srcNode and dstNode
-    std::cout << "shortest route between " << (char)(srcNodeOpt + 'A') << " and "
-              << (char)(dstNodeOpt + 'A') << " (length "
+    std::cout << "shortest route between " << static_cast<char>(srcNodeOpt + 'A') << " and "
+              << static_cast<char>(dstNodeOpt + 'A') << " (length "
               << routeWeights.GetValue(srcNodeOpt, dstNodeOpt) << "):";
     auto lastNodeNumber = srcNodeOpt;
     for (auto nodeNumber : routeMap.at({srcNodeOpt, dstNodeOpt}))
     {
         std::cout << "--" << routeWeights.GetValue(lastNodeNumber, nodeNumber) << "-->"
-                  << (char)('A' + nodeNumber);
+                  << static_cast<char>('A' + nodeNumber);
         lastNodeNumber = nodeNumber;
     }
     std::cout << std::endl;
