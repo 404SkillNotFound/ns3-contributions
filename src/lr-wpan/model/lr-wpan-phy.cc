@@ -911,7 +911,7 @@ LrWpanPhy::PlmeSetTRXStateRequest(PhyEnumeration state)
             m_trxStatePending = IEEE_802_15_4_PHY_TX_ON;
 
             // Delay for turnaround time (BUSY_RX|RX_ON ---> TX_ON)
-            Time setTime = Seconds((double)lrwpan::aTurnaroundTime / GetDataOrSymbolRate(false));
+            Time setTime = Seconds(static_cast<double>(lrwpan::aTurnaroundTime) / GetDataOrSymbolRate(false));
             m_setTRXState = Simulator::Schedule(setTime, &LrWpanPhy::EndSetTRXState, this);
             return;
         }
@@ -978,7 +978,7 @@ LrWpanPhy::PlmeSetTRXStateRequest(PhyEnumeration state)
             //       even when the transmitter is not busy? (6.9.1)
             m_trxStatePending = IEEE_802_15_4_PHY_RX_ON;
 
-            Time setTime = Seconds((double)lrwpan::aTurnaroundTime / GetDataOrSymbolRate(false));
+            Time setTime = Seconds(static_cast<double>(lrwpan::aTurnaroundTime) / GetDataOrSymbolRate(false));
             m_setTRXState = Simulator::Schedule(setTime, &LrWpanPhy::EndSetTRXState, this);
             return;
         }
@@ -1096,14 +1096,14 @@ LrWpanPhy::PlmeSetAttributeRequest(PhyPibAttributeIdentifier id, Ptr<PhyPibAttri
                 {
                     // 915 MHz BPSK
                     m_phyOption = IEEE_802_15_4_915MHZ_BPSK;
-                    NS_LOG_INFO("Page " << (uint32_t)attribute->phyCurrentPage
+                    NS_LOG_INFO("Page " << +attribute->phyCurrentPage
                                         << ",915 MHz BPSK PHY SET");
                 }
                 else if (m_phyPIBAttributes.phyCurrentChannel <= 26)
                 {
                     // 2.4 GHz MHz O-QPSK
                     m_phyOption = IEEE_802_15_4_2_4GHZ_OQPSK;
-                    NS_LOG_INFO("Page " << (uint32_t)attribute->phyCurrentPage
+                    NS_LOG_INFO("Page " << +attribute->phyCurrentPage
                                         << ", 2.4 Ghz O-QPSK PHY SET");
                 }
             }
@@ -1113,14 +1113,14 @@ LrWpanPhy::PlmeSetAttributeRequest(PhyPibAttributeIdentifier id, Ptr<PhyPibAttri
                 {
                     // 868 MHz ASK
                     m_phyOption = IEEE_802_15_4_868MHZ_ASK;
-                    NS_LOG_INFO("Page " << (uint32_t)attribute->phyCurrentPage
+                    NS_LOG_INFO("Page " << +attribute->phyCurrentPage
                                         << ", 868 MHz ASK PHY SET");
                 }
                 else if (m_phyPIBAttributes.phyCurrentChannel <= 10)
                 {
                     // 915 MHz ASK
                     m_phyOption = IEEE_802_15_4_915MHZ_ASK;
-                    NS_LOG_INFO("Page " << (uint32_t)attribute->phyCurrentPage
+                    NS_LOG_INFO("Page " << +attribute->phyCurrentPage
                                         << ", 915 MHz ASK PHY SET");
                 }
                 else
@@ -1129,9 +1129,9 @@ LrWpanPhy::PlmeSetAttributeRequest(PhyPibAttributeIdentifier id, Ptr<PhyPibAttri
                     m_phyOption = IEEE_802_15_4_868MHZ_ASK;
                     m_phyPIBAttributes.phyCurrentChannel = 0;
                     NS_LOG_INFO("Channel no longer valid in new page "
-                                << (uint32_t)attribute->phyCurrentPage
+                                << +attribute->phyCurrentPage
                                 << ", setting new default channel "
-                                << (uint32_t)m_phyPIBAttributes.phyCurrentChannel);
+                                << +m_phyPIBAttributes.phyCurrentChannel);
                     NS_LOG_INFO("868 MHz ASK PHY SET");
                 }
             }
@@ -1141,14 +1141,14 @@ LrWpanPhy::PlmeSetAttributeRequest(PhyPibAttributeIdentifier id, Ptr<PhyPibAttri
                 {
                     // 868 MHz O-QPSK
                     m_phyOption = IEEE_802_15_4_868MHZ_OQPSK;
-                    NS_LOG_INFO("Page " << (uint32_t)attribute->phyCurrentPage
+                    NS_LOG_INFO("Page " << +attribute->phyCurrentPage
                                         << ", 868 MHz O-QPSK PHY SET");
                 }
                 else if (m_phyPIBAttributes.phyCurrentChannel <= 10)
                 {
                     // 915 MHz O-QPSK
                     m_phyOption = IEEE_802_15_4_915MHZ_OQPSK;
-                    NS_LOG_INFO("Page " << (uint32_t)attribute->phyCurrentPage
+                    NS_LOG_INFO("Page " << +attribute->phyCurrentPage
                                         << ", 915 MHz O-QPSK PHY SET");
                 }
                 else
@@ -1157,9 +1157,9 @@ LrWpanPhy::PlmeSetAttributeRequest(PhyPibAttributeIdentifier id, Ptr<PhyPibAttri
                     m_phyOption = IEEE_802_15_4_868MHZ_OQPSK;
                     m_phyPIBAttributes.phyCurrentChannel = 0;
                     NS_LOG_INFO("Channel no longer valid in new page "
-                                << (uint32_t)attribute->phyCurrentPage
+                                << +attribute->phyCurrentPage
                                 << ", setting new default channel "
-                                << (uint32_t)m_phyPIBAttributes.phyCurrentChannel);
+                                << +m_phyPIBAttributes.phyCurrentChannel);
                     NS_LOG_INFO("868 MHz O-QPSK PHY SET");
                 }
             }
@@ -1169,7 +1169,7 @@ LrWpanPhy::PlmeSetAttributeRequest(PhyPibAttributeIdentifier id, Ptr<PhyPibAttri
                 {
                     // 780 MHz O-QPSK
                     m_phyOption = IEEE_802_15_4_780MHZ_OQPSK;
-                    NS_LOG_INFO("Page " << (uint32_t)attribute->phyCurrentPage
+                    NS_LOG_INFO("Page " << +attribute->phyCurrentPage
                                         << ", 915 MHz O-QPSK PHY SET");
                 }
                 else
@@ -1178,9 +1178,9 @@ LrWpanPhy::PlmeSetAttributeRequest(PhyPibAttributeIdentifier id, Ptr<PhyPibAttri
                     m_phyOption = IEEE_802_15_4_780MHZ_OQPSK;
                     m_phyPIBAttributes.phyCurrentChannel = 0;
                     NS_LOG_INFO("Channel no longer valid in new page "
-                                << (uint32_t)attribute->phyCurrentPage
+                                << +attribute->phyCurrentPage
                                 << ", setting new default channel "
-                                << (uint32_t)m_phyPIBAttributes.phyCurrentChannel);
+                                << +m_phyPIBAttributes.phyCurrentChannel);
                     NS_LOG_INFO("780 MHz O-QPSK PHY SET");
                 }
             }
@@ -1190,7 +1190,7 @@ LrWpanPhy::PlmeSetAttributeRequest(PhyPibAttributeIdentifier id, Ptr<PhyPibAttri
                 {
                     // 950 MHz BPSK
                     m_phyOption = IEEE_802_15_4_950MHZ_BPSK;
-                    NS_LOG_INFO("Page " << (uint32_t)attribute->phyCurrentPage
+                    NS_LOG_INFO("Page " << +attribute->phyCurrentPage
                                         << ", 950 MHz BPSK PHY SET");
                 }
                 else
@@ -1198,9 +1198,9 @@ LrWpanPhy::PlmeSetAttributeRequest(PhyPibAttributeIdentifier id, Ptr<PhyPibAttri
                     m_phyOption = IEEE_802_15_4_950MHZ_BPSK;
                     m_phyPIBAttributes.phyCurrentChannel = 0;
                     NS_LOG_INFO("Channel no longer valid in new page "
-                                << (uint32_t)attribute->phyCurrentPage
+                                << +attribute->phyCurrentPage
                                 << ", setting new default channel "
-                                << (uint32_t)m_phyPIBAttributes.phyCurrentChannel);
+                                << +m_phyPIBAttributes.phyCurrentChannel);
                     NS_LOG_INFO("950 MHz BPSK PHY SET");
                 }
             }

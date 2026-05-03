@@ -859,7 +859,7 @@ LrWpanMac::MlmeSyncRequest(MlmeSyncRequestParams params)
     NS_LOG_FUNCTION(this);
     NS_ASSERT(params.m_logCh <= 26 && m_macPanId != 0xffff);
 
-    auto symbolRate = (uint64_t)m_phy->GetDataOrSymbolRate(false); // symbols per second
+    auto symbolRate = static_cast<uint64_t>(m_phy->GetDataOrSymbolRate(false)); // symbols per second
     // change phy current logical channel
     Ptr<PhyPibAttributes> pibAttr = Create<PhyPibAttributes>();
     pibAttr->phyCurrentChannel = params.m_logCh;
@@ -881,8 +881,8 @@ LrWpanMac::MlmeSyncRequest(MlmeSyncRequestParams params)
         m_numLostBeacons = 0;
         // search for a beacon for a time = incomingSuperframe symbols + 960 symbols
         searchSymbols =
-            ((uint64_t)1 << m_incomingBeaconOrder) + 1 * lrwpan::aBaseSuperframeDuration;
-        searchBeaconTime = Seconds((double)searchSymbols / symbolRate);
+            (static_cast<uint64_t>(1) << m_incomingBeaconOrder) + 1 * lrwpan::aBaseSuperframeDuration;
+        searchBeaconTime = Seconds(static_cast<double>(searchSymbols) / symbolRate);
         m_beaconTrackingOn = true;
         m_trackingEvent =
             Simulator::Schedule(searchBeaconTime, &LrWpanMac::BeaconSearchTimeout, this);
@@ -1637,14 +1637,14 @@ LrWpanMac::StartCAP(SuperframeType superframeType)
     Time endCapTime;
     uint64_t symbolRate;
 
-    symbolRate = (uint64_t)m_phy->GetDataOrSymbolRate(false); // symbols per second
+    symbolRate = static_cast<uint64_t>(m_phy->GetDataOrSymbolRate(false)); // symbols per second
 
     if (superframeType == OUTGOING)
     {
         m_outSuperframeStatus = CAP;
         activeSlot = m_superframeDuration / 16;
         capDuration = activeSlot * (m_fnlCapSlot + 1);
-        endCapTime = Seconds((double)capDuration / symbolRate);
+        endCapTime = Seconds(static_cast<double>(capDuration) / symbolRate);
         // Obtain the end of the CAP by adjust the time it took to send the beacon
         endCapTime -= (Simulator::Now() - m_macBeaconTxTime);
 
@@ -1661,7 +1661,7 @@ LrWpanMac::StartCAP(SuperframeType superframeType)
         m_incSuperframeStatus = CAP;
         activeSlot = m_incomingSuperframeDuration / 16;
         capDuration = activeSlot * (m_incomingFnlCapSlot + 1);
-        endCapTime = Seconds((double)capDuration / symbolRate);
+        endCapTime = Seconds(static_cast<double>(capDuration) / symbolRate);
         // Obtain the end of the CAP by adjust the time it took to receive the beacon
         endCapTime -= (Simulator::Now() - m_macBeaconRxTime);
 
@@ -1685,13 +1685,13 @@ LrWpanMac::StartCFP(SuperframeType superframeType)
     Time endCfpTime;
     uint64_t symbolRate;
 
-    symbolRate = (uint64_t)m_phy->GetDataOrSymbolRate(false); // symbols per second
+    symbolRate = static_cast<uint64_t>(m_phy->GetDataOrSymbolRate(false)); // symbols per second
 
     if (superframeType == INCOMING)
     {
         activeSlot = m_incomingSuperframeDuration / 16;
         cfpDuration = activeSlot * (15 - m_incomingFnlCapSlot);
-        endCfpTime = Seconds((double)cfpDuration / symbolRate);
+        endCfpTime = Seconds(static_cast<double>(cfpDuration) / symbolRate);
         if (cfpDuration > 0)
         {
             m_incSuperframeStatus = CFP;
@@ -1709,7 +1709,7 @@ LrWpanMac::StartCFP(SuperframeType superframeType)
     {
         activeSlot = m_superframeDuration / 16;
         cfpDuration = activeSlot * (15 - m_fnlCapSlot);
-        endCfpTime = Seconds((double)cfpDuration / symbolRate);
+        endCfpTime = Seconds(static_cast<double>(cfpDuration) / symbolRate);
 
         if (cfpDuration > 0)
         {
@@ -1734,12 +1734,12 @@ LrWpanMac::StartInactivePeriod(SuperframeType superframeType)
     Time endInactiveTime;
     uint64_t symbolRate;
 
-    symbolRate = (uint64_t)m_phy->GetDataOrSymbolRate(false); // symbols per second
+    symbolRate = static_cast<uint64_t>(m_phy->GetDataOrSymbolRate(false)); // symbols per second
 
     if (superframeType == INCOMING)
     {
         inactiveDuration = m_incomingBeaconInterval - m_incomingSuperframeDuration;
-        endInactiveTime = Seconds((double)inactiveDuration / symbolRate);
+        endInactiveTime = Seconds(static_cast<double>(inactiveDuration) / symbolRate);
 
         if (inactiveDuration > 0)
         {
@@ -1753,7 +1753,7 @@ LrWpanMac::StartInactivePeriod(SuperframeType superframeType)
     else
     {
         inactiveDuration = m_beaconInterval - m_superframeDuration;
-        endInactiveTime = Seconds((double)inactiveDuration / symbolRate);
+        endInactiveTime = Seconds(static_cast<double>(inactiveDuration) / symbolRate);
 
         if (inactiveDuration > 0)
         {
@@ -1781,7 +1781,7 @@ LrWpanMac::AwaitBeacon()
 void
 LrWpanMac::BeaconSearchTimeout()
 {
-    auto symbolRate = (uint64_t)m_phy->GetDataOrSymbolRate(false); // symbols per second
+    auto symbolRate = static_cast<uint64_t>(m_phy->GetDataOrSymbolRate(false)); // symbols per second
 
     if (m_numLostBeacons > lrwpan::aMaxLostBeacons)
     {
@@ -1802,8 +1802,8 @@ LrWpanMac::BeaconSearchTimeout()
         uint64_t searchSymbols;
         Time searchBeaconTime;
         searchSymbols =
-            ((uint64_t)1 << m_incomingBeaconOrder) + 1 * lrwpan::aBaseSuperframeDuration;
-        searchBeaconTime = Seconds((double)searchSymbols / symbolRate);
+            (static_cast<uint64_t>(1) << m_incomingBeaconOrder) + 1 * lrwpan::aBaseSuperframeDuration;
+        searchBeaconTime = Seconds(static_cast<double>(searchSymbols) / symbolRate);
         m_trackingEvent =
             Simulator::Schedule(searchBeaconTime, &LrWpanMac::BeaconSearchTimeout, this);
     }
@@ -1821,7 +1821,7 @@ LrWpanMac::ReceiveBeacon(uint8_t lqi, const LrWpanMacHeader& receivedMacHdr, Ptr
                         (p->GetSize() * m_phy->GetPhySymbolsPerOctet());
 
     // The start of Rx beacon time and start of the Incoming superframe Active Period
-    auto symbolRate = (uint64_t)m_phy->GetDataOrSymbolRate(false); // symbols per second
+    auto symbolRate = static_cast<uint64_t>(m_phy->GetDataOrSymbolRate(false)); // symbols per second
     m_macBeaconRxTime = Simulator::Now() - Seconds(double(m_rxBeaconSymbols) / symbolRate);
 
     NS_LOG_DEBUG("Beacon Received; forwarding up (m_macBeaconRxTime: "
@@ -2012,7 +2012,7 @@ LrWpanMac::ReceiveCommand(uint8_t lqi, const LrWpanMacHeader& receivedMacHdr, Pt
 {
     NS_LOG_FUNCTION(this << lqi << p);
 
-    auto symbolRate = (uint64_t)m_phy->GetDataOrSymbolRate(false); // symbols per second
+    auto symbolRate = static_cast<uint64_t>(m_phy->GetDataOrSymbolRate(false)); // symbols per second
 
     CommandPayloadHeader receivedMacPayload;
     p->RemoveHeader(receivedMacPayload);
@@ -2170,7 +2170,7 @@ LrWpanMac::ReceiveAcknowledgment(const LrWpanMacHeader& receivedMacHdr, Ptr<Pack
 
     // TODO: check  if the IFS is the correct size after ACK.
     double symbolRate = m_phy->GetDataOrSymbolRate(false);
-    Time ifsWaitTime = Seconds((double)GetIfsSize() / symbolRate);
+    Time ifsWaitTime = Seconds(static_cast<double>(GetIfsSize()) / symbolRate);
 
     if (txMacHdr.IsCommand())
     {
@@ -2407,7 +2407,7 @@ void
 LrWpanMac::PdDataIndication(uint32_t psduLength, Ptr<Packet> p, uint8_t lqi, int8_t rssi)
 {
     NS_ASSERT(m_macState == MAC_IDLE || m_macState == MAC_ACK_PENDING || m_macState == MAC_CSMA);
-    NS_LOG_FUNCTION(this << psduLength << p << (uint16_t)lqi);
+    NS_LOG_FUNCTION(this << psduLength << p << +lqi);
 
     Ptr<Packet> originalPkt = p->Copy();
 
@@ -2548,7 +2548,7 @@ LrWpanMac::PdDataIndication(uint32_t psduLength, Ptr<Packet> p, uint8_t lqi, int
             uint64_t ackSymbols = lrwpan::aTurnaroundTime + m_phy->GetPhySHRDuration() +
                                   ceil(6 * m_phy->GetPhySymbolsPerOctet());
             auto symbolRate = m_phy->GetDataOrSymbolRate(false); // symbols per second
-            Time ackTime = Seconds((double)ackSymbols / symbolRate);
+            Time ackTime = Seconds(static_cast<double>(ackSymbols) / symbolRate);
 
             if (ackTime >= timeLeftInCap)
             {
@@ -2762,9 +2762,9 @@ LrWpanMac::AckWaitTimeout()
 void
 LrWpanMac::IfsWaitTimeout(Time ifsTime)
 {
-    auto symbolRate = (uint64_t)m_phy->GetDataOrSymbolRate(false);
-    Time lifsTime = Seconds((double)m_macLIFSPeriod / symbolRate);
-    Time sifsTime = Seconds((double)m_macSIFSPeriod / symbolRate);
+    auto symbolRate = static_cast<uint64_t>(m_phy->GetDataOrSymbolRate(false));
+    Time lifsTime = Seconds(static_cast<double>(m_macLIFSPeriod) / symbolRate);
+    Time sifsTime = Seconds(static_cast<double>(m_macSIFSPeriod) / symbolRate);
 
     if (ifsTime == lifsTime)
     {

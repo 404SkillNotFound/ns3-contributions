@@ -278,7 +278,7 @@ LrWpanSlottedCsmacaTestCase::DoRun()
     // Verifies that the CCA checks and the rest of the transaction runs
     // on a boundary of an Active Period in the slotted CSMA-CA.
 
-    symbolRate = (uint64_t)dev1->GetMac()->GetPhy()->GetDataOrSymbolRate(false);
+    symbolRate = static_cast<uint64_t>(dev1->GetMac()->GetPhy()->GetDataOrSymbolRate(false));
     activePeriodsSum = m_apBoundary - m_startCap;
     boundary = (activePeriodsSum.GetMicroSeconds() * 1000 * 1000 * symbolRate) % activePeriodSize;
 
@@ -316,7 +316,7 @@ LrWpanSlottedCsmacaTestCase::DoRun()
 
     // TODO: This test need some rework to make it more clear
 
-    transactionTime = Seconds((double)(m_transCost - (ifsSize + 12)) / symbolRate);
+    transactionTime = Seconds(static_cast<double>(m_transCost - (ifsSize + 12)) / symbolRate);
     NS_LOG_UNCOND("Transmission start time(On a boundary): " << m_apBoundary.As(Time::S));
     NS_LOG_UNCOND("Transmission End time (McpsData.confirm): " << m_sentTime.As(Time::S));
 
