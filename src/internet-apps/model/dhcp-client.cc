@@ -332,7 +332,7 @@ DhcpClient::Boot()
     Ptr<Packet> packet;
     packet = Create<Packet>();
     header.ResetOpt();
-    m_tran = (uint32_t)(m_ran->GetValue());
+    m_tran = static_cast<uint32_t>(m_ran->GetValue());
     header.SetTran(m_tran);
     header.SetType(DhcpHeader::DHCPDISCOVER);
     header.SetTime();
@@ -421,7 +421,7 @@ DhcpClient::Request()
         uint32_t addr = m_myAddress.Get();
         packet = Create<Packet>((uint8_t*)&addr, sizeof(addr));
         header.ResetOpt();
-        m_tran = (uint32_t)(m_ran->GetValue());
+        m_tran = static_cast<uint32_t>(m_ran->GetValue());
         header.SetTran(m_tran);
         header.SetTime();
         header.SetType(DhcpHeader::DHCPREQ);

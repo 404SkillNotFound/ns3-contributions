@@ -40,7 +40,7 @@ Dhcp6Header::GetMessageType() const
 void
 Dhcp6Header::SetMessageType(MessageType msgType)
 {
-    NS_LOG_FUNCTION(this << (uint8_t)msgType);
+    NS_LOG_FUNCTION(this << static_cast<uint8_t>(msgType));
     m_msgType = msgType;
 }
 
@@ -378,19 +378,19 @@ Dhcp6Header::GetSerializedSize() const
 void
 Dhcp6Header::Print(std::ostream& os) const
 {
-    os << "(type=" << +(uint8_t)m_msgType << ")";
+    os << "(type=" << +static_cast<uint8_t>(m_msgType) << ")";
 }
 
 void
 Dhcp6Header::Serialize(Buffer::Iterator start) const
 {
     Buffer::Iterator i = start;
-    uint32_t mTTid = (uint32_t)m_msgType << 24 | m_transactId;
+    uint32_t mTTid = static_cast<uint32_t>(m_msgType) << 24 | m_transactId;
     i.WriteHtonU32(mTTid);
 
     if (m_options.find(Options::OptionType::OPTION_CLIENTID) != m_options.end())
     {
-        i.WriteHtonU16((uint16_t)m_clientIdentifier.GetOptionCode());
+        i.WriteHtonU16(static_cast<uint16_t>(m_clientIdentifier.GetOptionCode()));
         i.WriteHtonU16(m_clientIdentifier.GetOptionLength());
         Duid duid = m_clientIdentifier.GetDuid();
         uint32_t size = duid.GetSerializedSize();
@@ -399,7 +399,7 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     }
     if (m_options.find(Options::OptionType::OPTION_SERVERID) != m_options.end())
     {
-        i.WriteHtonU16((uint16_t)m_serverIdentifier.GetOptionCode());
+        i.WriteHtonU16(static_cast<uint16_t>(m_serverIdentifier.GetOptionCode()));
         i.WriteHtonU16(m_serverIdentifier.GetOptionLength());
         Duid duid = m_serverIdentifier.GetDuid();
         uint32_t size = duid.GetSerializedSize();
@@ -410,7 +410,7 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     {
         for (const auto& itr : m_ianaList)
         {
-            i.WriteHtonU16((uint16_t)itr.GetOptionCode());
+            i.WriteHtonU16(static_cast<uint16_t>(itr.GetOptionCode()));
             i.WriteHtonU16(itr.GetOptionLength());
             i.WriteHtonU32(itr.GetIaid());
             i.WriteHtonU32(itr.GetT1());
@@ -419,7 +419,7 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
             std::vector<IaAddressOption> iaAddresses = itr.m_iaAddressOption;
             for (const auto& iaItr : iaAddresses)
             {
-                i.WriteHtonU16((uint16_t)iaItr.GetOptionCode());
+                i.WriteHtonU16(static_cast<uint16_t>(iaItr.GetOptionCode()));
                 i.WriteHtonU16(iaItr.GetOptionLength());
 
                 Address addr = iaItr.GetIaAddress();
@@ -433,13 +433,13 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     }
     if (m_options.find(Options::OptionType::OPTION_ELAPSED_TIME) != m_options.end())
     {
-        i.WriteHtonU16((uint16_t)m_elapsedTime.GetOptionCode());
+        i.WriteHtonU16(static_cast<uint16_t>(m_elapsedTime.GetOptionCode()));
         i.WriteHtonU16(m_elapsedTime.GetOptionLength());
         i.WriteHtonU16(m_elapsedTime.GetOptionValue());
     }
     if (m_options.find(Options::OptionType::OPTION_ORO) != m_options.end())
     {
-        i.WriteHtonU16((uint16_t)m_optionRequest.GetOptionCode());
+        i.WriteHtonU16(static_cast<uint16_t>(m_optionRequest.GetOptionCode()));
         i.WriteHtonU16(m_optionRequest.GetOptionLength());
 
         std::vector<Options::OptionType> requestedOptions = m_optionRequest.GetRequestedOptions();
@@ -450,15 +450,15 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     }
     if (m_options.find(Options::OptionType::OPTION_SOL_MAX_RT) != m_options.end())
     {
-        i.WriteHtonU16((uint16_t)Options::OptionType::OPTION_SOL_MAX_RT);
+        i.WriteHtonU16(static_cast<uint16_t>(Options::OptionType::OPTION_SOL_MAX_RT));
         i.WriteHtonU16(4);
         i.WriteHtonU32(m_solMaxRt);
     }
     if (m_options.find(Options::OptionType::OPTION_STATUS_CODE) != m_options.end())
     {
-        i.WriteHtonU16((uint16_t)Options::OptionType::OPTION_STATUS_CODE);
+        i.WriteHtonU16(static_cast<uint16_t>(Options::OptionType::OPTION_STATUS_CODE));
         i.WriteHtonU16(m_statusCode.GetOptionLength());
-        i.WriteHtonU16((uint16_t)m_statusCode.GetStatusCode());
+        i.WriteHtonU16(static_cast<uint16_t>(m_statusCode.GetStatusCode()));
 
         // Considering a maximum message length of 128 bytes (arbitrary).
         uint8_t strBuf[128];

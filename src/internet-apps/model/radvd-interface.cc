@@ -22,7 +22,7 @@ RadvdInterface::RadvdInterface(uint32_t interface)
     /* initialize default value as specified in radvd.conf manpage */
     m_sendAdvert = true;
     m_maxRtrAdvInterval = 600000;
-    m_minRtrAdvInterval = (uint32_t)(double)(0.33 * m_maxRtrAdvInterval);
+    m_minRtrAdvInterval = static_cast<uint32_t>(0.33 * m_maxRtrAdvInterval);
     m_minDelayBetweenRAs = 3000;
     m_managedFlag = false;
     m_otherConfigFlag = false;

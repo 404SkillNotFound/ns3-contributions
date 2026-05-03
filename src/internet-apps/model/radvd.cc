@@ -342,7 +342,7 @@ Radvd::HandleRead(Ptr<Socket> socket)
             case Icmpv6Header::ICMPV6_ND_ROUTER_SOLICITATION:
                 packet->RemoveHeader(rsHdr);
                 NS_LOG_INFO("Received ICMPv6 Router Solicitation from "
-                            << hdr.GetSource() << " code = " << (uint32_t)rsHdr.GetCode());
+                            << hdr.GetSource() << " code = " << static_cast<uint32_t>(rsHdr.GetCode()));
 
                 for (auto it = m_configurations.begin(); it != m_configurations.end(); it++)
                 {

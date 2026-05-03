@@ -253,7 +253,7 @@ RadvdTestCase::DoRun()
     // Routes checks
     NS_TEST_ASSERT_MSG_EQ(m_routingResults[0],
                           Socket::ERROR_NOTERROR,
-                          (int)m_routingResults[0] << " instead of Socket::ERROR_NOTERROR");
+                          static_cast<int>(m_routingResults[0]) << " instead of Socket::ERROR_NOTERROR");
 
     NS_TEST_ASSERT_MSG_EQ(m_routes[0]->GetGateway(),
                           Ipv6Address("fe80::200:ff:fe00:2"),
@@ -262,11 +262,11 @@ RadvdTestCase::DoRun()
 
     NS_TEST_ASSERT_MSG_EQ(m_routingResults[1],
                           Socket::ERROR_NOROUTETOHOST,
-                          (int)m_routingResults[1] << " instead of Socket::ERROR_NOROUTETOHOST");
+                          static_cast<int>(m_routingResults[1]) << " instead of Socket::ERROR_NOROUTETOHOST");
 
     NS_TEST_ASSERT_MSG_EQ(m_routingResults[2],
                           Socket::ERROR_NOTERROR,
-                          (int)m_routingResults[2] << " instead of Socket::ERROR_NOTERROR");
+                          static_cast<int>(m_routingResults[2]) << " instead of Socket::ERROR_NOTERROR");
 
     NS_TEST_ASSERT_MSG_EQ(m_routes[2]->GetGateway(),
                           Ipv6Address("::"),
@@ -275,7 +275,7 @@ RadvdTestCase::DoRun()
 
     NS_TEST_ASSERT_MSG_EQ(m_routingResults[3],
                           Socket::ERROR_NOTERROR,
-                          (int)m_routingResults[3] << " instead of Socket::ERROR_NOTERROR");
+                          static_cast<int>(m_routingResults[3]) << " instead of Socket::ERROR_NOTERROR");
 
     NS_TEST_ASSERT_MSG_EQ(m_routes[3]->GetGateway(),
                           Ipv6Address("::"),

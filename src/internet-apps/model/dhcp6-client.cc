@@ -409,7 +409,7 @@ Dhcp6Client::CheckLeaseStatus(Ptr<NetDevice> iDev,
     // Read Status Code option.
     Options::StatusCodeValues statusCode = header.GetStatusCodeOption().GetStatusCode();
 
-    NS_LOG_DEBUG("Received status " << (uint16_t)statusCode << " from DHCPv6 server");
+    NS_LOG_DEBUG("Received status " << static_cast<uint16_t>(statusCode) << " from DHCPv6 server");
     if (statusCode == Options::StatusCodeValues::Success)
     {
         NS_LOG_INFO("DHCPv6 client: Server bindings updated successfully.");

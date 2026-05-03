@@ -157,7 +157,7 @@ TracerouteExample::Report(std::ostream&)
 void
 TracerouteExample::CreateNodes()
 {
-    std::cout << "Creating " << (unsigned)size << " nodes " << step << " m apart.\n";
+    std::cout << "Creating " << static_cast<unsigned>(size) << " nodes " << step << " m apart.\n";
     nodes.Create(size);
     // Name nodes
     for (uint32_t i = 0; i < size; ++i)

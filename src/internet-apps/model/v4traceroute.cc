@@ -239,8 +239,8 @@ V4TraceRoute::Receive(Ptr<Socket> socket)
             // Get the 7th and 8th Octet to obtain the Sequence number from
             // the original packet.
             uint16_t recvSeq;
-            recvSeq = (uint16_t)data[7] << 0;
-            recvSeq |= (uint16_t)data[6] << 8;
+            recvSeq = static_cast<uint16_t>(data[7]) << 0;
+            recvSeq |= static_cast<uint16_t>(data[6]) << 8;
 
             auto i = m_sent.find(recvSeq);
             if (i != m_sent.end())

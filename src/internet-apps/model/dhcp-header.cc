@@ -41,7 +41,7 @@ DhcpChaddrToString(const DhcpChaddr& chaddr)
 
     for (std::size_t i = 0; i < chaddr.size(); ++i)
     {
-        outStream << std::setw(2) << (uint32_t)chaddr[i] << (i < chaddr.size() - 1 ? ":" : "");
+        outStream << std::setw(2) << static_cast<uint32_t>(chaddr[i]) << (i < chaddr.size() - 1 ? ":" : "");
     }
     return outStream.str();
 }
@@ -124,7 +124,7 @@ DhcpHeader::GetTran() const
 void
 DhcpHeader::SetTime()
 {
-    m_secs = (uint16_t)Simulator::Now().GetSeconds();
+    m_secs = static_cast<uint16_t>(Simulator::Now().GetSeconds());
 }
 
 void
