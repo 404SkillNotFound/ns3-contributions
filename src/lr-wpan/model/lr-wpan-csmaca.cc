@@ -173,7 +173,7 @@ LrWpanCsmaCa::GetTimeToNextSlot() const
     Time nextBoundary;
     uint64_t elapsedSuperframeSymbols;
     uint64_t symbolRate =
-        (uint64_t)m_mac->GetPhy()->GetDataOrSymbolRate(false); // symbols per second
+        static_cast<uint64_t>(m_mac->GetPhy()->GetDataOrSymbolRate(false)); // symbols per second
     Time timeAtBoundary;
 
     if (m_coorDest)
@@ -181,7 +181,8 @@ LrWpanCsmaCa::GetTimeToNextSlot() const
         // Take the Incoming Frame Reference
         elapsedSuperframe = currentTime - m_mac->m_macBeaconRxTime;
 
-        Time beaconTime [[maybe_unused]] = Seconds((double)m_mac->m_rxBeaconSymbols / symbolRate);
+        Time beaconTime [[maybe_unused]] =
+            Seconds(static_cast<double>(m_mac->m_rxBeaconSymbols) / symbolRate);
         Time elapsedCap [[maybe_unused]] = elapsedSuperframe - beaconTime;
         NS_LOG_DEBUG("Elapsed incoming CAP symbols: " << (elapsedCap.GetSeconds() * symbolRate)
                                                       << " (" << elapsedCap.As(Time::S) << ")");
@@ -194,10 +195,12 @@ LrWpanCsmaCa::GetTimeToNextSlot() const
 
     // get a close value to the the boundary in symbols
     elapsedSuperframeSymbols = elapsedSuperframe.GetSeconds() * symbolRate;
-    symbolsToBoundary = lrwpan::aUnitBackoffPeriod -
-                        std::fmod((double)elapsedSuperframeSymbols, lrwpan::aUnitBackoffPeriod);
+    symbolsToBoundary =
+        lrwpan::aUnitBackoffPeriod -
+        std::fmod(static_cast<double>(elapsedSuperframeSymbols), lrwpan::aUnitBackoffPeriod);
 
-    timeAtBoundary = Seconds((double)(elapsedSuperframeSymbols + symbolsToBoundary) / symbolRate);
+    timeAtBoundary =
+        Seconds(static_cast<double>(elapsedSuperframeSymbols + symbolsToBoundary) / symbolRate);
 
     // get the exact time boundary
     nextBoundary = timeAtBoundary - elapsedSuperframe;
@@ -271,22 +274,23 @@ LrWpanCsmaCa::RandomBackoffDelay()
 {
     NS_LOG_FUNCTION(this);
 
-    uint64_t upperBound = (uint64_t)pow(2, m_BE) - 1;
+    uint64_t upperBound = static_cast<uint64_t>(pow(2, m_BE)) - 1;
     Time randomBackoff;
     uint64_t symbolRate;
     Time timeLeftInCap;
 
-    symbolRate = (uint64_t)m_mac->GetPhy()->GetDataOrSymbolRate(false); // symbols per second
+    symbolRate =
+        static_cast<uint64_t>(m_mac->GetPhy()->GetDataOrSymbolRate(false)); // symbols per second
 
     // We should not recalculate the random backoffPeriods if we are in a slotted CSMA-CA and the
     // transmission was previously deferred (m_randomBackoffPeriods != 0)
     if (m_randomBackoffPeriodsLeft == 0 || IsUnSlottedCsmaCa())
     {
-        m_randomBackoffPeriodsLeft = (uint64_t)m_random->GetValue(0, upperBound + 1);
+        m_randomBackoffPeriodsLeft = static_cast<uint64_t>(m_random->GetValue(0, upperBound + 1));
     }
 
-    randomBackoff =
-        Seconds((double)(m_randomBackoffPeriodsLeft * lrwpan::aUnitBackoffPeriod) / symbolRate);
+    randomBackoff = Seconds(
+        static_cast<double>(m_randomBackoffPeriodsLeft * lrwpan::aUnitBackoffPeriod) / symbolRate);
 
     if (IsUnSlottedCsmaCa())
     {
@@ -314,8 +318,8 @@ LrWpanCsmaCa::RandomBackoffDelay()
 
         if (randomBackoff >= timeLeftInCap)
         {
-            uint64_t usedBackoffs =
-                (double)(timeLeftInCap.GetSeconds() * symbolRate) / lrwpan::aUnitBackoffPeriod;
+            uint64_t usedBackoffs = static_cast<double>(timeLeftInCap.GetSeconds() * symbolRate) /
+                                    lrwpan::aUnitBackoffPeriod;
             m_randomBackoffPeriodsLeft -= usedBackoffs;
             NS_LOG_DEBUG("No time in CAP to complete backoff delay, deferring to the next CAP");
             m_endCapEvent =
@@ -340,19 +344,22 @@ LrWpanCsmaCa::GetTimeLeftInCap()
 
     // At this point, the currentTime should be aligned on a backoff period boundary
     currentTime = Simulator::Now();
-    symbolRate = (uint64_t)m_mac->GetPhy()->GetDataOrSymbolRate(false); // symbols per second
+    symbolRate =
+        static_cast<uint64_t>(m_mac->GetPhy()->GetDataOrSymbolRate(false)); // symbols per second
 
     if (m_coorDest)
     { // Take Incoming frame reference
         activeSlot = m_mac->m_incomingSuperframeDuration / 16;
         capSymbols = activeSlot * (m_mac->m_incomingFnlCapSlot + 1);
-        endCapTime = m_mac->m_macBeaconRxTime + Seconds((double)capSymbols / symbolRate);
+        endCapTime =
+            m_mac->m_macBeaconRxTime + Seconds(static_cast<double>(capSymbols) / symbolRate);
     }
     else
     { // Take Outgoing frame reference
         activeSlot = m_mac->m_superframeDuration / 16;
         capSymbols = activeSlot * (m_mac->m_fnlCapSlot + 1);
-        endCapTime = m_mac->m_macBeaconTxTime + Seconds((double)capSymbols / symbolRate);
+        endCapTime =
+            m_mac->m_macBeaconTxTime + Seconds(static_cast<double>(capSymbols) / symbolRate);
     }
 
     return (endCapTime - currentTime);
@@ -371,7 +378,7 @@ LrWpanCsmaCa::CanProceed()
 
     ccaSymbols = 0;
     m_randomBackoffPeriodsLeft = 0;
-    symbolRate = (uint64_t)m_mac->GetPhy()->GetDataOrSymbolRate(false);
+    symbolRate = static_cast<uint64_t>(m_mac->GetPhy()->GetDataOrSymbolRate(false));
     timeLeftInCap = GetTimeLeftInCap();
 
     // TODO: On the 950 Mhz Band (Japanese Band)
@@ -412,7 +419,7 @@ LrWpanCsmaCa::CanProceed()
         m_lrWpanMacTransCostCallback(transactionSymbols);
     }
 
-    transactionTime = Seconds((double)transactionSymbols / symbolRate);
+    transactionTime = Seconds(static_cast<double>(transactionSymbols) / symbolRate);
     NS_LOG_DEBUG("Total required transaction: " << transactionSymbols << " symbols ("
                                                 << transactionTime.As(Time::S) << ")");
 

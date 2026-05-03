@@ -450,14 +450,14 @@ LrWpanMacHeader::GetInstanceTypeId() const
 void
 LrWpanMacHeader::Print(std::ostream& os) const
 {
-    os << "  Frame Type = " << (uint32_t)m_fctrlFrmType
-       << ", Sec Enable = " << (uint32_t)m_fctrlSecU
-       << ", Frame Pending = " << (uint32_t)m_fctrlFrmPending
-       << ", Ack Request = " << (uint32_t)m_fctrlAckReq
-       << ", PAN ID Compress = " << (uint32_t)m_fctrlPanIdComp
-       << ", Frame Vers = " << (uint32_t)m_fctrlFrmVer
-       << ", Dst Addrs Mode = " << (uint32_t)m_fctrlDstAddrMode
-       << ", Src Addr Mode = " << (uint32_t)m_fctrlSrcAddrMode;
+    os << "  Frame Type = " << +m_fctrlFrmType;
+    os << ", Sec Enable = " << +m_fctrlSecU;
+    os << ", Frame Pending = " << +m_fctrlFrmPending;
+    os << ", Ack Request = " << +m_fctrlAckReq;
+    os << ", PAN ID Compress = " << +m_fctrlPanIdComp;
+    os << ", Frame Vers = " << +m_fctrlFrmVer;
+    os << ", Dst Addrs Mode = " << +m_fctrlDstAddrMode;
+    os << ", Src Addr Mode = " << +m_fctrlSrcAddrMode;
 
     os << ", Sequence Num = " << static_cast<uint16_t>(m_SeqNum);
 
