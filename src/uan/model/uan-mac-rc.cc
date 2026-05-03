@@ -559,7 +559,7 @@ UanMacRc::ProcessAck(Ptr<Packet> ack)
         for (; nit != nacks.end(); nit++)
         {
             NS_LOG_DEBUG(Now().As(Time::S) << " Node " << Mac8Address::ConvertFrom(GetAddress())
-                                           << " Received NACK for " << (uint32_t)*nit);
+                                           << " Received NACK for " << +*nit);
             while (pnum < *nit)
             {
                 pit++;

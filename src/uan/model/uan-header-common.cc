@@ -183,8 +183,8 @@ void
 UanHeaderCommon::Print(std::ostream& os) const
 {
     os << "UAN src=" << m_src << " dest=" << m_dest
-       << " type=" << (uint32_t)m_uanProtocolBits.m_type
-       << "Protocol Number=" << (uint32_t)m_uanProtocolBits.m_protocolNumber;
+       << " type=" << +m_uanProtocolBits.m_type
+       << "Protocol Number=" << +m_uanProtocolBits.m_protocolNumber;
 }
 
 } // namespace ns3

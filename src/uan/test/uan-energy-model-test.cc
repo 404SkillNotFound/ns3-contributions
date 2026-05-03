@@ -131,7 +131,7 @@ AcousticModemEnergyTestCase::DoRun()
     // compute a packet (header + payload) duration
     uint32_t datarate = devNode->GetPhy()->GetMode(0).GetDataRateBps();
     UanHeaderCommon hd;
-    double packetDuration = (m_packetSize + hd.GetSerializedSize()) * 8.0 / (double)datarate;
+    double packetDuration = (m_packetSize + hd.GetSerializedSize()) * 8.0 / static_cast<double>(datarate);
 
     // energy source
     BasicEnergySourceHelper eh;

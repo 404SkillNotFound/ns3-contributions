@@ -186,7 +186,7 @@ Experiment::CreateMode(uint32_t kass, uint32_t fc, bool upperblock, std::string 
     }
     else
     {
-        fcmode = (uint32_t)((-((double)m_totalRate) + (double)bw) / 2.0 + (double)fc);
+        fcmode = static_cast<uint32_t>((-static_cast<double>(m_totalRate) + static_cast<double>(bw)) / 2.0 + static_cast<double>(fc));
     }
 
     uint32_t phyrate = m_totalRate;
@@ -230,7 +230,7 @@ Experiment::Run(uint32_t param)
         nNodes = m_numNodes;
         a = param;
     }
-    Time pDelay = Seconds((double)m_maxRange / 1500.0);
+    Time pDelay = Seconds(static_cast<double>(m_maxRange) / 1500.0);
 
     uan.SetPhy("ns3::UanPhyDual",
                "SupportedModesPhy1",
