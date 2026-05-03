@@ -21,7 +21,7 @@
  * In the _x86 versions the main loop used negative indexes, as shown.
  * Other conversions to std::size_t are marked.
  */
-
+v
 #include "hash-murmur3.h"
 
 #include "log.h"
@@ -411,10 +411,10 @@ void MurmurHash3_x86_128_fin ( const std::size_t len,
   h1 += h2; h1 += h3; h1 += h4;
   h2 += h1; h3 += h1; h4 += h1;
 
-  static_cast<uint32_t*>(out)[0] = h1;
-  static_cast<uint32_t*>(out)[1] = h2;
-  static_cast<uint32_t*>(out)[2] = h3;
-  static_cast<uint32_t*>(out)[3] = h4;
+  static_cast<uint32_t*>(out)[0] = h1; //PDB cast
+  static_cast<uint32_t*>(out)[1] = h2; //PDB cast
+  static_cast<uint32_t*>(out)[2] = h3; //PDB cast
+  static_cast<uint32_t*>(out)[3] = h4; //PDB cast
 }
 
 //-----------------------------------------------------------------------------
@@ -422,7 +422,7 @@ void MurmurHash3_x86_128_fin ( const std::size_t len,
 void MurmurHash3_x64_128 ( const void * key, const std::size_t len,
                            const uint32_t seed, void * out )
 {
-  const uint8_t * data = static_cast<const uint8_t*>(key);
+  const uint8_t * data = static_cast<const uint8_t*>(key); //PDB cast
   const std::size_t nblocks = len / 16;  //PDB: was const int nblocks
 
   uint64_t h1 = seed;
@@ -453,7 +453,7 @@ void MurmurHash3_x64_128 ( const void * key, const std::size_t len,
   //----------
   // tail
 
-  const uint8_t* tail = static_cast<const uint8_t*>(data + nblocks * 16);
+  const uint8_t* tail = static_cast<const uint8_t*>(data + nblocks * 16); //PDB cast
 
   uint64_t k1 = 0;
   uint64_t k2 = 0;

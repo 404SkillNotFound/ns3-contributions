@@ -128,10 +128,10 @@ DsrFsHeader::GetDestId() const
 void
 DsrFsHeader::Print(std::ostream& os) const
 {
-    os << "nextHeader: " << (uint32_t)GetNextHeader()
-       << " messageType: " << (uint32_t)GetMessageType() << " sourceId: " << (uint32_t)GetSourceId()
-       << " destinationId: " << (uint32_t)GetDestId()
-       << " length: " << (uint32_t)GetPayloadLength();
+    os << "nextHeader: " << +GetNextHeader()
+       << " messageType: " << +GetMessageType() << " sourceId: " << static_cast<uint32_t>(GetSourceId())
+       << " destinationId: " << static_cast<uint32_t>(GetDestId())
+       << " length: " << static_cast<uint32_t>(GetPayloadLength());
 }
 
 uint32_t
@@ -303,10 +303,10 @@ DsrRoutingHeader::~DsrRoutingHeader()
 void
 DsrRoutingHeader::Print(std::ostream& os) const
 {
-    os << " nextHeader: " << (uint32_t)GetNextHeader()
-       << " messageType: " << (uint32_t)GetMessageType() << " sourceId: " << (uint32_t)GetSourceId()
-       << " destinationId: " << (uint32_t)GetDestId()
-       << " length: " << (uint32_t)GetPayloadLength();
+    os << " nextHeader: " << +GetNextHeader()
+       << " messageType: " << +GetMessageType() << " sourceId: " << static_cast<uint32_t>(GetSourceId())
+       << " destinationId: " << static_cast<uint32_t>(GetDestId())
+       << " length: " << static_cast<uint32_t>(GetPayloadLength());
 }
 
 uint32_t

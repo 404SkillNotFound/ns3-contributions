@@ -404,7 +404,7 @@ DsrOptionPad1::Process(Ptr<Packet> packet,
                        Ipv4Address promiscSource)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
-                         << (uint32_t)protocol << isPromisc);
+                         << +protocol << isPromisc);
     Ptr<Packet> p = packet->Copy();
     DsrOptionPad1Header pad1Header;
     p->RemoveHeader(pad1Header);
@@ -454,7 +454,7 @@ DsrOptionPadn::Process(Ptr<Packet> packet,
                        Ipv4Address promiscSource)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
-                         << (uint32_t)protocol << isPromisc);
+                         << +protocol << isPromisc);
 
     Ptr<Packet> p = packet->Copy();
     DsrOptionPadnHeader padnHeader;
@@ -506,7 +506,7 @@ DsrOptionRreq::Process(Ptr<Packet> packet,
                        Ipv4Address promiscSource)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
-                         << (uint32_t)protocol << isPromisc);
+                         << +protocol << isPromisc);
     // Fields from IP header
     Ipv4Address srcAddress = ipv4Header.GetSource();
     /*
@@ -535,7 +535,7 @@ DsrOptionRreq::Process(Ptr<Packet> packet,
     uint8_t buf[2];
     p->CopyData(buf, sizeof(buf));
     uint8_t numberAddress = (buf[1] - 6) / 4;
-    NS_LOG_DEBUG("The number of Ip addresses " << (uint32_t)numberAddress);
+    NS_LOG_DEBUG("The number of Ip addresses " << +numberAddress);
     if (numberAddress >= 255)
     {
         NS_LOG_DEBUG("Discard the packet, malformed header since two many ip addresses in route");
@@ -973,7 +973,7 @@ DsrOptionRreq::Process(Ptr<Packet> packet,
              * Decrease the TTL value in the packet tag by one, this tag will go to ip layer 3 send
              * function and drop packet when TTL value equals to 0
              */
-            NS_LOG_DEBUG("The ttl value here " << (uint32_t)ttl);
+            NS_LOG_DEBUG("The ttl value here " << +ttl);
             if (ttl)
             {
                 Ptr<Packet> interP = Create<Packet>();
@@ -1031,7 +1031,7 @@ DsrOptionRrep::Process(Ptr<Packet> packet,
                        Ipv4Address promiscSource)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
-                         << (uint32_t)protocol << isPromisc);
+                         << +protocol << isPromisc);
 
     Ptr<Packet> p = packet->Copy();
 
@@ -1048,7 +1048,7 @@ DsrOptionRrep::Process(Ptr<Packet> packet,
     Ptr<Node> node = GetNodeWithAddress(ipv4Address);
     Ptr<dsr::DsrRouting> dsr = node->GetObject<dsr::DsrRouting>();
 
-    NS_LOG_DEBUG("The next header value " << (uint32_t)protocol);
+    NS_LOG_DEBUG("The next header value " << +protocol);
 
     std::vector<Ipv4Address> nodeList = rrep.GetNodesAddress();
     /**
@@ -1128,7 +1128,7 @@ DsrOptionRrep::Process(Ptr<Packet> packet,
     {
         uint8_t length = rrep.GetLength() -
                          2; // The get length - 2 is to get aligned for the malformed header check
-        NS_LOG_DEBUG("The length of rrep option " << (uint32_t)length);
+        NS_LOG_DEBUG("The length of rrep option " << +length);
 
         if (length % 2 != 0)
         {
@@ -1193,7 +1193,7 @@ DsrOptionRrep::Process(Ptr<Packet> packet,
         dsrRoutingHeader.SetNextHeader(protocol);
 
         length = rrep.GetLength(); // Get the length of the rrep header excluding the type header
-        NS_LOG_DEBUG("The reply header length " << (uint32_t)length);
+        NS_LOG_DEBUG("The reply header length " << +length);
         dsrRoutingHeader.SetPayloadLength(length + 2);
         dsrRoutingHeader.SetMessageType(1);
         dsrRoutingHeader.SetSourceId(GetIDfromIP(source));
@@ -1247,7 +1247,7 @@ DsrOptionSR::Process(Ptr<Packet> packet,
                      Ipv4Address promiscSource)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Address << ipv4Header
-                         << (uint32_t)protocol << isPromisc);
+                         << +protocol << isPromisc);
     Ptr<Packet> p = packet->Copy();
     // Get the number of routers' address field
     uint8_t buf[2];
@@ -1432,8 +1432,8 @@ DsrOptionSR::Process(Ptr<Packet> packet,
         nextAddressIndex = numberAddress - segsLeft;
         nextAddress = newSourceRoute.GetNodeAddress(nextAddressIndex);
         NS_LOG_DEBUG("The next address of source route option "
-                     << nextAddress << " and the nextAddressIndex: " << (uint32_t)nextAddressIndex
-                     << " and the segments left : " << (uint32_t)segsLeft);
+                     << nextAddress << " and the nextAddressIndex: " << +nextAddressIndex
+                     << " and the segments left : " << +segsLeft);
         /*
          * Get the target Address in the node list
          */
@@ -1519,7 +1519,7 @@ DsrOptionRerr::Process(Ptr<Packet> packet,
                        Ipv4Address promiscSource)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
-                         << (uint32_t)protocol << isPromisc);
+                         << +protocol << isPromisc);
     Ptr<Packet> p = packet->Copy();
     uint32_t size = p->GetSize();
     auto data = new uint8_t[size];
@@ -1530,7 +1530,7 @@ DsrOptionRerr::Process(Ptr<Packet> packet,
      */
     Ptr<Node> node = GetNodeWithAddress(ipv4Address);
     Ptr<dsr::DsrRouting> dsr = node->GetObject<dsr::DsrRouting>();
-    NS_LOG_DEBUG("The error type value here " << (uint32_t)errorType);
+    NS_LOG_DEBUG("The error type value here " << +errorType);
     if (errorType == 1) // unreachable ip address
     {
         /*
@@ -1594,7 +1594,7 @@ DsrOptionRerr::DoSendError(Ptr<Packet> p,
     uint8_t numberAddress = (buf[1] - 2) / 4;
 
     // Here remove the source route header and schedule next hop error transmission
-    NS_LOG_DEBUG("The number of addresses " << (uint32_t)numberAddress);
+    NS_LOG_DEBUG("The number of addresses " << +numberAddress);
     DsrOptionSRHeader sourceRoute;
     sourceRoute.SetNumberAddress(numberAddress);
     p->RemoveHeader(sourceRoute);
@@ -1706,7 +1706,7 @@ DsrOptionAckReq::Process(Ptr<Packet> packet,
                          Ipv4Address promiscSource)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
-                         << (uint32_t)protocol << isPromisc);
+                         << +protocol << isPromisc);
     /*
      * Current implementation of the ack request header processing is coded in source route header
      * processing
@@ -1723,7 +1723,7 @@ DsrOptionAckReq::Process(Ptr<Packet> packet,
     Ptr<Node> node = GetNodeWithAddress(ipv4Address);
     Ptr<dsr::DsrRouting> dsr = node->GetObject<dsr::DsrRouting>();
 
-    NS_LOG_DEBUG("The next header value " << (uint32_t)protocol);
+    NS_LOG_DEBUG("The next header value " << +protocol);
 
     return ackReq.GetSerializedSize();
 }
@@ -1768,7 +1768,7 @@ DsrOptionAck::Process(Ptr<Packet> packet,
                       Ipv4Address promiscSource)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
-                         << (uint32_t)protocol << isPromisc);
+                         << +protocol << isPromisc);
     /*
      * Remove the ACK header
      */

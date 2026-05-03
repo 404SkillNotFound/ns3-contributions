@@ -90,7 +90,7 @@ DsrOptionHeader::GetLength() const
 void
 DsrOptionHeader::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)m_type << " length = " << (uint32_t)m_length << " )";
+    os << "( type = " << +m_type << " length = " << +m_length << " )";
 }
 
 uint32_t
@@ -164,7 +164,7 @@ DsrOptionPad1Header::~DsrOptionPad1Header()
 void
 DsrOptionPad1Header::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " )";
+    os << "( type = " << +GetType() << " )";
 }
 
 uint32_t
@@ -223,7 +223,7 @@ DsrOptionPadnHeader::~DsrOptionPadnHeader()
 void
 DsrOptionPadnHeader::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength() << " )";
+    os << "( type = " << +GetType() << " length = " << +GetLength() << " )";
 }
 
 uint32_t
@@ -358,7 +358,7 @@ DsrOptionRreqHeader::GetId() const
 void
 DsrOptionRreqHeader::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength() << "";
+    os << "( type = " << +GetType() << " length = " << +GetLength() << "";
 
     for (auto it = m_ipv4Address.begin(); it != m_ipv4Address.end(); it++)
     {
@@ -490,7 +490,7 @@ DsrOptionRrepHeader::GetTargetAddress(std::vector<Ipv4Address> ipv4Address) cons
 void
 DsrOptionRrepHeader::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength() << "";
+    os << "( type = " << +GetType() << " length = " << +GetLength() << "";
 
     for (auto it = m_ipv4Address.begin(); it != m_ipv4Address.end(); it++)
     {
@@ -647,7 +647,7 @@ DsrOptionSRHeader::GetNodeListSize() const
 void
 DsrOptionSRHeader::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength() << "";
+    os << "( type = " << +GetType() << " length = " << +GetLength() << "";
 
     for (auto it = m_ipv4Address.begin(); it != m_ipv4Address.end(); it++)
     {
@@ -791,8 +791,8 @@ DsrOptionRerrHeader::GetErrorDst() const
 void
 DsrOptionRerrHeader::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength()
-       << " errorType = " << (uint32_t)m_errorType << " salvage = " << (uint32_t)m_salvage
+    os << "( type = " << +GetType() << " length = " << +GetLength()
+       << " errorType = " << +m_errorType << " salvage = " << +m_salvage
        << " error source = " << m_errorSrcAddress << " error dst = " << m_errorDstAddress << " )";
 }
 
@@ -938,8 +938,8 @@ DsrOptionRerrUnreachHeader::GetOriginalDst() const
 void
 DsrOptionRerrUnreachHeader::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength()
-       << " errorType = " << (uint32_t)m_errorType << " salvage = " << (uint32_t)m_salvage
+    os << "( type = " << +GetType() << " length = " << +GetLength()
+       << " errorType = " << +m_errorType << " salvage = " << +m_salvage
        << " error source = " << m_errorSrcAddress << " error dst = " << m_errorDstAddress
        << " unreach node = " << m_unreachNode << " )";
 }
@@ -1070,8 +1070,8 @@ DsrOptionRerrUnsupportedHeader::GetUnsupported() const
 void
 DsrOptionRerrUnsupportedHeader::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength()
-       << " errorType = " << (uint32_t)m_errorType << " salvage = " << (uint32_t)m_salvage
+    os << "( type = " << +GetType() << " length = " << +GetLength()
+       << " errorType = " << +m_errorType << " salvage = " << +m_salvage
        << " error source = " << m_errorSrcAddress << " error dst = " << m_errorDstAddress
        << " unsupported option = " << m_unsupported << " )";
 }
@@ -1164,7 +1164,7 @@ DsrOptionAckReqHeader::GetAckId() const
 void
 DsrOptionAckReqHeader::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength()
+    os << "( type = " << +GetType() << " length = " << +GetLength()
        << " id = " << m_identification << " )";
 }
 
@@ -1271,7 +1271,7 @@ DsrOptionAckHeader::GetRealDst() const
 void
 DsrOptionAckHeader::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)GetType() << " length = " << (uint32_t)GetLength()
+    os << "( type = " << +GetType() << " length = " << +GetLength()
        << " id = " << m_identification << " real src = " << m_realSrcAddress
        << " real dst = " << m_realDstAddress << " )";
 }

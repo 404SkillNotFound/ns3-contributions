@@ -87,7 +87,7 @@ DsrRreqTable::FindAndUpdate(Ipv4Address dst)
         if (m_rreqDstMap.size() >= m_requestTableSize)
         {
             RemoveLeastExpire();
-            NS_LOG_INFO("The request table size after erase " << (uint32_t)m_rreqDstMap.size());
+            NS_LOG_INFO("The request table size after erase " << static_cast<uint32_t>(m_rreqDstMap.size()));
         }
         RreqTableEntry rreqTableEntry;
         rreqTableEntry.m_reqNo = 1;
