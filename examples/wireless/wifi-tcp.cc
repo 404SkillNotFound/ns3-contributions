@@ -67,6 +67,7 @@ main(int argc, char* argv[])
     std::string phyRate{"HtMcs7"};        /* Physical layer bitrate. */
     Time simulationTime{"10s"};           /* Simulation time. */
     bool pcapTracing{false};              /* PCAP Tracing is enabled or not. */
+    double distance{1.0};                 /* Distance in meters between AP and STA. */
 
     /* Command line argument parser setup. */
     CommandLine cmd(__FILE__);
@@ -80,6 +81,11 @@ main(int argc, char* argv[])
     cmd.AddValue("phyRate", "Physical layer bitrate", phyRate);
     cmd.AddValue("simulationTime", "Simulation time in seconds", simulationTime);
     cmd.AddValue("pcap", "Enable/disable PCAP Tracing", pcapTracing);
+    cmd.AddValue("distance",
+                 "Distance in meters between the AP and the STA. Larger values "
+                 "degrade the WiFi signal (Friis model), causing packet loss and "
+                 "revealing differences between TCP congestion control variants.",
+                 distance);
     cmd.Parse(argc, argv);
 
     tcpVariant = std::string("ns3::") + tcpVariant;
@@ -134,7 +140,7 @@ main(int argc, char* argv[])
     MobilityHelper mobility;
     Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator>();
     positionAlloc->Add(Vector(0.0, 0.0, 0.0));
-    positionAlloc->Add(Vector(1.0, 1.0, 0.0));
+    positionAlloc->Add(Vector(distance, 0.0, 0.0));
 
     mobility.SetPositionAllocator(positionAlloc);
     mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
@@ -191,11 +197,6 @@ main(int argc, char* argv[])
 
     Simulator::Destroy();
 
-    if (averageThroughput < 50)
-    {
-        NS_LOG_ERROR("Obtained throughput is not in the expected boundaries!");
-        exit(1);
-    }
     std::cout << "\nAverage throughput: " << averageThroughput << " Mbit/s" << std::endl;
     return 0;
 }
