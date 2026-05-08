@@ -92,11 +92,10 @@ MacStatsCalculator::DlScheduling(uint16_t cellId,
                                  uint64_t imsi,
                                  DlSchedulingCallbackInfo dlSchedulingCallbackInfo)
 {
-    NS_LOG_FUNCTION(
-        this << cellId << imsi << dlSchedulingCallbackInfo.frameNo
-             << dlSchedulingCallbackInfo.subframeNo << dlSchedulingCallbackInfo.rnti
-             << (uint32_t)dlSchedulingCallbackInfo.mcsTb1 << dlSchedulingCallbackInfo.sizeTb1
-             << (uint32_t)dlSchedulingCallbackInfo.mcsTb2 << dlSchedulingCallbackInfo.sizeTb2);
+    NS_LOG_FUNCTION(this << cellId << imsi << dlSchedulingCallbackInfo.frameNo
+                         << dlSchedulingCallbackInfo.subframeNo << dlSchedulingCallbackInfo.rnti
+                         << +dlSchedulingCallbackInfo.mcsTb1 << dlSchedulingCallbackInfo.sizeTb1
+                         << +dlSchedulingCallbackInfo.mcsTb2 << dlSchedulingCallbackInfo.sizeTb2);
     NS_LOG_INFO("Write DL Mac Stats in " << GetDlOutputFilename());
 
     if (m_dlFirstWrite)
@@ -114,16 +113,16 @@ MacStatsCalculator::DlScheduling(uint16_t cellId,
     }
 
     m_dlOutFile << Simulator::Now().GetSeconds() << "\t";
-    m_dlOutFile << (uint32_t)cellId << "\t";
+    m_dlOutFile << static_cast<uint32_t>(cellId) << "\t";
     m_dlOutFile << imsi << "\t";
     m_dlOutFile << dlSchedulingCallbackInfo.frameNo << "\t";
     m_dlOutFile << dlSchedulingCallbackInfo.subframeNo << "\t";
     m_dlOutFile << dlSchedulingCallbackInfo.rnti << "\t";
-    m_dlOutFile << (uint32_t)dlSchedulingCallbackInfo.mcsTb1 << "\t";
+    m_dlOutFile << static_cast<uint32_t>(dlSchedulingCallbackInfo.mcsTb1) << "\t";
     m_dlOutFile << dlSchedulingCallbackInfo.sizeTb1 << "\t";
-    m_dlOutFile << (uint32_t)dlSchedulingCallbackInfo.mcsTb2 << "\t";
+    m_dlOutFile << static_cast<uint32_t>(dlSchedulingCallbackInfo.mcsTb2) << "\t";
     m_dlOutFile << dlSchedulingCallbackInfo.sizeTb2 << "\t";
-    m_dlOutFile << (uint32_t)dlSchedulingCallbackInfo.componentCarrierId << std::endl;
+    m_dlOutFile << static_cast<uint32_t>(dlSchedulingCallbackInfo.componentCarrierId) << std::endl;
 }
 
 void
@@ -136,8 +135,7 @@ MacStatsCalculator::UlScheduling(uint16_t cellId,
                                  uint16_t size,
                                  uint8_t componentCarrierId)
 {
-    NS_LOG_FUNCTION(this << cellId << imsi << frameNo << subframeNo << rnti << (uint32_t)mcsTb
-                         << size);
+    NS_LOG_FUNCTION(this << cellId << imsi << frameNo << subframeNo << rnti << +mcsTb << size);
     NS_LOG_INFO("Write UL Mac Stats in " << GetUlOutputFilename());
 
     if (m_ulFirstWrite)
@@ -154,14 +152,14 @@ MacStatsCalculator::UlScheduling(uint16_t cellId,
     }
 
     m_ulOutFile << Simulator::Now().GetSeconds() << "\t";
-    m_ulOutFile << (uint32_t)cellId << "\t";
+    m_ulOutFile << static_cast<uint32_t>(cellId) << "\t";
     m_ulOutFile << imsi << "\t";
     m_ulOutFile << frameNo << "\t";
     m_ulOutFile << subframeNo << "\t";
     m_ulOutFile << rnti << "\t";
-    m_ulOutFile << (uint32_t)mcsTb << "\t";
+    m_ulOutFile << static_cast<uint32_t>(mcsTb) << "\t";
     m_ulOutFile << size << "\t";
-    m_ulOutFile << (uint32_t)componentCarrierId << std::endl;
+    m_ulOutFile << static_cast<uint32_t>(componentCarrierId) << std::endl;
 }
 
 void

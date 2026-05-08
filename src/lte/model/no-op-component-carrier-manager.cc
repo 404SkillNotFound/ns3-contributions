@@ -118,13 +118,13 @@ NoOpComponentCarrierManager::DoNotifyHarqDeliveryFailure()
 void
 NoOpComponentCarrierManager::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)measResults.measId);
+    NS_LOG_FUNCTION(this << rnti << +measResults.measId);
 }
 
 void
 NoOpComponentCarrierManager::DoAddUe(uint16_t rnti, uint8_t state)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)state);
+    NS_LOG_FUNCTION(this << rnti << +state);
     auto ueInfoIt = m_ueInfo.find(rnti);
     if (ueInfoIt == m_ueInfo.end())
     {
@@ -207,8 +207,8 @@ NoOpComponentCarrierManager::DoSetupDataRadioBearer(EpsBearer bearer,
             lci.gbrUl = 0;
             lci.gbrDl = 0;
         }
-        NS_LOG_DEBUG(this << " RNTI " << lci.rnti << "Lcid " << (uint16_t)lci.lcId << " lcGroup "
-                          << (uint16_t)lci.lcGroup);
+        NS_LOG_DEBUG(this << " RNTI " << lci.rnti << "Lcid " << +lci.lcId << " lcGroup "
+                          << +lci.lcGroup);
         entry.componentCarrierId = ncc;
         entry.lc = lci;
         entry.msu = m_ccmMacSapUser;
@@ -294,8 +294,7 @@ void
 NoOpComponentCarrierManager::DoNotifyPrbOccupancy(double prbOccupancy, uint8_t componentCarrierId)
 {
     NS_LOG_FUNCTION(this);
-    NS_LOG_DEBUG("Update PRB occupancy:" << prbOccupancy
-                                         << " at carrier:" << (uint32_t)componentCarrierId);
+    NS_LOG_DEBUG("Update PRB occupancy:" << prbOccupancy << " at carrier:" << +componentCarrierId);
     m_ccPrbOccupancy.insert(std::pair<uint8_t, double>(componentCarrierId, prbOccupancy));
 }
 

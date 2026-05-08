@@ -349,7 +349,7 @@ LteUePowerControl::ReportTpc(uint8_t tpc)
         m_fc = 0;
     }
 
-    NS_LOG_INFO("ReportTpc: " << (int)tpc << " delta: " << delta << " Fc: " << m_fc);
+    NS_LOG_INFO("ReportTpc: " << +tpc << " delta: " << delta << " Fc: " << m_fc);
 }
 
 void

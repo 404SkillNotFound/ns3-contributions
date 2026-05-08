@@ -589,7 +589,7 @@ LteUeRrc::DoSendData(Ptr<Packet> packet, uint8_t bid)
         params.lcid = it->second->m_logicalChannelIdentity;
 
         NS_LOG_LOGIC(this << " RNTI=" << m_rnti << " sending packet " << packet << " on DRBID "
-                          << (uint32_t)drbid << " (LCID " << (uint32_t)params.lcid << ")"
+                          << +drbid << " (LCID " << +params.lcid << ")"
                           << " (" << packet->GetSize() << " bytes)");
         it->second->m_pdcp->GetLtePdcpSapProvider()->TransmitPdcpSdu(params);
     }
@@ -1024,7 +1024,7 @@ LteUeRrc::DoRecvRrcConnectionSetup(LteRrcSap::RrcConnectionSetup msg)
         NS_ABORT_MSG_IF(m_noOfSyncIndications > 0,
                         "Sync indications should be zero "
                         "when a new RRC connection is established. Current value = "
-                            << (uint16_t)m_noOfSyncIndications);
+                            << +m_noOfSyncIndications);
     }
     break;
 
@@ -1479,9 +1479,8 @@ LteUeRrc::ApplyRadioResourceConfigDedicated(LteRrcSap::RadioResourceConfigDedica
 
     for (auto dtamIt = rrcd.drbToAddModList.begin(); dtamIt != rrcd.drbToAddModList.end(); ++dtamIt)
     {
-        NS_LOG_INFO(this << " IMSI " << m_imsi << " adding/modifying DRBID "
-                         << (uint32_t)dtamIt->drbIdentity << " LC "
-                         << (uint32_t)dtamIt->logicalChannelIdentity);
+        NS_LOG_INFO(this << " IMSI " << m_imsi << " adding/modifying DRBID " << +dtamIt->drbIdentity
+                         << " LC " << +dtamIt->logicalChannelIdentity);
         NS_ASSERT_MSG(dtamIt->logicalChannelIdentity > 2,
                       "LCID value " << dtamIt->logicalChannelIdentity << " is reserved for SRBs");
 
@@ -1554,7 +1553,7 @@ LteUeRrc::ApplyRadioResourceConfigDedicated(LteRrcSap::RadioResourceConfigDedica
 
             NS_LOG_DEBUG(this << " UE RRC RNTI " << m_rnti << " Number Of Component Carriers "
                               << m_numberOfComponentCarriers << " lcID "
-                              << (uint16_t)dtamIt->logicalChannelIdentity);
+                              << +dtamIt->logicalChannelIdentity);
             // Call AddLc of UE component carrier manager
             std::vector<LteUeCcmRrcSapProvider::LcsConfig> lcOnCcMapping =
                 m_ccmRrcSapProvider->AddLc(dtamIt->logicalChannelIdentity,
@@ -1570,9 +1569,9 @@ LteUeRrc::ApplyRadioResourceConfigDedicated(LteRrcSap::RadioResourceConfigDedica
                  ++itLcOnCcMapping)
             {
                 NS_LOG_DEBUG("RNTI " << m_rnti << " LCG id "
-                                     << (uint16_t)itLcOnCcMapping->lcConfig.logicalChannelGroup
+                                     << +itLcOnCcMapping->lcConfig.logicalChannelGroup
                                      << " ComponentCarrierId "
-                                     << (uint16_t)itLcOnCcMapping->componentCarrierId);
+                                     << +itLcOnCcMapping->componentCarrierId);
                 uint8_t index = itLcOnCcMapping->componentCarrierId;
                 LteUeCmacSapProvider::LogicalChannelConfig lcConfigFromCcm =
                     itLcOnCcMapping->lcConfig;
@@ -1597,7 +1596,7 @@ LteUeRrc::ApplyRadioResourceConfigDedicated(LteRrcSap::RadioResourceConfigDedica
          ++dtdmIt)
     {
         uint8_t drbid = *dtdmIt;
-        NS_LOG_INFO(this << " IMSI " << m_imsi << " releasing DRB " << (uint32_t)drbid);
+        NS_LOG_INFO(this << " IMSI " << m_imsi << " releasing DRB " << +drbid);
         auto it = m_drbMap.find(drbid);
         NS_ASSERT_MSG(it != m_drbMap.end(), "could not find bearer with given lcid");
         m_drbMap.erase(it);
@@ -1621,7 +1620,7 @@ LteUeRrc::ApplyMeasConfig(LteRrcSap::MeasConfig mc)
     for (auto it = mc.measObjectToRemoveList.begin(); it != mc.measObjectToRemoveList.end(); ++it)
     {
         uint8_t measObjectId = *it;
-        NS_LOG_LOGIC(this << " deleting measObjectId " << (uint32_t)measObjectId);
+        NS_LOG_LOGIC(this << " deleting measObjectId " << +measObjectId);
         m_varMeasConfig.measObjectList.erase(measObjectId);
         auto measIdIt = m_varMeasConfig.measIdList.begin();
         while (measIdIt != m_varMeasConfig.measIdList.end())
@@ -1630,9 +1629,8 @@ LteUeRrc::ApplyMeasConfig(LteRrcSap::MeasConfig mc)
             {
                 uint8_t measId = measIdIt->second.measId;
                 NS_ASSERT(measId == measIdIt->first);
-                NS_LOG_LOGIC(this << " deleting measId " << (uint32_t)measId
-                                  << " because referring to measObjectId "
-                                  << (uint32_t)measObjectId);
+                NS_LOG_LOGIC(this << " deleting measId " << +measId
+                                  << " because referring to measObjectId " << +measObjectId);
                 // note: postfix operator preserves iterator validity
                 m_varMeasConfig.measIdList.erase(measIdIt++);
                 VarMeasReportListClear(measId);
@@ -1663,7 +1661,7 @@ LteUeRrc::ApplyMeasConfig(LteRrcSap::MeasConfig mc)
         auto measObjectIt = m_varMeasConfig.measObjectList.find(measObjectId);
         if (measObjectIt != m_varMeasConfig.measObjectList.end())
         {
-            NS_LOG_LOGIC("measObjectId " << (uint32_t)measObjectId << " exists, updating entry");
+            NS_LOG_LOGIC("measObjectId " << +measObjectId << " exists, updating entry");
             measObjectIt->second = *it;
             for (auto measIdIt = m_varMeasConfig.measIdList.begin();
                  measIdIt != m_varMeasConfig.measIdList.end();
@@ -1672,15 +1670,15 @@ LteUeRrc::ApplyMeasConfig(LteRrcSap::MeasConfig mc)
                 if (measIdIt->second.measObjectId == measObjectId)
                 {
                     uint8_t measId = measIdIt->second.measId;
-                    NS_LOG_LOGIC(this << " found measId " << (uint32_t)measId
-                                      << " referring to measObjectId " << (uint32_t)measObjectId);
+                    NS_LOG_LOGIC(this << " found measId " << +measId
+                                      << " referring to measObjectId " << +measObjectId);
                     VarMeasReportListClear(measId);
                 }
             }
         }
         else
         {
-            NS_LOG_LOGIC("measObjectId " << (uint32_t)measObjectId << " is new, adding entry");
+            NS_LOG_LOGIC("measObjectId " << +measObjectId << " is new, adding entry");
             m_varMeasConfig.measObjectList[measObjectId] = *it;
         }
     }
@@ -1690,7 +1688,7 @@ LteUeRrc::ApplyMeasConfig(LteRrcSap::MeasConfig mc)
          ++it)
     {
         uint8_t reportConfigId = *it;
-        NS_LOG_LOGIC(this << " deleting reportConfigId " << (uint32_t)reportConfigId);
+        NS_LOG_LOGIC(this << " deleting reportConfigId " << +reportConfigId);
         m_varMeasConfig.reportConfigList.erase(reportConfigId);
         auto measIdIt = m_varMeasConfig.measIdList.begin();
         while (measIdIt != m_varMeasConfig.measIdList.end())
@@ -1699,9 +1697,8 @@ LteUeRrc::ApplyMeasConfig(LteRrcSap::MeasConfig mc)
             {
                 uint8_t measId = measIdIt->second.measId;
                 NS_ASSERT(measId == measIdIt->first);
-                NS_LOG_LOGIC(this << " deleting measId " << (uint32_t)measId
-                                  << " because referring to reportConfigId "
-                                  << (uint32_t)reportConfigId);
+                NS_LOG_LOGIC(this << " deleting measId " << +measId
+                                  << " because referring to reportConfigId " << +reportConfigId);
                 // note: postfix operator preserves iterator validity
                 m_varMeasConfig.measIdList.erase(measIdIt++);
                 VarMeasReportListClear(measId);
@@ -1725,8 +1722,7 @@ LteUeRrc::ApplyMeasConfig(LteRrcSap::MeasConfig mc)
         auto reportConfigIt = m_varMeasConfig.reportConfigList.find(reportConfigId);
         if (reportConfigIt != m_varMeasConfig.reportConfigList.end())
         {
-            NS_LOG_LOGIC("reportConfigId " << (uint32_t)reportConfigId
-                                           << " exists, updating entry");
+            NS_LOG_LOGIC("reportConfigId " << +reportConfigId << " exists, updating entry");
             m_varMeasConfig.reportConfigList[reportConfigId] = *it;
             for (auto measIdIt = m_varMeasConfig.measIdList.begin();
                  measIdIt != m_varMeasConfig.measIdList.end();
@@ -1735,16 +1731,15 @@ LteUeRrc::ApplyMeasConfig(LteRrcSap::MeasConfig mc)
                 if (measIdIt->second.reportConfigId == reportConfigId)
                 {
                     uint8_t measId = measIdIt->second.measId;
-                    NS_LOG_LOGIC(this << " found measId " << (uint32_t)measId
-                                      << " referring to reportConfigId "
-                                      << (uint32_t)reportConfigId);
+                    NS_LOG_LOGIC(this << " found measId " << +measId
+                                      << " referring to reportConfigId " << +reportConfigId);
                     VarMeasReportListClear(measId);
                 }
             }
         }
         else
         {
-            NS_LOG_LOGIC("reportConfigId " << (uint32_t)reportConfigId << " is new, adding entry");
+            NS_LOG_LOGIC("reportConfigId " << +reportConfigId << " is new, adding entry");
             m_varMeasConfig.reportConfigList[reportConfigId] = *it;
         }
     }
@@ -1780,7 +1775,7 @@ LteUeRrc::ApplyMeasConfig(LteRrcSap::MeasConfig mc)
     for (auto it = mc.measIdToRemoveList.begin(); it != mc.measIdToRemoveList.end(); ++it)
     {
         uint8_t measId = *it;
-        NS_LOG_LOGIC(this << " deleting measId " << (uint32_t)measId);
+        NS_LOG_LOGIC(this << " deleting measId " << +measId);
         m_varMeasConfig.measIdList.erase(measId);
         VarMeasReportListClear(measId);
 
@@ -1792,9 +1787,8 @@ LteUeRrc::ApplyMeasConfig(LteRrcSap::MeasConfig mc)
     // 3GPP TS 36.331 section 5.5.2.3 Measurement identity addition/ modification
     for (auto it = mc.measIdToAddModList.begin(); it != mc.measIdToAddModList.end(); ++it)
     {
-        NS_LOG_LOGIC(this << " measId " << (uint32_t)it->measId
-                          << " (measObjectId=" << (uint32_t)it->measObjectId
-                          << ", reportConfigId=" << (uint32_t)it->reportConfigId << ")");
+        NS_LOG_LOGIC(this << " measId " << +it->measId << " (measObjectId=" << +it->measObjectId
+                          << ", reportConfigId=" << +it->reportConfigId << ")");
         NS_ASSERT(m_varMeasConfig.measObjectList.find(it->measObjectId) !=
                   m_varMeasConfig.measObjectList.end());
         NS_ASSERT(m_varMeasConfig.reportConfigList.find(it->reportConfigId) !=
@@ -1892,7 +1886,7 @@ LteUeRrc::SaveUeMeasurements(uint16_t cellId,
 void
 LteUeRrc::MeasurementReportTriggering(uint8_t measId)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)measId);
+    NS_LOG_FUNCTION(this << +measId);
 
     auto measIdIt = m_varMeasConfig.measIdList.find(measId);
     NS_ASSERT(measIdIt != m_varMeasConfig.measIdList.end());
@@ -1915,7 +1909,7 @@ LteUeRrc::MeasurementReportTriggering(uint8_t measId)
                   "only triggerType == event is supported");
     // only EUTRA is supported, no need to check for it
 
-    NS_LOG_LOGIC(this << " considering measId " << (uint32_t)measId);
+    NS_LOG_LOGIC(this << " considering measId " << +measId);
     bool eventEntryCondApplicable = false;
     bool eventLeavingCondApplicable = false;
     ConcernedCells_t concernedCellsEntry;
@@ -2637,7 +2631,7 @@ LteUeRrc::MeasurementReportTriggering(uint8_t measId)
 void
 LteUeRrc::CancelEnteringTrigger(uint8_t measId)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)measId);
+    NS_LOG_FUNCTION(this << +measId);
 
     auto it1 = m_enteringTriggerQueue.find(measId);
     NS_ASSERT(it1 != m_enteringTriggerQueue.end());
@@ -2659,7 +2653,7 @@ LteUeRrc::CancelEnteringTrigger(uint8_t measId)
 void
 LteUeRrc::CancelEnteringTrigger(uint8_t measId, uint16_t cellId)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)measId << cellId);
+    NS_LOG_FUNCTION(this << +measId << cellId);
 
     auto it1 = m_enteringTriggerQueue.find(measId);
     NS_ASSERT(it1 != m_enteringTriggerQueue.end());
@@ -2688,7 +2682,7 @@ LteUeRrc::CancelEnteringTrigger(uint8_t measId, uint16_t cellId)
 void
 LteUeRrc::CancelLeavingTrigger(uint8_t measId)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)measId);
+    NS_LOG_FUNCTION(this << +measId);
 
     auto it1 = m_leavingTriggerQueue.find(measId);
     NS_ASSERT(it1 != m_leavingTriggerQueue.end());
@@ -2710,7 +2704,7 @@ LteUeRrc::CancelLeavingTrigger(uint8_t measId)
 void
 LteUeRrc::CancelLeavingTrigger(uint8_t measId, uint16_t cellId)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)measId << cellId);
+    NS_LOG_FUNCTION(this << +measId << cellId);
 
     auto it1 = m_leavingTriggerQueue.find(measId);
     NS_ASSERT(it1 != m_leavingTriggerQueue.end());
@@ -2739,7 +2733,7 @@ LteUeRrc::CancelLeavingTrigger(uint8_t measId, uint16_t cellId)
 void
 LteUeRrc::VarMeasReportListAdd(uint8_t measId, ConcernedCells_t enteringCells)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)measId);
+    NS_LOG_FUNCTION(this << +measId);
     NS_ASSERT(!enteringCells.empty());
 
     auto measReportIt = m_varMeasReportList.find(measId);
@@ -2804,7 +2798,7 @@ LteUeRrc::VarMeasReportListAdd(uint8_t measId, ConcernedCells_t enteringCells)
 void
 LteUeRrc::VarMeasReportListErase(uint8_t measId, ConcernedCells_t leavingCells, bool reportOnLeave)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)measId);
+    NS_LOG_FUNCTION(this << +measId);
     NS_ASSERT(!leavingCells.empty());
 
     auto measReportIt = m_varMeasReportList.find(measId);
@@ -2857,13 +2851,13 @@ LteUeRrc::VarMeasReportListErase(uint8_t measId, ConcernedCells_t leavingCells, 
 void
 LteUeRrc::VarMeasReportListClear(uint8_t measId)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)measId);
+    NS_LOG_FUNCTION(this << +measId);
 
     // remove the measurement reporting entry for this measId from the VarMeasReportList
     auto measReportIt = m_varMeasReportList.find(measId);
     if (measReportIt != m_varMeasReportList.end())
     {
-        NS_LOG_LOGIC(this << " deleting existing report for measId " << (uint16_t)measId);
+        NS_LOG_LOGIC(this << " deleting existing report for measId " << +measId);
         measReportIt->second.periodicReportTimer.Cancel();
         m_varMeasReportList.erase(measReportIt);
     }
@@ -2875,7 +2869,7 @@ LteUeRrc::VarMeasReportListClear(uint8_t measId)
 void
 LteUeRrc::SendMeasurementReport(uint8_t measId)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)measId);
+    NS_LOG_FUNCTION(this << +measId);
     //  3GPP TS 36.331 section 5.5.5 Measurement reporting
 
     auto measIdIt = m_varMeasConfig.measIdList.find(measId);
@@ -2892,7 +2886,7 @@ LteUeRrc::SendMeasurementReport(uint8_t measId)
     auto measReportIt = m_varMeasReportList.find(measId);
     if (measReportIt == m_varMeasReportList.end())
     {
-        NS_LOG_ERROR("no entry found in m_varMeasReportList for measId " << (uint32_t)measId);
+        NS_LOG_ERROR("no entry found in m_varMeasReportList for measId " << +measId);
     }
     else
     {
@@ -2981,11 +2975,10 @@ LteUeRrc::SendMeasurementReport(uint8_t measId)
                 measResultEutra.haveRsrqResult = true;
                 measResultEutra.rsrqResult =
                     EutranMeasurementMapping::Db2RsrqRange(neighborMeasIt->second.rsrq);
-                NS_LOG_INFO(this << " reporting neighbor cell "
-                                 << (uint32_t)measResultEutra.physCellId << " RSRP "
-                                 << (uint32_t)measResultEutra.rsrpResult << " ("
+                NS_LOG_INFO(this << " reporting neighbor cell " << +measResultEutra.physCellId
+                                 << " RSRP " << +measResultEutra.rsrpResult << " ("
                                  << neighborMeasIt->second.rsrp << " dBm)"
-                                 << " RSRQ " << (uint32_t)measResultEutra.rsrqResult << " ("
+                                 << " RSRQ " << +measResultEutra.rsrqResult << " ("
                                  << neighborMeasIt->second.rsrq << " dB)");
                 measResults.measResultListEutra.push_back(measResultEutra);
                 measResults.haveMeasResultNeighCells = true;
@@ -3048,7 +3041,7 @@ LteUeRrc::SendMeasurementReport(uint8_t measId)
             break;
         default:
             NS_FATAL_ERROR("Unsupported reportInterval "
-                           << (uint16_t)reportConfigEutra.reportInterval);
+                           << static_cast<uint16_t>(reportConfigEutra.reportInterval));
             break;
         }
 
@@ -3238,7 +3231,7 @@ LteUeRrc::DoNotifyInSync()
 {
     NS_LOG_FUNCTION(this << m_imsi);
     m_noOfSyncIndications++;
-    NS_LOG_INFO("noOfSyncIndications " << (uint16_t)m_noOfSyncIndications);
+    NS_LOG_INFO("noOfSyncIndications " << +m_noOfSyncIndications);
     m_phySyncDetectionTrace(m_imsi, m_rnti, m_cellId, "Notify in sync", m_noOfSyncIndications);
     if (m_noOfSyncIndications == m_n311)
     {
@@ -3251,8 +3244,8 @@ LteUeRrc::DoNotifyOutOfSync()
 {
     NS_LOG_FUNCTION(this << m_imsi);
     m_noOfSyncIndications++;
-    NS_LOG_INFO(this << " Total Number of Sync indications from PHY "
-                     << (uint16_t)m_noOfSyncIndications << "N310 value : " << (uint16_t)m_n310);
+    NS_LOG_INFO(this << " Total Number of Sync indications from PHY " << +m_noOfSyncIndications
+                     << "N310 value : " << +m_n310);
     m_phySyncDetectionTrace(m_imsi, m_rnti, m_cellId, "Notify out of sync", m_noOfSyncIndications);
     if (m_noOfSyncIndications == m_n310)
     {
@@ -3272,8 +3265,8 @@ LteUeRrc::DoResetSyncIndicationCounter()
 {
     NS_LOG_FUNCTION(this << m_imsi);
 
-    NS_LOG_DEBUG("The number of sync indication received by RRC from PHY: "
-                 << (uint16_t)m_noOfSyncIndications);
+    NS_LOG_DEBUG(
+        "The number of sync indication received by RRC from PHY: " << +m_noOfSyncIndications);
     m_noOfSyncIndications = 0;
 }
 

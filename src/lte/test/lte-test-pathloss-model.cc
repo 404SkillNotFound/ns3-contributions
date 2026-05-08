@@ -271,8 +271,8 @@ LtePathlossModelSystemTestCase::DlScheduling(DlSchedulingCallbackInfo dlInfo)
     // need to allow for RRC connection establishment + SRS transmission
     if (Simulator::Now() > MilliSeconds(21))
     {
-        NS_LOG_INFO(m_snrDb << "\t" << m_mcsIndex << "\t" << (uint16_t)dlInfo.mcsTb1);
+        NS_LOG_INFO(m_snrDb << "\t" << m_mcsIndex << "\t" << +dlInfo.mcsTb1);
 
-        NS_TEST_ASSERT_MSG_EQ((uint16_t)dlInfo.mcsTb1, m_mcsIndex, "Wrong MCS index");
+        NS_TEST_ASSERT_MSG_EQ(+dlInfo.mcsTb1, m_mcsIndex, "Wrong MCS index");
     }
 }

@@ -245,7 +245,7 @@ LteSimpleHelperDlTxPduCallback(Ptr<RadioBearerStatsCalculator> rlcStats,
                                uint8_t lcid,
                                uint32_t packetSize)
 {
-    NS_LOG_FUNCTION(rlcStats << path << rnti << (uint16_t)lcid << packetSize);
+    NS_LOG_FUNCTION(rlcStats << path << rnti << +lcid << packetSize);
     uint64_t imsi = 111;
     uint16_t cellId = 222;
     rlcStats->DlTxPdu(cellId, imsi, rnti, lcid, packetSize);
@@ -269,7 +269,7 @@ LteSimpleHelperDlRxPduCallback(Ptr<RadioBearerStatsCalculator> rlcStats,
                                uint32_t packetSize,
                                uint64_t delay)
 {
-    NS_LOG_FUNCTION(rlcStats << path << rnti << (uint16_t)lcid << packetSize << delay);
+    NS_LOG_FUNCTION(rlcStats << path << rnti << +lcid << packetSize << delay);
     uint64_t imsi = 333;
     uint16_t cellId = 555;
     rlcStats->DlRxPdu(cellId, imsi, rnti, lcid, packetSize, delay);
@@ -302,7 +302,7 @@ LteSimpleHelperUlTxPduCallback(Ptr<RadioBearerStatsCalculator> rlcStats,
                                uint8_t lcid,
                                uint32_t packetSize)
 {
-    NS_LOG_FUNCTION(rlcStats << path << rnti << (uint16_t)lcid << packetSize);
+    NS_LOG_FUNCTION(rlcStats << path << rnti << +lcid << packetSize);
     uint64_t imsi = 1111;
     uint16_t cellId = 555;
     rlcStats->UlTxPdu(cellId, imsi, rnti, lcid, packetSize);
@@ -326,7 +326,7 @@ LteSimpleHelperUlRxPduCallback(Ptr<RadioBearerStatsCalculator> rlcStats,
                                uint32_t packetSize,
                                uint64_t delay)
 {
-    NS_LOG_FUNCTION(rlcStats << path << rnti << (uint16_t)lcid << packetSize << delay);
+    NS_LOG_FUNCTION(rlcStats << path << rnti << +lcid << packetSize << delay);
     uint64_t imsi = 444;
     uint16_t cellId = 555;
     rlcStats->UlRxPdu(cellId, imsi, rnti, lcid, packetSize, delay);

@@ -58,7 +58,7 @@ DlTxPduCallback(std::shared_ptr<BoundCallbackArgument> arg,
                 uint8_t lcid,
                 uint32_t packetSize)
 {
-    NS_LOG_FUNCTION(path << rnti << (uint16_t)lcid << packetSize);
+    NS_LOG_FUNCTION(path << rnti << +lcid << packetSize);
     arg->stats->DlTxPdu(arg->cellId, arg->imsi, rnti, lcid, packetSize);
 }
 
@@ -79,7 +79,7 @@ DlRxPduCallback(std::shared_ptr<BoundCallbackArgument> arg,
                 uint32_t packetSize,
                 uint64_t delay)
 {
-    NS_LOG_FUNCTION(path << rnti << (uint16_t)lcid << packetSize << delay);
+    NS_LOG_FUNCTION(path << rnti << +lcid << packetSize << delay);
     arg->stats->DlRxPdu(arg->cellId, arg->imsi, rnti, lcid, packetSize, delay);
 }
 
@@ -98,7 +98,7 @@ UlTxPduCallback(std::shared_ptr<BoundCallbackArgument> arg,
                 uint8_t lcid,
                 uint32_t packetSize)
 {
-    NS_LOG_FUNCTION(path << rnti << (uint16_t)lcid << packetSize);
+    NS_LOG_FUNCTION(path << rnti << +lcid << packetSize);
     arg->stats->UlTxPdu(arg->cellId, arg->imsi, rnti, lcid, packetSize);
 }
 
@@ -119,7 +119,7 @@ UlRxPduCallback(std::shared_ptr<BoundCallbackArgument> arg,
                 uint32_t packetSize,
                 uint64_t delay)
 {
-    NS_LOG_FUNCTION(path << rnti << (uint16_t)lcid << packetSize << delay);
+    NS_LOG_FUNCTION(path << rnti << +lcid << packetSize << delay);
     arg->stats->UlRxPdu(arg->cellId, arg->imsi, rnti, lcid, packetSize, delay);
 }
 
@@ -210,7 +210,7 @@ RadioBearerStatsConnector::CreatedDrbEnb(RadioBearerStatsConnector* c,
                                          uint16_t rnti,
                                          uint8_t lcid)
 {
-    NS_LOG_FUNCTION(c << context << imsi << cellId << rnti << (uint16_t)lcid);
+    NS_LOG_FUNCTION(c << context << imsi << cellId << rnti << +lcid);
     c->ConnectTracesDrbEnb(context, imsi, cellId, rnti, lcid);
 }
 
@@ -233,7 +233,7 @@ RadioBearerStatsConnector::CreatedDrbUe(RadioBearerStatsConnector* c,
                                         uint16_t rnti,
                                         uint8_t lcid)
 {
-    NS_LOG_FUNCTION(c << context << imsi << cellId << rnti << (uint16_t)lcid);
+    NS_LOG_FUNCTION(c << context << imsi << cellId << rnti << +lcid);
     c->ConnectTracesDrbUe(context, imsi, cellId, rnti, lcid);
 }
 
@@ -321,7 +321,7 @@ RadioBearerStatsConnector::ConnectTracesDrbEnb(std::string context,
                                                uint16_t rnti,
                                                uint8_t lcid)
 {
-    NS_LOG_FUNCTION(this << context << imsi << cellId << rnti << (uint16_t)lcid);
+    NS_LOG_FUNCTION(this << context << imsi << cellId << rnti << +lcid);
     NS_LOG_LOGIC("expected context should match /NodeList/*/DeviceList/*/LteEnbRrc/");
     std::string basePath;
     basePath =
@@ -360,7 +360,7 @@ RadioBearerStatsConnector::ConnectTracesDrbUe(std::string context,
                                               uint16_t rnti,
                                               uint8_t lcid)
 {
-    NS_LOG_FUNCTION(this << context << imsi << cellId << rnti << (uint16_t)lcid);
+    NS_LOG_FUNCTION(this << context << imsi << cellId << rnti << +lcid);
     NS_LOG_LOGIC("expected context should match /NodeList/*/DeviceList/*/LteUeRrc/");
     std::string basePath;
     basePath =

@@ -381,13 +381,12 @@ LteUeMeasurementsTestCase::RecvMeasurementReport(uint64_t imsi,
     {
         if (cellId == imsi)
         {
-            NS_LOG_DEBUG(
-                this << "Serving Cell: received IMSI " << imsi << " CellId " << cellId << " RNTI "
-                     << rnti << " thr "
-                     << (uint16_t)EutranMeasurementMapping::Dbm2RsrpRange(m_rsrpDbmUeServingCell)
-                     << " RSRP " << (uint16_t)meas.measResults.measResultPCell.rsrpResult
-                     << " RSRQ " << (uint16_t)meas.measResults.measResultPCell.rsrqResult << " thr "
-                     << (uint16_t)EutranMeasurementMapping::Db2RsrqRange(m_rsrqDbUeServingCell));
+            NS_LOG_DEBUG(this << "Serving Cell: received IMSI " << imsi << " CellId " << cellId
+                              << " RNTI " << rnti << " thr "
+                              << +EutranMeasurementMapping::Dbm2RsrpRange(m_rsrpDbmUeServingCell)
+                              << " RSRP " << +meas.measResults.measResultPCell.rsrpResult
+                              << " RSRQ " << +meas.measResults.measResultPCell.rsrqResult << " thr "
+                              << +EutranMeasurementMapping::Db2RsrqRange(m_rsrqDbUeServingCell));
             NS_TEST_ASSERT_MSG_EQ(meas.measResults.measResultPCell.rsrpResult,
                                   EutranMeasurementMapping::Dbm2RsrpRange(m_rsrpDbmUeServingCell),
                                   "Wrong RSRP ");
@@ -397,13 +396,12 @@ LteUeMeasurementsTestCase::RecvMeasurementReport(uint64_t imsi,
         }
         else
         {
-            NS_LOG_DEBUG(
-                this << "Neighbor cell: received IMSI " << imsi << " CellId " << cellId << " RNTI "
-                     << rnti << " thr "
-                     << (uint16_t)EutranMeasurementMapping::Dbm2RsrpRange(m_rsrpDbmUeNeighborCell)
-                     << " RSRP " << (uint16_t)meas.measResults.measResultPCell.rsrpResult
-                     << " RSRQ " << (uint16_t)meas.measResults.measResultPCell.rsrqResult << " thr "
-                     << (uint16_t)EutranMeasurementMapping::Db2RsrqRange(m_rsrqDbUeNeighborCell));
+            NS_LOG_DEBUG(this << "Neighbor cell: received IMSI " << imsi << " CellId " << cellId
+                              << " RNTI " << rnti << " thr "
+                              << +EutranMeasurementMapping::Dbm2RsrpRange(m_rsrpDbmUeNeighborCell)
+                              << " RSRP " << +meas.measResults.measResultPCell.rsrpResult
+                              << " RSRQ " << +meas.measResults.measResultPCell.rsrqResult << " thr "
+                              << +EutranMeasurementMapping::Db2RsrqRange(m_rsrqDbUeNeighborCell));
             NS_TEST_ASSERT_MSG_EQ(meas.measResults.measResultPCell.rsrpResult,
                                   EutranMeasurementMapping::Dbm2RsrpRange(m_rsrpDbmUeNeighborCell),
                                   "Wrong RSRP ");
@@ -869,10 +867,10 @@ LteUeMeasurementsPiecewiseTestCase1::RecvMeasurementReportCallback(
         // verifying the report completeness
         LteRrcSap::MeasResults measResults = report.measResults;
         NS_LOG_DEBUG(
-            this << " rsrp=" << (uint16_t)measResults.measResultPCell.rsrpResult << " ("
+            this << " rsrp=" << +measResults.measResultPCell.rsrpResult << " ("
                  << EutranMeasurementMapping::RsrpRange2Dbm(measResults.measResultPCell.rsrpResult)
                  << " dBm)"
-                 << " rsrq=" << (uint16_t)measResults.measResultPCell.rsrqResult << " ("
+                 << " rsrq=" << +measResults.measResultPCell.rsrqResult << " ("
                  << EutranMeasurementMapping::RsrqRange2Db(measResults.measResultPCell.rsrqResult)
                  << " dB)");
         NS_TEST_ASSERT_MSG_EQ(measResults.haveMeasResultNeighCells,
@@ -1577,11 +1575,11 @@ LteUeMeasurementsPiecewiseTestCase2::RecvMeasurementReportCallback(
     // verifying the report completeness
     LteRrcSap::MeasResults measResults = report.measResults;
     NS_LOG_DEBUG(
-        this << " Serving cellId=" << cellId
-             << " rsrp=" << (uint16_t)measResults.measResultPCell.rsrpResult << " ("
+        this << " Serving cellId=" << cellId << " rsrp=" << +measResults.measResultPCell.rsrpResult
+             << " ("
              << EutranMeasurementMapping::RsrpRange2Dbm(measResults.measResultPCell.rsrpResult)
              << " dBm)"
-             << " rsrq=" << (uint16_t)measResults.measResultPCell.rsrqResult << " ("
+             << " rsrq=" << +measResults.measResultPCell.rsrqResult << " ("
              << EutranMeasurementMapping::RsrqRange2Db(measResults.measResultPCell.rsrqResult)
              << " dB)");
 
@@ -1609,10 +1607,10 @@ LteUeMeasurementsPiecewiseTestCase2::RecvMeasurementReportCallback(
         NS_TEST_ASSERT_MSG_EQ(it->haveRsrqResult,
                               true,
                               "Report does not contain measured RSRQ result");
-        NS_LOG_DEBUG(this << " Neighbour cellId=" << it->physCellId
-                          << " rsrp=" << (uint16_t)it->rsrpResult << " ("
-                          << EutranMeasurementMapping::RsrpRange2Dbm(it->rsrpResult) << " dBm)"
-                          << " rsrq=" << (uint16_t)it->rsrqResult << " ("
+        NS_LOG_DEBUG(this << " Neighbour cellId=" << it->physCellId << " rsrp=" << +it->rsrpResult
+                          << " (" << EutranMeasurementMapping::RsrpRange2Dbm(it->rsrpResult)
+                          << " dBm)"
+                          << " rsrq=" << +it->rsrqResult << " ("
                           << EutranMeasurementMapping::RsrqRange2Db(it->rsrqResult) << " dB)");
     }
 
@@ -1867,11 +1865,11 @@ LteUeMeasurementsPiecewiseTestCase3::RecvMeasurementReportCallback(
     // verifying the report completeness
     LteRrcSap::MeasResults measResults = report.measResults;
     NS_LOG_DEBUG(
-        this << " Serving cellId=" << cellId
-             << " rsrp=" << (uint16_t)measResults.measResultPCell.rsrpResult << " ("
+        this << " Serving cellId=" << cellId << " rsrp=" << +measResults.measResultPCell.rsrpResult
+             << " ("
              << EutranMeasurementMapping::RsrpRange2Dbm(measResults.measResultPCell.rsrpResult)
              << " dBm)"
-             << " rsrq=" << (uint16_t)measResults.measResultPCell.rsrqResult << " ("
+             << " rsrq=" << +measResults.measResultPCell.rsrqResult << " ("
              << EutranMeasurementMapping::RsrqRange2Db(measResults.measResultPCell.rsrqResult)
              << " dB)");
 
@@ -1901,10 +1899,10 @@ LteUeMeasurementsPiecewiseTestCase3::RecvMeasurementReportCallback(
             NS_TEST_ASSERT_MSG_EQ(it.haveRsrqResult,
                                   true,
                                   "Report does not contain measured RSRQ result");
-            NS_LOG_DEBUG(this << " Neighbour cellId=" << it.physCellId
-                              << " rsrp=" << (uint16_t)it.rsrpResult << " ("
-                              << EutranMeasurementMapping::RsrpRange2Dbm(it.rsrpResult) << " dBm)"
-                              << " rsrq=" << (uint16_t)it.rsrqResult << " ("
+            NS_LOG_DEBUG(this << " Neighbour cellId=" << it.physCellId << " rsrp=" << +it.rsrpResult
+                              << " (" << EutranMeasurementMapping::RsrpRange2Dbm(it.rsrpResult)
+                              << " dBm)"
+                              << " rsrq=" << +it.rsrqResult << " ("
                               << EutranMeasurementMapping::RsrqRange2Db(it.rsrqResult) << " dB)");
         }
     }
@@ -2467,7 +2465,7 @@ LteUeMeasurementsHandoverTestCase::RecvMeasurementReportCallback(
     LteRrcSap::MeasurementReport report)
 {
     uint8_t measId = report.measResults.measId;
-    NS_LOG_FUNCTION(this << context << (uint16_t)measId);
+    NS_LOG_FUNCTION(this << context << +measId);
 
     bool isCorrectMeasId;
     if (cellId == 1)
@@ -2493,11 +2491,11 @@ LteUeMeasurementsHandoverTestCase::RecvMeasurementReportCallback(
     // verifying the report completeness
     LteRrcSap::MeasResults measResults = report.measResults;
     NS_LOG_DEBUG(
-        this << " Serving cellId=" << cellId
-             << " rsrp=" << (uint16_t)measResults.measResultPCell.rsrpResult << " ("
+        this << " Serving cellId=" << cellId << " rsrp=" << +measResults.measResultPCell.rsrpResult
+             << " ("
              << EutranMeasurementMapping::RsrpRange2Dbm(measResults.measResultPCell.rsrpResult)
              << " dBm)"
-             << " rsrq=" << (uint16_t)measResults.measResultPCell.rsrqResult << " ("
+             << " rsrq=" << +measResults.measResultPCell.rsrqResult << " ("
              << EutranMeasurementMapping::RsrqRange2Db(measResults.measResultPCell.rsrqResult)
              << " dB)");
 
@@ -2526,10 +2524,10 @@ LteUeMeasurementsHandoverTestCase::RecvMeasurementReportCallback(
         NS_TEST_ASSERT_MSG_EQ(it->haveRsrqResult,
                               true,
                               "Report does not contain measured RSRQ result");
-        NS_LOG_DEBUG(this << " Neighbour cellId=" << it->physCellId
-                          << " rsrp=" << (uint16_t)it->rsrpResult << " ("
-                          << EutranMeasurementMapping::RsrpRange2Dbm(it->rsrpResult) << " dBm)"
-                          << " rsrq=" << (uint16_t)it->rsrqResult << " ("
+        NS_LOG_DEBUG(this << " Neighbour cellId=" << it->physCellId << " rsrp=" << +it->rsrpResult
+                          << " (" << EutranMeasurementMapping::RsrpRange2Dbm(it->rsrpResult)
+                          << " dBm)"
+                          << " rsrq=" << +it->rsrqResult << " ("
                           << EutranMeasurementMapping::RsrqRange2Db(it->rsrqResult) << " dB)");
     }
 

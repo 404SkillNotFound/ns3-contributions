@@ -103,7 +103,7 @@ EpsBearerTag::GetBid() const
 void
 EpsBearerTag::Print(std::ostream& os) const
 {
-    os << "rnti=" << m_rnti << ", bid=" << (uint16_t)m_bid;
+    os << "rnti=" << m_rnti << ", bid=" << +m_bid;
 }
 
 } // namespace ns3

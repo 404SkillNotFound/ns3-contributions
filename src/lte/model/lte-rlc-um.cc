@@ -93,7 +93,7 @@ LteRlcUm::DoDispose()
 void
 LteRlcUm::DoTransmitPdcpPdu(Ptr<Packet> p)
 {
-    NS_LOG_FUNCTION(this << m_rnti << (uint32_t)m_lcid << p->GetSize());
+    NS_LOG_FUNCTION(this << m_rnti << +m_lcid << p->GetSize());
     if (m_txBufferSize + p->GetSize() <= m_maxTxBufferSize)
     {
         if (m_enablePdcpDiscarding)
@@ -151,11 +151,11 @@ LteRlcUm::DoTransmitPdcpPdu(Ptr<Packet> p)
 void
 LteRlcUm::DoNotifyTxOpportunity(LteMacSapUser::TxOpportunityParameters txOpParams)
 {
-    NS_LOG_FUNCTION(this << m_rnti << (uint32_t)m_lcid << txOpParams.bytes);
+    NS_LOG_FUNCTION(this << m_rnti << +m_lcid << txOpParams.bytes);
     NS_LOG_INFO("RLC layer is preparing data for the following Tx opportunity of "
-                << txOpParams.bytes << " bytes for RNTI=" << m_rnti << ", LCID=" << (uint32_t)m_lcid
-                << ", CCID=" << (uint32_t)txOpParams.componentCarrierId << ", HARQ ID="
-                << (uint32_t)txOpParams.harqId << ", MIMO Layer=" << (uint32_t)txOpParams.layer);
+                << txOpParams.bytes << " bytes for RNTI=" << m_rnti << ", LCID=" << +m_lcid
+                << ", CCID=" << +txOpParams.componentCarrierId << ", HARQ ID=" << +txOpParams.harqId
+                << ", MIMO Layer=" << +txOpParams.layer);
 
     if (txOpParams.bytes <= 2)
     {
@@ -440,7 +440,7 @@ LteRlcUm::DoNotifyHarqDeliveryFailure()
 void
 LteRlcUm::DoReceivePdu(LteMacSapUser::ReceivePduParameters rxPduParams)
 {
-    NS_LOG_FUNCTION(this << m_rnti << (uint32_t)m_lcid << rxPduParams.p->GetSize());
+    NS_LOG_FUNCTION(this << m_rnti << +m_lcid << rxPduParams.p->GetSize());
 
     // Receiver timestamp
     RlcTag rlcTag;
@@ -657,7 +657,7 @@ LteRlcUm::ReassembleAndDeliver(Ptr<Packet> packet)
     do
     {
         extensionBit = rlcHeader.PopExtensionBit();
-        NS_LOG_LOGIC("E = " << (uint16_t)extensionBit);
+        NS_LOG_LOGIC("E = " << +extensionBit);
 
         if (extensionBit == 0)
         {
@@ -698,7 +698,7 @@ LteRlcUm::ReassembleAndDeliver(Ptr<Packet> packet)
     }
 
     // Received framing Info
-    NS_LOG_LOGIC("Framing Info = " << (uint16_t)framingInfo);
+    NS_LOG_LOGIC("Framing Info = " << +framingInfo);
 
     // Reassemble the list of SDUs (when there is no losses)
     if (!expectedSnLost)
@@ -796,8 +796,7 @@ LteRlcUm::ReassembleAndDeliver(Ptr<Packet> packet)
                 /**
                  * ERROR: Transition not possible
                  */
-                NS_LOG_LOGIC(
-                    "INTERNAL ERROR: Transition not possible. FI = " << (uint32_t)framingInfo);
+                NS_LOG_LOGIC("INTERNAL ERROR: Transition not possible. FI = " << +framingInfo);
                 break;
             }
             break;
@@ -868,15 +867,13 @@ LteRlcUm::ReassembleAndDeliver(Ptr<Packet> packet)
                 /**
                  * ERROR: Transition not possible
                  */
-                NS_LOG_LOGIC(
-                    "INTERNAL ERROR: Transition not possible. FI = " << (uint32_t)framingInfo);
+                NS_LOG_LOGIC("INTERNAL ERROR: Transition not possible. FI = " << +framingInfo);
                 break;
             }
             break;
 
         default:
-            NS_LOG_LOGIC(
-                "INTERNAL ERROR: Wrong reassembling state = " << (uint32_t)m_reassemblingState);
+            NS_LOG_LOGIC("INTERNAL ERROR: Wrong reassembling state = " << +m_reassemblingState);
             break;
         }
     }
@@ -976,8 +973,7 @@ LteRlcUm::ReassembleAndDeliver(Ptr<Packet> packet)
                 /**
                  * ERROR: Transition not possible
                  */
-                NS_LOG_LOGIC(
-                    "INTERNAL ERROR: Transition not possible. FI = " << (uint32_t)framingInfo);
+                NS_LOG_LOGIC("INTERNAL ERROR: Transition not possible. FI = " << +framingInfo);
                 break;
             }
             break;
@@ -1094,15 +1090,13 @@ LteRlcUm::ReassembleAndDeliver(Ptr<Packet> packet)
                 /**
                  * ERROR: Transition not possible
                  */
-                NS_LOG_LOGIC(
-                    "INTERNAL ERROR: Transition not possible. FI = " << (uint32_t)framingInfo);
+                NS_LOG_LOGIC("INTERNAL ERROR: Transition not possible. FI = " << +framingInfo);
                 break;
             }
             break;
 
         default:
-            NS_LOG_LOGIC(
-                "INTERNAL ERROR: Wrong reassembling state = " << (uint32_t)m_reassemblingState);
+            NS_LOG_LOGIC("INTERNAL ERROR: Wrong reassembling state = " << +m_reassemblingState);
             break;
         }
     }
@@ -1191,7 +1185,7 @@ LteRlcUm::DoReportBufferStatus()
 void
 LteRlcUm::ExpireReorderingTimer()
 {
-    NS_LOG_FUNCTION(this << m_rnti << (uint32_t)m_lcid);
+    NS_LOG_FUNCTION(this << m_rnti << +m_lcid);
     NS_LOG_LOGIC("Reordering timer has expired");
 
     // 5.1.2.2.4 Actions when t-Reordering expires

@@ -63,7 +63,7 @@ LteRlcTm::DoDispose()
 void
 LteRlcTm::DoTransmitPdcpPdu(Ptr<Packet> p)
 {
-    NS_LOG_FUNCTION(this << m_rnti << (uint32_t)m_lcid << p->GetSize());
+    NS_LOG_FUNCTION(this << m_rnti << +m_lcid << p->GetSize());
 
     if (m_txBufferSize + p->GetSize() <= m_maxTxBufferSize)
     {
@@ -94,8 +94,8 @@ LteRlcTm::DoTransmitPdcpPdu(Ptr<Packet> p)
 void
 LteRlcTm::DoNotifyTxOpportunity(LteMacSapUser::TxOpportunityParameters txOpParams)
 {
-    NS_LOG_FUNCTION(this << m_rnti << (uint32_t)m_lcid << txOpParams.bytes
-                         << (uint32_t)txOpParams.layer << (uint32_t)txOpParams.harqId);
+    NS_LOG_FUNCTION(this << m_rnti << +m_lcid << txOpParams.bytes << +txOpParams.layer
+                         << +txOpParams.harqId);
 
     // 5.1.1.1 Transmit operations
     // 5.1.1.1.1 General
@@ -149,7 +149,7 @@ LteRlcTm::DoNotifyHarqDeliveryFailure()
 void
 LteRlcTm::DoReceivePdu(LteMacSapUser::ReceivePduParameters rxPduParams)
 {
-    NS_LOG_FUNCTION(this << m_rnti << (uint32_t)m_lcid << rxPduParams.p->GetSize());
+    NS_LOG_FUNCTION(this << m_rnti << +m_lcid << rxPduParams.p->GetSize());
 
     m_rxPdu(m_rnti, m_lcid, rxPduParams.p->GetSize(), 0);
 

@@ -491,12 +491,11 @@ LteEnbMac::DoSubframeIndication(uint32_t frameNo, uint32_t subframeNo)
         for (auto it = m_receivedRachPreambleCount.begin(); it != m_receivedRachPreambleCount.end();
              ++it)
         {
-            NS_LOG_INFO(this << " preambleId " << (uint32_t)it->first << ": " << it->second
-                             << " received");
+            NS_LOG_INFO(this << " preambleId " << +it->first << ": " << it->second << " received");
             NS_ASSERT(it->second != 0);
             if (it->second > 1)
             {
-                NS_LOG_INFO("preambleId " << (uint32_t)it->first << ": collision");
+                NS_LOG_INFO("preambleId " << +it->first << ": collision");
                 // in case of collision we assume that no preamble is
                 // successfully received, hence no RAR is sent
             }
@@ -508,7 +507,7 @@ LteEnbMac::DoSubframeIndication(uint32_t frameNo, uint32_t subframeNo)
                 {
                     rnti = jt->second.rnti;
                     NS_LOG_INFO("preambleId previously allocated for NC based RA, RNTI ="
-                                << (uint32_t)rnti << ", sending RAR");
+                                << +rnti << ", sending RAR");
                 }
                 else
                 {
@@ -521,8 +520,8 @@ LteEnbMac::DoSubframeIndication(uint32_t frameNo, uint32_t subframeNo)
                         NS_LOG_INFO("UE context not created, no RAR to send");
                         continue;
                     }
-                    NS_LOG_INFO("preambleId " << (uint32_t)it->first << ": allocated T-C-RNTI "
-                                              << (uint32_t)rnti << ", sending RAR");
+                    NS_LOG_INFO("preambleId " << +it->first << ": allocated T-C-RNTI " << +rnti
+                                              << ", sending RAR");
                 }
 
                 RachListElement_s rachLe;
@@ -646,7 +645,7 @@ LteEnbMac::DoReceiveLteControlMessage(Ptr<LteControlMessage> msg)
 void
 LteEnbMac::DoReceiveRachPreamble(uint8_t rapId)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)rapId);
+    NS_LOG_FUNCTION(this << +rapId);
     // just record that the preamble has been received; it will be processed later
     ++m_receivedRachPreambleCount[rapId]; // will create entry if not exists
 }
@@ -687,11 +686,11 @@ void
 LteEnbMac::DoReportMacCeToScheduler(MacCeListElement_s bsr)
 {
     NS_LOG_FUNCTION(this);
-    NS_LOG_DEBUG(this << " bsr Size " << (uint16_t)m_ulCeReceived.size());
+    NS_LOG_DEBUG(this << " bsr Size " << +m_ulCeReceived.size());
     // send to LteCcmMacSapUser
     m_ulCeReceived.push_back(
         bsr); // this to called when LteUlCcmSapProvider::ReportMacCeToScheduler is called
-    NS_LOG_DEBUG(this << " bsr Size after push_back " << (uint16_t)m_ulCeReceived.size());
+    NS_LOG_DEBUG(this << " bsr Size after push_back " << +m_ulCeReceived.size());
 }
 
 void
@@ -853,7 +852,7 @@ LteEnbMac::DoRemoveUe(uint16_t rnti)
 void
 LteEnbMac::DoAddLc(LteEnbCmacSapProvider::LcInfo lcinfo, LteMacSapUser* msu)
 {
-    NS_LOG_FUNCTION(this << lcinfo.rnti << (uint16_t)lcinfo.lcId);
+    NS_LOG_FUNCTION(this << lcinfo.rnti << +lcinfo.lcId);
 
     LteFlowId_t flow(lcinfo.rnti, lcinfo.lcId);
 
@@ -974,8 +973,8 @@ LteEnbMac::DoAllocateNcRaPreamble(uint16_t rnti)
         {
             found = true;
             NcRaPreambleInfo preambleInfo;
-            uint32_t expiryIntervalMs =
-                (uint32_t)m_preambleTransMax * ((uint32_t)m_raResponseWindowSize + 5);
+            uint32_t expiryIntervalMs = static_cast<uint32_t>(m_preambleTransMax) *
+                                        (static_cast<uint32_t>(m_raResponseWindowSize) + 5);
 
             preambleInfo.expiryTime = Simulator::Now() + MilliSeconds(expiryIntervalMs);
             preambleInfo.rnti = rnti;
@@ -1017,8 +1016,7 @@ LteEnbMac::DoTransmitPdu(LteMacSapProvider::TransmitPduParameters params)
     // Store pkt in HARQ buffer
     auto it = m_miDlHarqProcessesPackets.find(params.rnti);
     NS_ASSERT(it != m_miDlHarqProcessesPackets.end());
-    NS_LOG_DEBUG(this << " LAYER " << (uint16_t)tag.GetLayer() << " HARQ ID "
-                      << (uint16_t)params.harqProcessId);
+    NS_LOG_DEBUG(this << " LAYER " << +tag.GetLayer() << " HARQ ID " << +params.harqProcessId);
 
     //(*it).second.at (params.layer).at (params.harqProcessId) = params.pdu;//->Copy ();
     (*it).second.at(params.layer).at(params.harqProcessId)->AddPacket(params.pdu);
@@ -1082,9 +1080,9 @@ LteEnbMac::DoSchedDlConfigInd(FfMacSchedSapUser::SchedDlConfigIndParameters ind)
                     NS_ASSERT_MSG(rntiIt != m_rlcAttached.end(), "could not find RNTI" << rnti);
                     auto lcidIt = rntiIt->second.find(lcid);
                     NS_ASSERT_MSG(lcidIt != rntiIt->second.end(),
-                                  "could not find LCID" << (uint32_t)lcid << " carrier id:"
-                                                        << (uint16_t)m_componentCarrierId);
-                    NS_LOG_DEBUG(this << " rnti= " << rnti << " lcid= " << (uint32_t)lcid
+                                  "could not find LCID" << +lcid
+                                                        << " carrier id:" << +m_componentCarrierId);
+                    NS_LOG_DEBUG(this << " rnti= " << rnti << " lcid= " << +lcid
                                       << " layer= " << k);
                     txOpParams.bytes = ind.m_buildDataList.at(i).m_rlcPduList.at(j).at(k).m_size;
                     txOpParams.layer = k;
@@ -1291,12 +1289,12 @@ LteEnbMac::DoDlInfoListElementHarqFeedback(DlInfoListElement_s params)
             Ptr<PacketBurst> emptyBuf = CreateObject<PacketBurst>();
             (*it).second.at(layer).at(params.m_harqProcessId) = emptyBuf;
             NS_LOG_DEBUG(this << " HARQ-ACK UE " << params.m_rnti << " harqId "
-                              << (uint16_t)params.m_harqProcessId << " layer " << (uint16_t)layer);
+                              << +params.m_harqProcessId << " layer " << +layer);
         }
         else if (params.m_harqStatus.at(layer) == DlInfoListElement_s::NACK)
         {
             NS_LOG_DEBUG(this << " HARQ-NACK UE " << params.m_rnti << " harqId "
-                              << (uint16_t)params.m_harqProcessId << " layer " << (uint16_t)layer);
+                              << +params.m_harqProcessId << " layer " << +layer);
         }
         else
         {

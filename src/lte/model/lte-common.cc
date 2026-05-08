@@ -216,7 +216,7 @@ EutranMeasurementMapping::RsrpRange2Dbm(uint8_t range)
 {
     // 3GPP TS 36.133 section 9.1.4 RSRP Measurement Report Mapping
     NS_ASSERT_MSG(range <= 97, "value " << range << " is out of range");
-    return (double)range - 141.0;
+    return static_cast<double>(range) - 141.0;
 }
 
 uint8_t
@@ -224,15 +224,15 @@ EutranMeasurementMapping::Dbm2RsrpRange(double dbm)
 {
     // 3GPP TS 36.133 section 9.1.4 RSRP Measurement Report Mapping
     double range = std::min(std::max(std::floor(dbm + 141), 0.0), 97.0);
-    return (uint8_t)range;
+    return static_cast<uint8_t>(range);
 }
 
 double
 EutranMeasurementMapping::RsrqRange2Db(uint8_t range)
 {
     // 3GPP TS 36.133 section 9.1.7 RSRQ Measurement Report Mapping
-    NS_ASSERT_MSG(range <= 34, "value " << (uint16_t)range << " is out of range");
-    return ((double)range - 40.0) * 0.5;
+    NS_ASSERT_MSG(range <= 34, "value " << +range << " is out of range");
+    return (static_cast<double>(range) - 40.0) * 0.5;
 }
 
 uint8_t
@@ -240,7 +240,7 @@ EutranMeasurementMapping::Db2RsrqRange(double db)
 {
     // 3GPP TS 36.133 section 9.1.7 RSRQ Measurement Report Mapping
     double range = std::min(std::max(std::floor(db * 2 + 40), 0.0), 34.0);
-    return (uint8_t)range;
+    return static_cast<uint8_t>(range);
 }
 
 double
@@ -260,8 +260,7 @@ EutranMeasurementMapping::IeValue2ActualHysteresis(uint8_t hysteresisIeValue)
 {
     if (hysteresisIeValue > 30)
     {
-        NS_FATAL_ERROR("The value " << (uint16_t)hysteresisIeValue
-                                    << " is out of the allowed range (0..30)"
+        NS_FATAL_ERROR("The value " << +hysteresisIeValue << " is out of the allowed range (0..30)"
                                     << " for Hysteresis IE value");
     }
 

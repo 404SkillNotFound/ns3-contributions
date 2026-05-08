@@ -94,8 +94,8 @@ SimpleUeCcmMacSapUser::SimpleUeCcmMacSapUser(SimpleUeComponentCarrierManager* ma
 void
 SimpleUeCcmMacSapUser::NotifyTxOpportunity(LteMacSapUser::TxOpportunityParameters txOpParams)
 {
-    NS_LOG_INFO("SimpleUeCcmMacSapUser::NotifyTxOpportunity for ccId:"
-                << (uint32_t)txOpParams.componentCarrierId);
+    NS_LOG_INFO(
+        "SimpleUeCcmMacSapUser::NotifyTxOpportunity for ccId:" << +txOpParams.componentCarrierId);
     m_mac->DoNotifyTxOpportunity(txOpParams);
 }
 
@@ -164,7 +164,7 @@ SimpleUeComponentCarrierManager::DoInitialize()
 void
 SimpleUeComponentCarrierManager::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)measResults.measId);
+    NS_LOG_FUNCTION(this << rnti << +measResults.measId);
 }
 
 void
@@ -173,8 +173,7 @@ SimpleUeComponentCarrierManager::DoTransmitPdu(LteMacSapProvider::TransmitPduPar
     NS_LOG_FUNCTION(this);
     auto it = m_macSapProvidersMap.find(params.componentCarrierId);
     NS_ABORT_MSG_IF(it == m_macSapProvidersMap.end(),
-                    "could not find Sap for ComponentCarrier "
-                        << (uint16_t)params.componentCarrierId);
+                    "could not find Sap for ComponentCarrier " << +params.componentCarrierId);
     // with this algorithm all traffic is on Primary Carrier, is it?
     it->second->TransmitPdu(params);
 }
@@ -184,7 +183,7 @@ SimpleUeComponentCarrierManager::DoReportBufferStatus(
     LteMacSapProvider::ReportBufferStatusParameters params)
 {
     NS_LOG_FUNCTION(this);
-    NS_LOG_DEBUG("BSR from RLC for LCID = " << (uint16_t)params.lcid);
+    NS_LOG_DEBUG("BSR from RLC for LCID = " << +params.lcid);
     auto it = m_macSapProvidersMap.find(0);
     NS_ABORT_MSG_IF(it == m_macSapProvidersMap.end(), "could not find Sap for ComponentCarrier");
 
@@ -194,7 +193,7 @@ SimpleUeComponentCarrierManager::DoReportBufferStatus(
          ccLcMapIt != m_componentCarrierLcMap.end();
          ccLcMapIt++)
     {
-        NS_LOG_DEBUG("BSR from RLC for CC id = " << (uint16_t)ccLcMapIt->first);
+        NS_LOG_DEBUG("BSR from RLC for CC id = " << +ccLcMapIt->first);
         auto it = ccLcMapIt->second.find(params.lcid);
         if (it != ccLcMapIt->second.end())
         {
@@ -215,16 +214,14 @@ SimpleUeComponentCarrierManager::DoNotifyTxOpportunity(
 {
     NS_LOG_FUNCTION(this);
     auto lcidIt = m_lcAttached.find(txOpParams.lcid);
-    NS_ABORT_MSG_IF(lcidIt == m_lcAttached.end(),
-                    "could not find LCID" << (uint16_t)txOpParams.lcid);
-    NS_LOG_DEBUG(this << " lcid = " << (uint32_t)txOpParams.lcid
-                      << " layer= " << (uint16_t)txOpParams.layer << " componentCarrierId "
-                      << (uint16_t)txOpParams.componentCarrierId << " rnti " << txOpParams.rnti);
+    NS_ABORT_MSG_IF(lcidIt == m_lcAttached.end(), "could not find LCID" << +txOpParams.lcid);
+    NS_LOG_DEBUG(this << " lcid = " << +txOpParams.lcid << " layer= " << +txOpParams.layer
+                      << " componentCarrierId " << +txOpParams.componentCarrierId << " rnti "
+                      << txOpParams.rnti);
 
-    NS_LOG_DEBUG(this << " MAC is asking component carrier id = "
-                      << (uint16_t)txOpParams.componentCarrierId
-                      << " with lcid = " << (uint32_t)txOpParams.lcid << " to transmit "
-                      << txOpParams.bytes << " bytes");
+    NS_LOG_DEBUG(this << " MAC is asking component carrier id = " << +txOpParams.componentCarrierId
+                      << " with lcid = " << +txOpParams.lcid << " to transmit " << txOpParams.bytes
+                      << " bytes");
     (*lcidIt).second->NotifyTxOpportunity(txOpParams);
 }
 
@@ -233,8 +230,7 @@ SimpleUeComponentCarrierManager::DoReceivePdu(LteMacSapUser::ReceivePduParameter
 {
     NS_LOG_FUNCTION(this);
     auto lcidIt = m_lcAttached.find(rxPduParams.lcid);
-    NS_ABORT_MSG_IF(lcidIt == m_lcAttached.end(),
-                    "could not find LCID" << (uint16_t)rxPduParams.lcid);
+    NS_ABORT_MSG_IF(lcidIt == m_lcAttached.end(), "could not find LCID" << +rxPduParams.lcid);
     if (lcidIt != m_lcAttached.end())
     {
         (*lcidIt).second->ReceivePdu(rxPduParams);
@@ -339,8 +335,7 @@ SimpleUeComponentCarrierManager::DoConfigureSignalBearer(
     auto it = m_lcAttached.find(lcid);
     // if the following assert is hit, e.g., in handover scenarios, it means
     //  the DoRest function is not called by UE RRC
-    NS_ABORT_MSG_IF(it != m_lcAttached.end(),
-                    "Warning, LCID " << (uint8_t)lcid << " already exist");
+    NS_ABORT_MSG_IF(it != m_lcAttached.end(), "Warning, LCID " << +lcid << " already exist");
 
     m_lcAttached.insert(std::pair<uint8_t, LteMacSapUser*>(lcid, msu));
 

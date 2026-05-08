@@ -294,16 +294,16 @@ LteRlcAmHeader::Print(std::ostream& os) const
     auto it3 = m_nackSnList.begin();
 
     os << "Len=" << m_headerLength;
-    os << " D/C=" << (uint16_t)m_dataControlBit;
+    os << " D/C=" << +m_dataControlBit;
 
     if (m_dataControlBit == DATA_PDU)
     {
-        os << " RF=" << (uint16_t)m_resegmentationFlag;
-        os << " P=" << (uint16_t)m_pollingBit;
-        os << " FI=" << (uint16_t)m_framingInfo;
-        os << " E=" << (uint16_t)(*it1);
+        os << " RF=" << +m_resegmentationFlag;
+        os << " P=" << +m_pollingBit;
+        os << " FI=" << +m_framingInfo;
+        os << " E=" << +(*it1);
         os << " SN=" << m_sequenceNumber;
-        os << " LSF=" << (uint16_t)(m_lastSegmentFlag);
+        os << " LSF=" << +m_lastSegmentFlag;
         os << " SO=" << m_segmentOffset;
 
         it1++;
@@ -313,7 +313,7 @@ LteRlcAmHeader::Print(std::ostream& os) const
         }
         while (it1 != m_extensionBits.end())
         {
-            os << (uint16_t)(*it1);
+            os << +(*it1);
             it1++;
         }
 
@@ -323,7 +323,7 @@ LteRlcAmHeader::Print(std::ostream& os) const
         }
         while (it2 != m_lengthIndicators.end())
         {
-            os << (uint16_t)(*it2) << " ";
+            os << static_cast<uint16_t>(*it2) << " ";
             it2++;
         }
     }
@@ -333,7 +333,7 @@ LteRlcAmHeader::Print(std::ostream& os) const
 
         while (it3 != m_nackSnList.end())
         {
-            os << " NACK_SN=" << (int)(*it3);
+            os << " NACK_SN=" << static_cast<int>(*it3);
             it3++;
         }
     }

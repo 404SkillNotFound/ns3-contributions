@@ -74,7 +74,7 @@ LteEnbComponentCarrierManager::SetMacSapProvider(uint8_t componentCarrierId, Lte
     NS_LOG_FUNCTION(this);
     bool res = false;
     auto it = m_macSapProvidersMap.find(componentCarrierId);
-    if ((uint16_t)componentCarrierId > m_noOfComponentCarriers)
+    if (static_cast<uint16_t>(componentCarrierId) > m_noOfComponentCarriers)
     {
         NS_FATAL_ERROR("Inconsistent componentCarrierId or you didn't call "
                        "SetNumberOfComponentCarriers before calling this method");

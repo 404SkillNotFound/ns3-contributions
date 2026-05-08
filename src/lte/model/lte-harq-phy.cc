@@ -53,7 +53,7 @@ LteHarqPhy::SubframeIndication(uint32_t frameNo, uint32_t subframeNo)
 double
 LteHarqPhy::GetAccumulatedMiDl(uint8_t harqProcId, uint8_t layer)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)harqProcId << (uint16_t)layer);
+    NS_LOG_FUNCTION(this << +harqProcId << +layer);
     HarqProcessInfoList_t list = m_miDlHarqProcessesInfoMap.at(layer).at(harqProcId);
     double mi = 0.0;
     for (std::size_t i = 0; i < list.size(); i++)
@@ -66,7 +66,7 @@ LteHarqPhy::GetAccumulatedMiDl(uint8_t harqProcId, uint8_t layer)
 HarqProcessInfoList_t
 LteHarqPhy::GetHarqProcessInfoDl(uint8_t harqProcId, uint8_t layer)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)harqProcId << (uint16_t)layer);
+    NS_LOG_FUNCTION(this << +harqProcId << +layer);
     return m_miDlHarqProcessesInfoMap.at(layer).at(harqProcId);
 }
 
@@ -89,7 +89,7 @@ LteHarqPhy::GetAccumulatedMiUl(uint16_t rnti)
 HarqProcessInfoList_t
 LteHarqPhy::GetHarqProcessInfoUl(uint16_t rnti, uint8_t harqProcId)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)harqProcId);
+    NS_LOG_FUNCTION(this << rnti << +harqProcId);
     auto it = m_miUlHarqProcessesInfoMap.find(rnti);
     if (it == m_miUlHarqProcessesInfoMap.end())
     {
@@ -113,7 +113,7 @@ LteHarqPhy::UpdateDlHarqProcessStatus(uint8_t id,
                                       uint16_t infoBytes,
                                       uint16_t codeBytes)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)id << mi);
+    NS_LOG_FUNCTION(this << +id << mi);
     if (m_miDlHarqProcessesInfoMap.at(layer).at(id).size() == 3) // MAX HARQ RETX
     {
         // HARQ should be disabled -> discard info
@@ -129,7 +129,7 @@ LteHarqPhy::UpdateDlHarqProcessStatus(uint8_t id,
 void
 LteHarqPhy::ResetDlHarqProcessStatus(uint8_t id)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)id);
+    NS_LOG_FUNCTION(this << +id);
     for (std::size_t i = 0; i < m_miDlHarqProcessesInfoMap.size(); i++)
     {
         m_miDlHarqProcessesInfoMap.at(i).at(id).clear();
@@ -183,7 +183,7 @@ LteHarqPhy::UpdateUlHarqProcessStatus(uint16_t rnti,
 void
 LteHarqPhy::ResetUlHarqProcessStatus(uint16_t rnti, uint8_t id)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)id);
+    NS_LOG_FUNCTION(this << rnti << +id);
     auto it = m_miUlHarqProcessesInfoMap.find(rnti);
     if (it == m_miUlHarqProcessesInfoMap.end())
     {

@@ -661,7 +661,9 @@ RrcAsn1Header::SerializeSystemInformationBlockType2(
 
     // freqInfo
     SerializeSequence(std::bitset<2>(3), false);
-    SerializeInteger((int)systemInformationBlockType2.freqInfo.ulCarrierFreq, 0, MAX_EARFCN);
+    SerializeInteger(static_cast<int>(systemInformationBlockType2.freqInfo.ulCarrierFreq),
+                     0,
+                     MAX_EARFCN);
     SerializeEnum(6, BandwidthToEnum(systemInformationBlockType2.freqInfo.ulBandwidth));
 
     SerializeInteger(29, 1, 32); // additionalSpectrumEmission
@@ -3049,14 +3051,14 @@ RrcAsn1Header::Print(std::ostream& os,
     auto it = radioResourceConfigDedicated.srbToAddModList.begin();
     for (; it != radioResourceConfigDedicated.srbToAddModList.end(); it++)
     {
-        os << "      srbIdentity: " << (int)it->srbIdentity << std::endl;
+        os << "      srbIdentity: " << +it->srbIdentity << std::endl;
         os << "      logicalChannelConfig: " << std::endl;
-        os << "         priority: " << (int)it->logicalChannelConfig.priority << std::endl;
+        os << "         priority: " << +it->logicalChannelConfig.priority << std::endl;
         os << "         prioritizedBitRateKbps: "
-           << (int)it->logicalChannelConfig.prioritizedBitRateKbps << std::endl;
-        os << "         bucketSizeDurationMs: "
-           << (int)it->logicalChannelConfig.bucketSizeDurationMs << std::endl;
-        os << "         logicalChannelGroup: " << (int)it->logicalChannelConfig.logicalChannelGroup
+           << +it->logicalChannelConfig.prioritizedBitRateKbps << std::endl;
+        os << "         bucketSizeDurationMs: " << +it->logicalChannelConfig.bucketSizeDurationMs
+           << std::endl;
+        os << "         logicalChannelGroup: " << +it->logicalChannelConfig.logicalChannelGroup
            << std::endl;
     }
     os << std::endl;
@@ -3065,17 +3067,17 @@ RrcAsn1Header::Print(std::ostream& os,
     auto it2 = radioResourceConfigDedicated.drbToAddModList.begin();
     for (; it2 != radioResourceConfigDedicated.drbToAddModList.end(); it2++)
     {
-        os << "      epsBearerIdentity: " << (int)it2->epsBearerIdentity << std::endl;
-        os << "      drbIdentity: " << (int)it2->drbIdentity << std::endl;
+        os << "      epsBearerIdentity: " << +it2->epsBearerIdentity << std::endl;
+        os << "      drbIdentity: " << +it2->drbIdentity << std::endl;
         os << "      rlcConfig: " << it2->rlcConfig.choice << std::endl;
-        os << "      logicalChannelIdentity: " << (int)it2->logicalChannelIdentity << std::endl;
+        os << "      logicalChannelIdentity: " << +it2->logicalChannelIdentity << std::endl;
         os << "      logicalChannelConfig: " << std::endl;
-        os << "         priority: " << (int)it2->logicalChannelConfig.priority << std::endl;
+        os << "         priority: " << +it2->logicalChannelConfig.priority << std::endl;
         os << "         prioritizedBitRateKbps: "
-           << (int)it2->logicalChannelConfig.prioritizedBitRateKbps << std::endl;
-        os << "         bucketSizeDurationMs: "
-           << (int)it2->logicalChannelConfig.bucketSizeDurationMs << std::endl;
-        os << "         logicalChannelGroup: " << (int)it2->logicalChannelConfig.logicalChannelGroup
+           << +it2->logicalChannelConfig.prioritizedBitRateKbps << std::endl;
+        os << "         bucketSizeDurationMs: " << +it2->logicalChannelConfig.bucketSizeDurationMs
+           << std::endl;
+        os << "         logicalChannelGroup: " << +it2->logicalChannelConfig.logicalChannelGroup
            << std::endl;
     }
     os << std::endl;
@@ -3084,7 +3086,7 @@ RrcAsn1Header::Print(std::ostream& os,
     auto it3 = radioResourceConfigDedicated.drbToReleaseList.begin();
     for (; it3 != radioResourceConfigDedicated.drbToReleaseList.end(); it3++)
     {
-        os << (int)*it3 << ", ";
+        os << +*it3 << ", ";
     }
     os << std::endl;
 
@@ -3106,12 +3108,12 @@ RrcAsn1Header::Print(std::ostream& os,
                       .type
                << std::endl;
             os << "         srsBandwidth: "
-               << (int)radioResourceConfigDedicated.physicalConfigDedicated
-                      .soundingRsUlConfigDedicated.srsBandwidth
+               << +radioResourceConfigDedicated.physicalConfigDedicated.soundingRsUlConfigDedicated
+                       .srsBandwidth
                << std::endl;
             os << "         srsConfigIndex: "
-               << (int)radioResourceConfigDedicated.physicalConfigDedicated
-                      .soundingRsUlConfigDedicated.srsConfigIndex
+               << +radioResourceConfigDedicated.physicalConfigDedicated.soundingRsUlConfigDedicated
+                       .srsConfigIndex
                << std::endl;
         }
 
@@ -3121,8 +3123,7 @@ RrcAsn1Header::Print(std::ostream& os,
         if (radioResourceConfigDedicated.physicalConfigDedicated.haveAntennaInfoDedicated)
         {
             os << "      antennaInfo Tx mode: "
-               << (int)radioResourceConfigDedicated.physicalConfigDedicated.antennaInfo
-                      .transmissionMode
+               << +radioResourceConfigDedicated.physicalConfigDedicated.antennaInfo.transmissionMode
                << std::endl;
         }
     }
@@ -4871,8 +4872,8 @@ RrcConnectionRequestHeader::Deserialize(Buffer::Iterator bIterator)
 void
 RrcConnectionRequestHeader::SetMessage(LteRrcSap::RrcConnectionRequest msg)
 {
-    m_mTmsi = std::bitset<32>((uint32_t)msg.ueIdentity);
-    m_mmec = std::bitset<8>((uint32_t)(msg.ueIdentity >> 32));
+    m_mTmsi = std::bitset<32>(static_cast<uint32_t>(msg.ueIdentity));
+    m_mmec = std::bitset<8>(static_cast<uint32_t>(msg.ueIdentity >> 32));
     m_isDataSerialized = false;
 }
 
@@ -4880,7 +4881,7 @@ LteRrcSap::RrcConnectionRequest
 RrcConnectionRequestHeader::GetMessage() const
 {
     LteRrcSap::RrcConnectionRequest msg;
-    msg.ueIdentity = (((uint64_t)m_mmec.to_ulong()) << 32) | (m_mTmsi.to_ulong());
+    msg.ueIdentity = ((static_cast<uint64_t>(m_mmec.to_ulong()) << 32) | m_mTmsi.to_ulong());
 
     return msg;
 }
@@ -4909,7 +4910,7 @@ RrcConnectionSetupHeader::~RrcConnectionSetupHeader()
 void
 RrcConnectionSetupHeader::Print(std::ostream& os) const
 {
-    os << "rrcTransactionIdentifier: " << (int)m_rrcTransactionIdentifier << std::endl;
+    os << "rrcTransactionIdentifier: " << +m_rrcTransactionIdentifier << std::endl;
     os << "radioResourceConfigDedicated:" << std::endl;
     RrcAsn1Header::Print(os, m_radioResourceConfigDedicated);
 }
@@ -5157,7 +5158,7 @@ RrcConnectionSetupCompleteHeader::Deserialize(Buffer::Iterator bIterator)
 void
 RrcConnectionSetupCompleteHeader::Print(std::ostream& os) const
 {
-    os << "rrcTransactionIdentifier: " << (int)m_rrcTransactionIdentifier << std::endl;
+    os << "rrcTransactionIdentifier: " << +m_rrcTransactionIdentifier << std::endl;
 }
 
 void
@@ -5248,7 +5249,7 @@ RrcConnectionReconfigurationCompleteHeader::Deserialize(Buffer::Iterator bIterat
 void
 RrcConnectionReconfigurationCompleteHeader::Print(std::ostream& os) const
 {
-    os << "rrcTransactionIdentifier: " << (int)m_rrcTransactionIdentifier << std::endl;
+    os << "rrcTransactionIdentifier: " << +m_rrcTransactionIdentifier << std::endl;
 }
 
 void
@@ -5567,7 +5568,7 @@ RrcConnectionReconfigurationHeader::Deserialize(Buffer::Iterator bIterator)
 void
 RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
 {
-    os << "rrcTransactionIdentifier: " << (int)m_rrcTransactionIdentifier << std::endl;
+    os << "rrcTransactionIdentifier: " << +m_rrcTransactionIdentifier << std::endl;
     os << "haveMeasConfig: " << m_haveMeasConfig << std::endl;
     if (m_haveMeasConfig)
     {
@@ -5578,7 +5579,7 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
             auto it = auxList.begin();
             for (; it != auxList.end(); it++)
             {
-                os << (int)*it << ", ";
+                os << +*it << ", ";
             }
             os << std::endl;
         }
@@ -5589,7 +5590,7 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
             auto it = auxList.begin();
             for (; it != auxList.end(); it++)
             {
-                os << (int)*it << ", ";
+                os << +*it << ", ";
             }
             os << std::endl;
         }
@@ -5600,7 +5601,7 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
             auto it = auxList.begin();
             for (; it != auxList.end(); it++)
             {
-                os << (int)*it << ", ";
+                os << +*it << ", ";
             }
             os << std::endl;
         }
@@ -5612,15 +5613,14 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
             auto it = auxList.begin();
             for (; it != auxList.end(); it++)
             {
-                os << "    measObjectId: " << (int)it->measObjectId << std::endl;
-                os << "    carrierFreq: " << (int)it->measObjectEutra.carrierFreq << std::endl;
-                os << "    allowedMeasBandwidth: " << (int)it->measObjectEutra.allowedMeasBandwidth
+                os << "    measObjectId: " << +it->measObjectId << std::endl;
+                os << "    carrierFreq: " << +it->measObjectEutra.carrierFreq << std::endl;
+                os << "    allowedMeasBandwidth: " << +it->measObjectEutra.allowedMeasBandwidth
                    << std::endl;
                 os << "    presenceAntennaPort1: " << it->measObjectEutra.presenceAntennaPort1
                    << std::endl;
-                os << "    neighCellConfig: " << (int)it->measObjectEutra.neighCellConfig
-                   << std::endl;
-                os << "    offsetFreq: " << (int)it->measObjectEutra.offsetFreq << std::endl;
+                os << "    neighCellConfig: " << +it->measObjectEutra.neighCellConfig << std::endl;
+                os << "    offsetFreq: " << +it->measObjectEutra.offsetFreq << std::endl;
 
                 if (!it->measObjectEutra.cellsToRemoveList.empty())
                 {
@@ -5629,7 +5629,7 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
                     auto it = auxList.begin();
                     for (; it != auxList.end(); it++)
                     {
-                        os << (int)*it << ", ";
+                        os << +*it << ", ";
                     }
                     os << std::endl;
                 }
@@ -5641,7 +5641,7 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
                     auto it = auxList.begin();
                     for (; it != auxList.end(); it++)
                     {
-                        os << (int)*it << ", ";
+                        os << +*it << ", ";
                     }
                     os << std::endl;
                 }
@@ -5654,9 +5654,9 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
                     auto it = auxList.begin();
                     for (; it != auxList.end(); it++)
                     {
-                        os << "      cellIndex: " << (int)it->cellIndex << std::endl;
-                        os << "      physCellId: " << (int)it->physCellId << std::endl;
-                        os << "      cellIndividualOffset: " << (int)it->cellIndividualOffset
+                        os << "      cellIndex: " << +it->cellIndex << std::endl;
+                        os << "      physCellId: " << +it->physCellId << std::endl;
+                        os << "      cellIndividualOffset: " << +it->cellIndividualOffset
                            << std::endl;
                         os << "      ------ " << std::endl;
                     }
@@ -5670,12 +5670,12 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
                     auto it = auxList.begin();
                     for (; it != auxList.end(); it++)
                     {
-                        os << "      cellIndex: " << (int)it->cellIndex << std::endl;
-                        os << "      physCellIdRange.start: " << (int)it->physCellIdRange.start
+                        os << "      cellIndex: " << +it->cellIndex << std::endl;
+                        os << "      physCellIdRange.start: " << +it->physCellIdRange.start
                            << std::endl;
                         os << "      physCellIdRange.haveRange: " << it->physCellIdRange.haveRange
                            << std::endl;
-                        os << "      physCellIdRange.range: " << (int)it->physCellIdRange.range
+                        os << "      physCellIdRange.range: " << +it->physCellIdRange.range
                            << std::endl;
                         os << "      ------ " << std::endl;
                     }
@@ -5684,7 +5684,7 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
                 os << "    haveCellForWhichToReportCGI: "
                    << it->measObjectEutra.haveCellForWhichToReportCGI << std::endl;
                 os << "    cellForWhichToReportCGI: "
-                   << (int)it->measObjectEutra.cellForWhichToReportCGI << std::endl;
+                   << +it->measObjectEutra.cellForWhichToReportCGI << std::endl;
                 os << "    ------------- " << std::endl;
             }
         }
@@ -5697,54 +5697,54 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
             auto it = auxList.begin();
             for (; it != auxList.end(); it++)
             {
-                os << "    reportConfigId: " << (int)it->reportConfigId << std::endl;
-                os << "    reportConfigEutra.triggerType  "
-                   << (int)it->reportConfigEutra.triggerType << std::endl;
+                os << "    reportConfigId: " << +it->reportConfigId << std::endl;
+                os << "    reportConfigEutra.triggerType  " << +it->reportConfigEutra.triggerType
+                   << std::endl;
                 if (it->reportConfigEutra.triggerType == LteRrcSap::ReportConfigEutra::EVENT)
                 {
-                    os << "    reportConfigEutra.eventId  " << (int)it->reportConfigEutra.eventId
+                    os << "    reportConfigEutra.eventId  " << +it->reportConfigEutra.eventId
                        << std::endl;
                     if (it->reportConfigEutra.eventId == LteRrcSap::ReportConfigEutra::EVENT_A3)
                     {
                         os << "    reportConfigEutra.reportOnLeave  "
-                           << (int)it->reportConfigEutra.reportOnLeave << std::endl;
-                        os << "    reportConfigEutra.a3Offset  "
-                           << (int)it->reportConfigEutra.a3Offset << std::endl;
+                           << +it->reportConfigEutra.reportOnLeave << std::endl;
+                        os << "    reportConfigEutra.a3Offset  " << +it->reportConfigEutra.a3Offset
+                           << std::endl;
                     }
                     else
                     {
                         os << "    reportConfigEutra.threshold1.choice  "
-                           << (int)it->reportConfigEutra.threshold1.choice << std::endl;
+                           << +it->reportConfigEutra.threshold1.choice << std::endl;
                         os << "    reportConfigEutra.threshold1.range  "
-                           << (int)it->reportConfigEutra.threshold1.range << std::endl;
+                           << +it->reportConfigEutra.threshold1.range << std::endl;
                         if (it->reportConfigEutra.eventId == LteRrcSap::ReportConfigEutra::EVENT_A5)
                         {
                             os << "    reportConfigEutra.threshold2.choice  "
-                               << (int)it->reportConfigEutra.threshold2.choice << std::endl;
+                               << +it->reportConfigEutra.threshold2.choice << std::endl;
                             os << "    reportConfigEutra.threshold2.range  "
-                               << (int)it->reportConfigEutra.threshold2.range << std::endl;
+                               << +it->reportConfigEutra.threshold2.range << std::endl;
                         }
                     }
-                    os << "    reportConfigEutra.hysteresis  "
-                       << (int)it->reportConfigEutra.hysteresis << std::endl;
+                    os << "    reportConfigEutra.hysteresis  " << +it->reportConfigEutra.hysteresis
+                       << std::endl;
                     os << "    reportConfigEutra.timeToTrigger  "
-                       << (int)it->reportConfigEutra.timeToTrigger << std::endl;
+                       << +it->reportConfigEutra.timeToTrigger << std::endl;
                 }
                 else
                 {
-                    os << "    reportConfigEutra.purpose  " << (int)it->reportConfigEutra.purpose
+                    os << "    reportConfigEutra.purpose  " << +it->reportConfigEutra.purpose
                        << std::endl;
                 }
                 os << "    reportConfigEutra.triggerQuantity  "
-                   << (int)it->reportConfigEutra.triggerQuantity << std::endl;
+                   << +it->reportConfigEutra.triggerQuantity << std::endl;
                 os << "    reportConfigEutra.reportQuantity  "
-                   << (int)it->reportConfigEutra.reportQuantity << std::endl;
+                   << +it->reportConfigEutra.reportQuantity << std::endl;
                 os << "    reportConfigEutra.maxReportCells  "
-                   << (int)it->reportConfigEutra.maxReportCells << std::endl;
+                   << +it->reportConfigEutra.maxReportCells << std::endl;
                 os << "    reportConfigEutra.reportInterval  "
-                   << (int)it->reportConfigEutra.reportInterval << std::endl;
-                os << "    reportConfigEutra.reportAmount  "
-                   << (int)it->reportConfigEutra.reportAmount << std::endl;
+                   << +it->reportConfigEutra.reportInterval << std::endl;
+                os << "    reportConfigEutra.reportAmount  " << +it->reportConfigEutra.reportAmount
+                   << std::endl;
             }
         }
 
@@ -5755,9 +5755,9 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
             auto it = auxList.begin();
             for (; it != auxList.end(); it++)
             {
-                os << "    measId: " << (int)it->measId << std::endl;
-                os << "    measObjectId: " << (int)it->measObjectId << std::endl;
-                os << "    reportConfigId: " << (int)it->reportConfigId << std::endl;
+                os << "    measId: " << +it->measId << std::endl;
+                os << "    measObjectId: " << +it->measObjectId << std::endl;
+                os << "    reportConfigId: " << +it->reportConfigId << std::endl;
                 os << "    ------ " << std::endl;
             }
         }
@@ -5766,9 +5766,9 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
         if (m_measConfig.haveQuantityConfig)
         {
             os << "    filterCoefficientRSRP: "
-               << (int)m_measConfig.quantityConfig.filterCoefficientRSRP << std::endl;
-            os << "    filterCoefficientRSRQ:"
-               << (int)m_measConfig.quantityConfig.filterCoefficientRSRQ << std::endl;
+               << +m_measConfig.quantityConfig.filterCoefficientRSRP << std::endl;
+            os << "    filterCoefficientRSRQ:" << +m_measConfig.quantityConfig.filterCoefficientRSRQ
+               << std::endl;
         }
 
         os << "  haveMeasGapConfig: " << m_measConfig.haveMeasGapConfig << std::endl;
@@ -5777,13 +5777,13 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
             os << "    measGapConfig.type: " << m_measConfig.measGapConfig.type << std::endl;
             os << "    measGapConfig.gap (gap0/1,value): ("
                << m_measConfig.measGapConfig.gapOffsetChoice << ","
-               << (int)m_measConfig.measGapConfig.gapOffsetValue << ")" << std::endl;
+               << +m_measConfig.measGapConfig.gapOffsetValue << ")" << std::endl;
         }
 
         os << "  haveSmeasure: " << m_measConfig.haveSmeasure << std::endl;
         if (m_measConfig.haveSmeasure)
         {
-            os << "    sMeasure: " << (int)m_measConfig.sMeasure << std::endl;
+            os << "    sMeasure: " << +m_measConfig.sMeasure << std::endl;
         }
 
         os << "  haveSpeedStatePars: " << m_measConfig.haveSpeedStatePars << std::endl;
@@ -5791,51 +5791,50 @@ RrcConnectionReconfigurationHeader::Print(std::ostream& os) const
         {
             os << "    speedStatePars.type: " << m_measConfig.speedStatePars.type << std::endl;
             os << "    speedStatePars.mobilityStateParameters.tEvaluation: "
-               << (int)m_measConfig.speedStatePars.mobilityStateParameters.tEvaluation << std::endl;
+               << +m_measConfig.speedStatePars.mobilityStateParameters.tEvaluation << std::endl;
             os << "    speedStatePars.mobilityStateParameters.tHystNormal: "
-               << (int)m_measConfig.speedStatePars.mobilityStateParameters.tHystNormal << std::endl;
+               << +m_measConfig.speedStatePars.mobilityStateParameters.tHystNormal << std::endl;
             os << "    speedStatePars.mobilityStateParameters.nCellChangeMedium: "
-               << (int)m_measConfig.speedStatePars.mobilityStateParameters.nCellChangeMedium
+               << +m_measConfig.speedStatePars.mobilityStateParameters.nCellChangeMedium
                << std::endl;
             os << "    speedStatePars.mobilityStateParameters.nCellChangeHigh: "
-               << (int)m_measConfig.speedStatePars.mobilityStateParameters.nCellChangeHigh
-               << std::endl;
+               << +m_measConfig.speedStatePars.mobilityStateParameters.nCellChangeHigh << std::endl;
             os << "    speedStatePars.timeToTriggerSf.sfMedium: "
-               << (int)m_measConfig.speedStatePars.timeToTriggerSf.sfMedium << std::endl;
+               << +m_measConfig.speedStatePars.timeToTriggerSf.sfMedium << std::endl;
             os << "    speedStatePars.timeToTriggerSf.sfHigh: "
-               << (int)m_measConfig.speedStatePars.timeToTriggerSf.sfHigh << std::endl;
+               << +m_measConfig.speedStatePars.timeToTriggerSf.sfHigh << std::endl;
         }
     }
 
     os << "haveMobilityControlInfo: " << m_haveMobilityControlInfo << std::endl;
     if (m_haveMobilityControlInfo)
     {
-        os << "targetPhysCellId: " << (int)m_mobilityControlInfo.targetPhysCellId << std::endl;
+        os << "targetPhysCellId: " << +m_mobilityControlInfo.targetPhysCellId << std::endl;
         os << "haveCarrierFreq: " << m_mobilityControlInfo.haveCarrierFreq << std::endl;
         if (m_mobilityControlInfo.haveCarrierFreq)
         {
             os << "  carrierFreq.dlCarrierFreq: "
-               << (int)m_mobilityControlInfo.carrierFreq.dlCarrierFreq << std::endl;
+               << +m_mobilityControlInfo.carrierFreq.dlCarrierFreq << std::endl;
             os << "  carrierFreq.dlCarrierFreq: "
-               << (int)m_mobilityControlInfo.carrierFreq.ulCarrierFreq << std::endl;
+               << +m_mobilityControlInfo.carrierFreq.ulCarrierFreq << std::endl;
         }
         os << "haveCarrierBandwidth: " << m_mobilityControlInfo.haveCarrierBandwidth << std::endl;
         if (m_mobilityControlInfo.haveCarrierBandwidth)
         {
             os << "  carrierBandwidth.dlBandwidth: "
-               << (int)m_mobilityControlInfo.carrierBandwidth.dlBandwidth << std::endl;
+               << +m_mobilityControlInfo.carrierBandwidth.dlBandwidth << std::endl;
             os << "  carrierBandwidth.ulBandwidth: "
-               << (int)m_mobilityControlInfo.carrierBandwidth.ulBandwidth << std::endl;
+               << +m_mobilityControlInfo.carrierBandwidth.ulBandwidth << std::endl;
         }
-        os << "newUeIdentity: " << (int)m_mobilityControlInfo.newUeIdentity << std::endl;
+        os << "newUeIdentity: " << +m_mobilityControlInfo.newUeIdentity << std::endl;
         os << "haveRachConfigDedicated: " << m_mobilityControlInfo.haveRachConfigDedicated
            << std::endl;
         if (m_mobilityControlInfo.haveRachConfigDedicated)
         {
-            os << "raPreambleIndex: "
-               << (int)m_mobilityControlInfo.rachConfigDedicated.raPreambleIndex << std::endl;
+            os << "raPreambleIndex: " << +m_mobilityControlInfo.rachConfigDedicated.raPreambleIndex
+               << std::endl;
             os << "raPrachMaskIndex: "
-               << (int)m_mobilityControlInfo.rachConfigDedicated.raPrachMaskIndex << std::endl;
+               << +m_mobilityControlInfo.rachConfigDedicated.raPrachMaskIndex << std::endl;
         }
     }
     os << "haveRadioResourceConfigDedicated: " << m_haveRadioResourceConfigDedicated << std::endl;
@@ -6174,21 +6173,21 @@ HandoverPreparationInfoHeader::Print(std::ostream& os) const
 {
     RrcAsn1Header::Print(os, m_asConfig.sourceRadioResourceConfig);
     os << "sourceUeIdentity: " << m_asConfig.sourceUeIdentity << std::endl;
-    os << "dlBandwidth: " << (int)m_asConfig.sourceMasterInformationBlock.dlBandwidth << std::endl;
-    os << "systemFrameNumber: " << (int)m_asConfig.sourceMasterInformationBlock.systemFrameNumber
+    os << "dlBandwidth: " << +m_asConfig.sourceMasterInformationBlock.dlBandwidth << std::endl;
+    os << "systemFrameNumber: " << +m_asConfig.sourceMasterInformationBlock.systemFrameNumber
        << std::endl;
     os << "plmnIdentityInfo.plmnIdentity: "
-       << (int)m_asConfig.sourceSystemInformationBlockType1.cellAccessRelatedInfo.plmnIdentityInfo
-              .plmnIdentity
+       << +m_asConfig.sourceSystemInformationBlockType1.cellAccessRelatedInfo.plmnIdentityInfo
+               .plmnIdentity
        << std::endl;
     os << "cellAccessRelatedInfo.cellIdentity "
-       << (int)m_asConfig.sourceSystemInformationBlockType1.cellAccessRelatedInfo.cellIdentity
+       << +m_asConfig.sourceSystemInformationBlockType1.cellAccessRelatedInfo.cellIdentity
        << std::endl;
     os << "cellAccessRelatedInfo.csgIndication: "
        << m_asConfig.sourceSystemInformationBlockType1.cellAccessRelatedInfo.csgIndication
        << std::endl;
     os << "cellAccessRelatedInfo.csgIdentity: "
-       << (int)m_asConfig.sourceSystemInformationBlockType1.cellAccessRelatedInfo.csgIdentity
+       << +m_asConfig.sourceSystemInformationBlockType1.cellAccessRelatedInfo.csgIdentity
        << std::endl;
     os << "sourceDlCarrierFreq: " << m_asConfig.sourceDlCarrierFreq << std::endl;
 }
@@ -6346,8 +6345,8 @@ RrcConnectionReestablishmentRequestHeader::Deserialize(Buffer::Iterator bIterato
 void
 RrcConnectionReestablishmentRequestHeader::Print(std::ostream& os) const
 {
-    os << "ueIdentity.cRnti: " << (int)m_ueIdentity.cRnti << std::endl;
-    os << "ueIdentity.physCellId: " << (int)m_ueIdentity.physCellId << std::endl;
+    os << "ueIdentity.cRnti: " << +m_ueIdentity.cRnti << std::endl;
+    os << "ueIdentity.physCellId: " << +m_ueIdentity.physCellId << std::endl;
     os << "m_reestablishmentCause: " << m_reestablishmentCause << std::endl;
 }
 
@@ -6481,7 +6480,7 @@ RrcConnectionReestablishmentHeader::Deserialize(Buffer::Iterator bIterator)
 void
 RrcConnectionReestablishmentHeader::Print(std::ostream& os) const
 {
-    os << "rrcTransactionIdentifier: " << (int)m_rrcTransactionIdentifier << std::endl;
+    os << "rrcTransactionIdentifier: " << +m_rrcTransactionIdentifier << std::endl;
     os << "RadioResourceConfigDedicated: " << std::endl;
     RrcAsn1Header::Print(os, m_radioResourceConfigDedicated);
 }
@@ -6589,7 +6588,7 @@ RrcConnectionReestablishmentCompleteHeader::Deserialize(Buffer::Iterator bIterat
 void
 RrcConnectionReestablishmentCompleteHeader::Print(std::ostream& os) const
 {
-    os << "rrcTransactionIdentifier: " << (int)m_rrcTransactionIdentifier << std::endl;
+    os << "rrcTransactionIdentifier: " << +m_rrcTransactionIdentifier << std::endl;
 }
 
 void
@@ -6917,7 +6916,7 @@ RrcConnectionRejectHeader::Deserialize(Buffer::Iterator bIterator)
 void
 RrcConnectionRejectHeader::Print(std::ostream& os) const
 {
-    os << "wait time: " << (int)m_rrcConnectionReject.waitTime << std::endl;
+    os << "wait time: " << +m_rrcConnectionReject.waitTime << std::endl;
 }
 
 void
@@ -7024,13 +7023,13 @@ MeasurementReportHeader::Deserialize(Buffer::Iterator bIterator)
 void
 MeasurementReportHeader::Print(std::ostream& os) const
 {
-    os << "measId = " << (int)m_measurementReport.measResults.measId << std::endl;
-    os << "rsrpResult = " << (int)m_measurementReport.measResults.measResultPCell.rsrpResult
+    os << "measId = " << +m_measurementReport.measResults.measId << std::endl;
+    os << "rsrpResult = " << +m_measurementReport.measResults.measResultPCell.rsrpResult
        << std::endl;
-    os << "rsrqResult = " << (int)m_measurementReport.measResults.measResultPCell.rsrqResult
+    os << "rsrqResult = " << +m_measurementReport.measResults.measResultPCell.rsrqResult
        << std::endl;
-    os << "haveMeasResultNeighCells = "
-       << (int)m_measurementReport.measResults.haveMeasResultNeighCells << std::endl;
+    os << "haveMeasResultNeighCells = " << +m_measurementReport.measResults.haveMeasResultNeighCells
+       << std::endl;
 
     if (m_measurementReport.measResults.haveMeasResultNeighCells)
     {
@@ -7039,13 +7038,13 @@ MeasurementReportHeader::Print(std::ostream& os) const
         auto it = measResultListEutra.begin();
         for (; it != measResultListEutra.end(); it++)
         {
-            os << "   physCellId =" << (int)it->physCellId << std::endl;
+            os << "   physCellId =" << +it->physCellId << std::endl;
             os << "   haveCgiInfo =" << it->haveCgiInfo << std::endl;
             if (it->haveCgiInfo)
             {
-                os << "      plmnIdentity = " << (int)it->cgiInfo.plmnIdentity << std::endl;
-                os << "      cellIdentity = " << (int)it->cgiInfo.cellIdentity << std::endl;
-                os << "      trackingAreaCode = " << (int)it->cgiInfo.trackingAreaCode << std::endl;
+                os << "      plmnIdentity = " << +it->cgiInfo.plmnIdentity << std::endl;
+                os << "      cellIdentity = " << +it->cgiInfo.cellIdentity << std::endl;
+                os << "      trackingAreaCode = " << +it->cgiInfo.trackingAreaCode << std::endl;
                 os << "      havePlmnIdentityList = " << !it->cgiInfo.plmnIdentityList.empty()
                    << std::endl;
                 if (!it->cgiInfo.plmnIdentityList.empty())
@@ -7062,13 +7061,13 @@ MeasurementReportHeader::Print(std::ostream& os) const
             os << "   haveRsrpResult =" << it->haveRsrpResult << std::endl;
             if (it->haveRsrpResult)
             {
-                os << "   rsrpResult =" << (int)it->rsrpResult << std::endl;
+                os << "   rsrpResult =" << +it->rsrpResult << std::endl;
             }
 
             os << "   haveRsrqResult =" << it->haveRsrqResult << std::endl;
             if (it->haveRsrqResult)
             {
-                os << "   rsrqResult =" << (int)it->rsrqResult << std::endl;
+                os << "   rsrqResult =" << +it->rsrqResult << std::endl;
             }
         }
     }

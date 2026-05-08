@@ -66,7 +66,7 @@ LteRlcSduStatusTag::Deserialize(TagBuffer i)
 void
 LteRlcSduStatusTag::Print(std::ostream& os) const
 {
-    os << "SDU Status=" << (uint32_t)m_sduStatus;
+    os << "SDU Status=" << +m_sduStatus;
 }
 
 }; // namespace ns3

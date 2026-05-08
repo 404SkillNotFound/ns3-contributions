@@ -355,13 +355,13 @@ LteInterferenceTestCase::DoRun()
 void
 LteInterferenceTestCase::DlScheduling(DlSchedulingCallbackInfo dlInfo)
 {
-    NS_LOG_FUNCTION(dlInfo.frameNo << dlInfo.subframeNo << dlInfo.rnti << (uint32_t)dlInfo.mcsTb1
-                                   << dlInfo.sizeTb1 << (uint32_t)dlInfo.mcsTb2 << dlInfo.sizeTb2);
+    NS_LOG_FUNCTION(dlInfo.frameNo << dlInfo.subframeNo << dlInfo.rnti << +dlInfo.mcsTb1
+                                   << dlInfo.sizeTb1 << +dlInfo.mcsTb2 << dlInfo.sizeTb2);
     // need to allow for RRC connection establishment + CQI feedback reception + persistent data
     // transmission
     if (Simulator::Now() > MilliSeconds(65))
     {
-        NS_TEST_ASSERT_MSG_EQ((uint32_t)dlInfo.mcsTb1, (uint32_t)m_dlMcs, "Wrong DL MCS ");
+        NS_TEST_ASSERT_MSG_EQ(+dlInfo.mcsTb1, static_cast<uint32_t>(m_dlMcs), "Wrong DL MCS ");
     }
 }
 
@@ -372,10 +372,10 @@ LteInterferenceTestCase::UlScheduling(uint32_t frameNo,
                                       uint8_t mcs,
                                       uint16_t sizeTb)
 {
-    NS_LOG_FUNCTION(frameNo << subframeNo << rnti << (uint32_t)mcs << sizeTb);
+    NS_LOG_FUNCTION(frameNo << subframeNo << rnti << +mcs << sizeTb);
     // need to allow for RRC connection establishment + SRS transmission
     if (Simulator::Now() > MilliSeconds(50))
     {
-        NS_TEST_ASSERT_MSG_EQ((uint32_t)mcs, (uint32_t)m_ulMcs, "Wrong UL MCS");
+        NS_TEST_ASSERT_MSG_EQ(+mcs, static_cast<uint32_t>(m_ulMcs), "Wrong UL MCS");
     }
 }

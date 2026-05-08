@@ -304,10 +304,11 @@ LenaRrFfMacSchedulerTestCase::DoRun()
         uint64_t imsi = ueDevs.Get(i)->GetObject<LteUeNetDevice>()->GetImsi();
         uint8_t lcId = 3;
         dlDataRxed.push_back(rlcStats->GetDlRxData(imsi, lcId));
-        NS_LOG_INFO("\tUser " << i << " imsi " << imsi << " lcid " << (uint16_t)lcId
-                              << " bytes rxed " << (double)dlDataRxed.at(i) << "  thr "
-                              << (double)dlDataRxed.at(i) / statsDuration << " ref " << m_thrRefDl);
-        NS_TEST_ASSERT_MSG_EQ_TOL((double)dlDataRxed.at(i) / statsDuration,
+        NS_LOG_INFO("\tUser " << i << " imsi " << imsi << " lcid " << +lcId << " bytes rxed "
+                              << static_cast<double>(dlDataRxed.at(i)) << "  thr "
+                              << static_cast<double>(dlDataRxed.at(i)) / statsDuration << " ref "
+                              << m_thrRefDl);
+        NS_TEST_ASSERT_MSG_EQ_TOL(static_cast<double>(dlDataRxed.at(i)) / statsDuration,
                                   m_thrRefDl,
                                   m_thrRefDl * tolerance,
                                   " Unfair Throughput!");
@@ -326,11 +327,12 @@ LenaRrFfMacSchedulerTestCase::DoRun()
         // get the lcId
         uint8_t lcId = 3;
         ulDataRxed.push_back(rlcStats->GetUlRxData(imsi, lcId));
-        NS_LOG_INFO("\tUser " << i << " imsi " << imsi << " lcid " << (uint16_t)lcId
-                              << " bytes rxed " << (double)ulDataRxed.at(i) << "  thr "
-                              << (double)ulDataRxed.at(i) / statsDuration << " ref " << m_thrRefUl
-                              << " txed " << rlcStats->GetUlTxData(imsi, lcId) / statsDuration);
-        NS_TEST_ASSERT_MSG_EQ_TOL((double)ulDataRxed.at(i) / statsDuration,
+        NS_LOG_INFO("\tUser " << i << " imsi " << imsi << " lcid " << +lcId << " bytes rxed "
+                              << static_cast<double>(ulDataRxed.at(i)) << "  thr "
+                              << static_cast<double>(ulDataRxed.at(i)) / statsDuration << " ref "
+                              << m_thrRefUl << " txed "
+                              << rlcStats->GetUlTxData(imsi, lcId) / statsDuration);
+        NS_TEST_ASSERT_MSG_EQ_TOL(static_cast<double>(ulDataRxed.at(i)) / statsDuration,
                                   m_thrRefUl,
                                   m_thrRefUl * tolerance,
                                   " Unfair Throughput!");

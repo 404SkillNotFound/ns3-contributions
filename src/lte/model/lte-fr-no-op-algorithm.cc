@@ -165,7 +165,7 @@ LteFrNoOpAlgorithm::DoGetMinContinuousUlBandwidth()
 void
 LteFrNoOpAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)measResults.measId);
+    NS_LOG_FUNCTION(this << rnti << +measResults.measId);
     NS_LOG_WARN("Method should not be called, because it is empty");
 }
 

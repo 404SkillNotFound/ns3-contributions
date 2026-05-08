@@ -366,14 +366,14 @@ UeManager::SetupDataRadioBearer(EpsBearer bearer,
                                 uint32_t gtpTeid,
                                 Ipv4Address transportLayerAddress)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)m_rnti);
+    NS_LOG_FUNCTION(this << +m_rnti);
 
     Ptr<LteDataRadioBearerInfo> drbInfo = CreateObject<LteDataRadioBearerInfo>();
     uint8_t drbid = AddDataRadioBearerInfo(drbInfo);
     uint8_t lcid = Drbid2Lcid(drbid);
     uint8_t bid = Drbid2Bid(drbid);
     NS_ASSERT_MSG(bearerId == 0 || bid == bearerId,
-                  "bearer ID mismatch (" << (uint32_t)bid << " != " << (uint32_t)bearerId
+                  "bearer ID mismatch (" << +bid << " != " << +bearerId
                                          << ", the assumption that ID are allocated in the same "
                                             "way by MME and RRC is not valid any more");
     drbInfo->m_epsBearer = bearer;
@@ -447,8 +447,8 @@ UeManager::SetupDataRadioBearer(EpsBearer bearer,
          ++itLcOnCcMapping)
     {
         NS_LOG_DEBUG(this << " RNTI " << itLcOnCcMapping->lc.rnti << "Lcid "
-                          << (uint16_t)itLcOnCcMapping->lc.lcId << " lcGroup "
-                          << (uint16_t)itLcOnCcMapping->lc.lcGroup << " ComponentCarrierId "
+                          << +itLcOnCcMapping->lc.lcId << " lcGroup "
+                          << +itLcOnCcMapping->lc.lcGroup << " ComponentCarrierId "
                           << itLcOnCcMapping->componentCarrierId);
         uint8_t index = itLcOnCcMapping->componentCarrierId;
         LteEnbCmacSapProvider::LcInfo lcinfo = itLcOnCcMapping->lc;
@@ -485,7 +485,7 @@ UeManager::SetupDataRadioBearer(EpsBearer bearer,
 void
 UeManager::RecordDataRadioBearersToBeStarted()
 {
-    NS_LOG_FUNCTION(this << (uint32_t)m_rnti);
+    NS_LOG_FUNCTION(this << +m_rnti);
     for (auto it = m_drbMap.begin(); it != m_drbMap.end(); ++it)
     {
         m_drbsToBeStarted.push_back(it->first);
@@ -495,7 +495,7 @@ UeManager::RecordDataRadioBearersToBeStarted()
 void
 UeManager::StartDataRadioBearers()
 {
-    NS_LOG_FUNCTION(this << (uint32_t)m_rnti);
+    NS_LOG_FUNCTION(this << +m_rnti);
     for (auto drbIdIt = m_drbsToBeStarted.begin(); drbIdIt != m_drbsToBeStarted.end(); ++drbIdIt)
     {
         auto drbIt = m_drbMap.find(*drbIdIt);
@@ -512,7 +512,7 @@ UeManager::StartDataRadioBearers()
 void
 UeManager::ReleaseDataRadioBearer(uint8_t drbid)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)m_rnti << (uint32_t)drbid);
+    NS_LOG_FUNCTION(this << +m_rnti << +drbid);
     uint8_t lcid = Drbid2Lcid(drbid);
     auto it = m_drbMap.find(drbid);
     NS_ASSERT_MSG(it != m_drbMap.end(),
@@ -555,7 +555,7 @@ UeManager::ReleaseDataRadioBearer(uint8_t drbid)
 void
 LteEnbRrc::DoSendReleaseDataRadioBearer(uint64_t imsi, uint16_t rnti, uint8_t bearerId)
 {
-    NS_LOG_FUNCTION(this << imsi << rnti << (uint16_t)bearerId);
+    NS_LOG_FUNCTION(this << imsi << rnti << +bearerId);
 
     // check if the RNTI to be removed is not stale
     if (HasUeManager(rnti))
@@ -578,9 +578,8 @@ UeManager::RecvIdealUeContextRemoveRequest(uint16_t rnti)
     {
         for (const auto& it : m_drbMap)
         {
-            NS_LOG_DEBUG("Sending release of bearer id : "
-                         << (uint16_t)(it.first)
-                         << "LCID : " << (uint16_t)(it.second->m_logicalChannelIdentity));
+            NS_LOG_DEBUG("Sending release of bearer id : " << +it.first << "LCID : "
+                                                           << +it.second->m_logicalChannelIdentity);
             // Bearer de-activation indication towards epc-enb application
             m_rrc->m_s1SapProvider->DoSendReleaseIndication(GetImsi(), rnti, it.first);
         }
@@ -889,7 +888,7 @@ UeManager::GetRrcConnectionReconfigurationForHandover(uint8_t componentCarrierId
 void
 UeManager::SendPacket(uint8_t bid, Ptr<Packet> p)
 {
-    NS_LOG_FUNCTION(this << p << (uint16_t)bid);
+    NS_LOG_FUNCTION(this << p << +bid);
     LtePdcpSapProvider::TransmitPdcpSduParameters params;
     params.pdcpSdu = p;
     params.rnti = m_rnti;
@@ -912,7 +911,7 @@ UeManager::SendPacket(uint8_t bid, Ptr<Packet> p)
 void
 UeManager::SendData(uint8_t bid, Ptr<Packet> p)
 {
-    NS_LOG_FUNCTION(this << p << (uint16_t)bid);
+    NS_LOG_FUNCTION(this << p << +bid);
     switch (m_state)
     {
     case INITIAL_RANDOM_ACCESS:
@@ -1069,7 +1068,7 @@ void
 UeManager::SendRrcConnectionRelease()
 {
     // TODO implement in the 3gpp way, see Section 5.3.8 of 3GPP TS 36.331.
-    NS_LOG_FUNCTION(this << (uint32_t)m_rnti);
+    NS_LOG_FUNCTION(this << +m_rnti);
     // De-activation towards UE, it will deactivate all bearers
     LteRrcSap::RrcConnectionRelease msg;
     msg.rrcTransactionIdentifier = this->GetNewRrcTransactionIdentifier();
@@ -1298,26 +1297,24 @@ void
 UeManager::RecvMeasurementReport(LteRrcSap::MeasurementReport msg)
 {
     uint8_t measId = msg.measResults.measId;
-    NS_LOG_FUNCTION(this << (uint16_t)measId);
+    NS_LOG_FUNCTION(this << +measId);
     NS_LOG_LOGIC(
-        "measId " << (uint16_t)measId << " haveMeasResultNeighCells "
+        "measId " << +measId << " haveMeasResultNeighCells "
                   << msg.measResults.haveMeasResultNeighCells << " measResultListEutra "
                   << msg.measResults.measResultListEutra.size() << " haveMeasResultServFreqList "
                   << msg.measResults.haveMeasResultServFreqList << " measResultServFreqList "
                   << msg.measResults.measResultServFreqList.size());
-    NS_LOG_LOGIC("serving cellId "
-                 << m_rrc->ComponentCarrierToCellId(m_componentCarrierId) << " RSRP "
-                 << (uint16_t)msg.measResults.measResultPCell.rsrpResult << " RSRQ "
-                 << (uint16_t)msg.measResults.measResultPCell.rsrqResult);
+    NS_LOG_LOGIC("serving cellId " << m_rrc->ComponentCarrierToCellId(m_componentCarrierId)
+                                   << " RSRP " << +msg.measResults.measResultPCell.rsrpResult
+                                   << " RSRQ " << +msg.measResults.measResultPCell.rsrqResult);
 
     for (auto it = msg.measResults.measResultListEutra.begin();
          it != msg.measResults.measResultListEutra.end();
          ++it)
     {
         NS_LOG_LOGIC("neighbour cellId " << it->physCellId << " RSRP "
-                                         << (it->haveRsrpResult ? (uint16_t)it->rsrpResult : 255)
-                                         << " RSRQ "
-                                         << (it->haveRsrqResult ? (uint16_t)it->rsrqResult : 255));
+                                         << (it->haveRsrpResult ? +it->rsrpResult : 255) << " RSRQ "
+                                         << (it->haveRsrqResult ? +it->rsrqResult : 255));
     }
 
     if ((m_rrc->m_handoverManagementSapProvider != nullptr) &&
@@ -1530,7 +1527,7 @@ UeManager::AddDataRadioBearerInfo(Ptr<LteDataRadioBearerInfo> drbInfo)
 Ptr<LteDataRadioBearerInfo>
 UeManager::GetDataRadioBearerInfo(uint8_t drbid)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)drbid);
+    NS_LOG_FUNCTION(this << +drbid);
     NS_ASSERT(0 != drbid);
     auto it = m_drbMap.find(drbid);
     NS_ABORT_IF(it == m_drbMap.end());
@@ -1540,7 +1537,7 @@ UeManager::GetDataRadioBearerInfo(uint8_t drbid)
 void
 UeManager::RemoveDataRadioBearerInfo(uint8_t drbid)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)drbid);
+    NS_LOG_FUNCTION(this << +drbid);
     auto it = m_drbMap.find(drbid);
     NS_ASSERT_MSG(it != m_drbMap.end(),
                   "request to remove radio bearer with unknown drbid " << drbid);
@@ -2286,7 +2283,7 @@ LteEnbRrc::GetLteEnbCphySapUser(uint8_t pos)
 bool
 LteEnbRrc::HasUeManager(uint16_t rnti) const
 {
-    NS_LOG_FUNCTION(this << (uint32_t)rnti);
+    NS_LOG_FUNCTION(this << +rnti);
     auto it = m_ueMap.find(rnti);
     return (it != m_ueMap.end());
 }
@@ -2294,7 +2291,7 @@ LteEnbRrc::HasUeManager(uint16_t rnti) const
 Ptr<UeManager>
 LteEnbRrc::GetUeManager(uint16_t rnti)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)rnti);
+    NS_LOG_FUNCTION(this << +rnti);
     NS_ASSERT(0 != rnti);
     auto it = m_ueMap.find(rnti);
     NS_ASSERT_MSG(it != m_ueMap.end(), "UE manager for RNTI " << rnti << " not found");
@@ -2559,7 +2556,7 @@ LteEnbRrc::SendData(Ptr<Packet> packet)
 
     NS_LOG_INFO("Sending a packet of " << packet->GetSize() << " bytes to IMSI "
                                        << ueManager->GetImsi() << ", RNTI " << ueManager->GetRnti()
-                                       << ", BID " << (uint16_t)tag.GetBid());
+                                       << ", BID " << +tag.GetBid());
     ueManager->SendData(tag.GetBid(), packet);
 
     return true;
@@ -3073,7 +3070,7 @@ LteEnbRrc::DoRrcConfigurationUpdateInd(LteEnbCmacSapUser::UeConfig cmacParams)
 void
 LteEnbRrc::DoNotifyLcConfigResult(uint16_t rnti, uint8_t lcid, bool success)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)rnti);
+    NS_LOG_FUNCTION(this << +rnti);
     NS_FATAL_ERROR("not implemented");
 }
 
@@ -3195,7 +3192,7 @@ LteEnbRrc::AddUe(UeManager::State state, uint8_t componentCarrierId)
     NS_ASSERT_MSG(found, "no more RNTIs available (do you have more than 65535 UEs in a cell?)");
     m_lastAllocatedRnti = rnti;
     Ptr<UeManager> ueManager = CreateObject<UeManager>(this, rnti, state, componentCarrierId);
-    m_ccmRrcSapProvider->AddUe(rnti, (uint8_t)state);
+    m_ccmRrcSapProvider->AddUe(rnti, static_cast<uint8_t>(state));
     m_ueMap.insert(std::pair<uint16_t, Ptr<UeManager>>(rnti, ueManager));
     ueManager->Initialize();
     const uint16_t cellId = ComponentCarrierToCellId(componentCarrierId);
@@ -3208,7 +3205,7 @@ LteEnbRrc::AddUe(UeManager::State state, uint8_t componentCarrierId)
 void
 LteEnbRrc::RemoveUe(uint16_t rnti)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)rnti);
+    NS_LOG_FUNCTION(this << +rnti);
     auto it = m_ueMap.find(rnti);
     NS_ASSERT_MSG(it != m_ueMap.end(), "request to remove UE info with unknown rnti " << rnti);
     uint64_t imsi = it->second->GetImsi();
@@ -3478,7 +3475,7 @@ LteEnbRrc::SendSystemInformation()
 bool
 LteEnbRrc::IsRandomAccessCompleted(uint16_t rnti)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)rnti);
+    NS_LOG_FUNCTION(this << +rnti);
     Ptr<UeManager> ueManager = GetUeManager(rnti);
     switch (ueManager->GetState())
     {

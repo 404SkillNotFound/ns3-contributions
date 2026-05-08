@@ -72,7 +72,7 @@ LtePdcpHeader::GetInstanceTypeId() const
 void
 LtePdcpHeader::Print(std::ostream& os) const
 {
-    os << "D/C=" << (uint16_t)m_dcBit;
+    os << "D/C=" << +m_dcBit;
     os << " SN=" << m_sequenceNumber;
 }
 

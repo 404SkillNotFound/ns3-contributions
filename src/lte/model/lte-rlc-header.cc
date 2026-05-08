@@ -120,8 +120,8 @@ LteRlcHeader::Print(std::ostream& os) const
     auto it2 = m_lengthIndicators.begin();
 
     os << "Len=" << m_headerLength;
-    os << " FI=" << (uint16_t)m_framingInfo;
-    os << " E=" << (uint16_t)(*it1);
+    os << " FI=" << +m_framingInfo;
+    os << " E=" << +(*it1);
     os << " SN=" << m_sequenceNumber;
 
     it1++;
@@ -131,7 +131,7 @@ LteRlcHeader::Print(std::ostream& os) const
     }
     while (it1 != m_extensionBits.end())
     {
-        os << (uint16_t)(*it1);
+        os << +(*it1);
         it1++;
     }
 
@@ -141,7 +141,7 @@ LteRlcHeader::Print(std::ostream& os) const
     }
     while (it2 != m_lengthIndicators.end())
     {
-        os << (uint16_t)(*it2) << " ";
+        os << static_cast<uint16_t>(*it2) << " ";
         it2++;
     }
 }

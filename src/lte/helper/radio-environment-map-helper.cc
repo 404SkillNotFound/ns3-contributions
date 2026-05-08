@@ -234,7 +234,7 @@ RadioEnvironmentMapHelper::DelayedInstall()
     m_xStep = (m_xMax - m_xMin) / (m_xRes - 1);
     m_yStep = (m_yMax - m_yMin) / (m_yRes - 1);
 
-    if ((double)m_xRes * (double)m_yRes < (double)m_maxPointsPerIteration)
+    if (static_cast<double>(m_xRes) * m_yRes < m_maxPointsPerIteration)
     {
         m_maxPointsPerIteration = m_xRes * m_yRes;
     }

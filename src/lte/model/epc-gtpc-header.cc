@@ -113,7 +113,7 @@ GtpcHeader::PreDeserialize(Buffer::Iterator& i)
 void
 GtpcHeader::Print(std::ostream& os) const
 {
-    os << " messageType " << (uint32_t)m_messageType << " messageLength " << m_messageLength;
+    os << " messageType " << +m_messageType << " messageLength " << m_messageLength;
     os << " TEID " << m_teid << " sequenceNumber " << m_sequenceNumber;
 }
 
@@ -201,7 +201,7 @@ uint32_t
 GtpcIes::DeserializeImsi(Buffer::Iterator& i, uint64_t& imsi) const
 {
     uint8_t type = i.ReadU8();
-    NS_ASSERT_MSG(type == 1, "Wrong IMSI IE type = " << (uint16_t)type);
+    NS_ASSERT_MSG(type == 1, "Wrong IMSI IE type = " << +type);
     uint16_t length = i.ReadNtohU16();
     NS_ASSERT_MSG(length == 8, "Wrong IMSI IE length");
     uint8_t instance = i.ReadU8() & 0x0f;
@@ -225,7 +225,7 @@ uint32_t
 GtpcIes::DeserializeCause(Buffer::Iterator& i, Cause_t& cause) const
 {
     uint8_t type = i.ReadU8();
-    NS_ASSERT_MSG(type == 2, "Wrong Cause IE type = " << (uint16_t)type);
+    NS_ASSERT_MSG(type == 2, "Wrong Cause IE type = " << +type);
     uint16_t length = i.ReadNtohU16();
     NS_ASSERT_MSG(length == 2, "Wrong Cause IE length");
     uint8_t instance = i.ReadU8() & 0x0f;
@@ -249,7 +249,7 @@ uint32_t
 GtpcIes::DeserializeEbi(Buffer::Iterator& i, uint8_t& epsBearerId) const
 {
     uint8_t type = i.ReadU8();
-    NS_ASSERT_MSG(type == 73, "Wrong EBI IE type = " << (uint16_t)type);
+    NS_ASSERT_MSG(type == 73, "Wrong EBI IE type = " << +type);
     uint16_t length = i.ReadNtohU16();
     NS_ASSERT_MSG(length == 1, "Wrong EBI IE length");
     uint8_t instance = i.ReadU8();
@@ -303,7 +303,7 @@ uint32_t
 GtpcIes::DeserializeBearerQos(Buffer::Iterator& i, EpsBearer& bearerQos)
 {
     uint8_t type = i.ReadU8();
-    NS_ASSERT_MSG(type == 80, "Wrong Bearer QoS IE type = " << (uint16_t)type);
+    NS_ASSERT_MSG(type == 80, "Wrong Bearer QoS IE type = " << +type);
     uint16_t length = i.ReadNtohU16();
     NS_ASSERT_MSG(length == 22, "Wrong Bearer QoS IE length");
     uint8_t instance = i.ReadU8();
@@ -354,7 +354,7 @@ uint32_t
 GtpcIes::DeserializeBearerTft(Buffer::Iterator& i, Ptr<EpcTft> epcTft) const
 {
     uint8_t type = i.ReadU8();
-    NS_ASSERT_MSG(type == 84, "Wrong Bearer TFT IE type = " << (uint16_t)type);
+    NS_ASSERT_MSG(type == 84, "Wrong Bearer TFT IE type = " << +type);
     i.ReadNtohU16();
     i.ReadU8();
     uint8_t numberOfPacketFilters = i.ReadU8() & 0x0f;
@@ -409,7 +409,7 @@ uint32_t
 GtpcIes::DeserializeUliEcgi(Buffer::Iterator& i, uint32_t& uliEcgi) const
 {
     uint8_t type = i.ReadU8();
-    NS_ASSERT_MSG(type == 86, "Wrong ULI ECGI IE type = " << (uint16_t)type);
+    NS_ASSERT_MSG(type == 86, "Wrong ULI ECGI IE type = " << +type);
     uint16_t length = i.ReadNtohU16();
     NS_ASSERT_MSG(length == 8, "Wrong ULI ECGI IE length");
     uint8_t instance = i.ReadU8() & 0x0f;
@@ -426,16 +426,17 @@ GtpcIes::SerializeFteid(Buffer::Iterator& i, GtpcHeader::Fteid_t fteid) const
     i.WriteU8(87);     // IE Type = Fully Qualified TEID (F-TEID)
     i.WriteHtonU16(9); // Length
     i.WriteU8(0);      // Spare + Instance
-    i.WriteU8(0x80 | ((uint8_t)fteid.interfaceType & 0x1f)); // IP version flag + Iface type
-    i.WriteHtonU32(fteid.teid);                              // TEID
-    i.WriteHtonU32(fteid.addr.Get());                        // IPv4 address
+    i.WriteU8(0x80 |
+              (static_cast<uint8_t>(fteid.interfaceType) & 0x1f)); // IP version flag + Iface type
+    i.WriteHtonU32(fteid.teid);                                    // TEID
+    i.WriteHtonU32(fteid.addr.Get());                              // IPv4 address
 }
 
 uint32_t
 GtpcIes::DeserializeFteid(Buffer::Iterator& i, GtpcHeader::Fteid_t& fteid) const
 {
     uint8_t type = i.ReadU8();
-    NS_ASSERT_MSG(type == 87, "Wrong FTEID IE type = " << (uint16_t)type);
+    NS_ASSERT_MSG(type == 87, "Wrong FTEID IE type = " << +type);
     uint16_t length = i.ReadNtohU16();
     NS_ASSERT_MSG(length == 9, "Wrong FTEID IE length");
     uint8_t instance = i.ReadU8() & 0x0f;
@@ -460,7 +461,7 @@ uint32_t
 GtpcIes::DeserializeBearerContextHeader(Buffer::Iterator& i, uint16_t& length) const
 {
     uint8_t type = i.ReadU8();
-    NS_ASSERT_MSG(type == 93, "Wrong Bearer Context IE type = " << (uint16_t)type);
+    NS_ASSERT_MSG(type == 93, "Wrong Bearer Context IE type = " << +type);
     length = i.ReadNtohU16();
     uint8_t instance = i.ReadU8() & 0x0f;
     NS_ASSERT_MSG(instance == 0, "Wrong Bearer Context IE instance");
@@ -975,7 +976,7 @@ GtpcModifyBearerResponseMessage::Deserialize(Buffer::Iterator start)
 void
 GtpcModifyBearerResponseMessage::Print(std::ostream& os) const
 {
-    os << " cause " << (uint16_t)m_cause;
+    os << " cause " << +m_cause;
 }
 
 GtpcModifyBearerResponseMessage::Cause_t
@@ -1071,7 +1072,7 @@ GtpcDeleteBearerCommandMessage::Print(std::ostream& os) const
     os << " bearerContexts [";
     for (auto& bearerContext : m_bearerContexts)
     {
-        os << (uint16_t)bearerContext.m_epsBearerId << " ";
+        os << +bearerContext.m_epsBearerId << " ";
     }
     os << "]";
 }
@@ -1164,7 +1165,7 @@ GtpcDeleteBearerRequestMessage::Print(std::ostream& os) const
     os << " epsBearerIds [";
     for (auto& epsBearerId : m_epsBearerIds)
     {
-        os << (uint16_t)epsBearerId << " ";
+        os << +epsBearerId << " ";
     }
     os << "]";
 }
@@ -1258,10 +1259,10 @@ GtpcDeleteBearerResponseMessage::Deserialize(Buffer::Iterator start)
 void
 GtpcDeleteBearerResponseMessage::Print(std::ostream& os) const
 {
-    os << " cause " << (uint16_t)m_cause << " epsBearerIds [";
+    os << " cause " << +m_cause << " epsBearerIds [";
     for (auto& epsBearerId : m_epsBearerIds)
     {
-        os << (uint16_t)epsBearerId << " ";
+        os << +epsBearerId << " ";
     }
     os << "]";
 }

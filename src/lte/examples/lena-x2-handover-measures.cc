@@ -100,10 +100,11 @@ main(int argc, char* argv[])
     uint16_t numberOfUes = 1;
     uint16_t numberOfEnbs = 2;
     uint16_t numBearersPerUe = 0;
-    double distance = 500.0;                                        // m
-    double yForUe = 500.0;                                          // m
-    double speed = 20;                                              // m/s
-    double simTime = (double)(numberOfEnbs + 1) * distance / speed; // 1500 m / 20 m/s = 75 secs
+    double distance = 500.0; // m
+    double yForUe = 500.0;   // m
+    double speed = 20;       // m/s
+    double simTime =
+        static_cast<double>(numberOfEnbs + 1) * distance / speed; // 1500 m / 20 m/s = 75 secs
     double enbTxPowerDbm = 46.0;
 
     // change some default attributes so that they are reasonable for

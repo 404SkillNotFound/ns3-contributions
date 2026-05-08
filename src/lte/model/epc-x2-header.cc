@@ -88,10 +88,10 @@ EpcX2Header::Deserialize(Buffer::Iterator start)
 void
 EpcX2Header::Print(std::ostream& os) const
 {
-    os << "MessageType=" << (uint32_t)m_messageType;
-    os << " ProcedureCode=" << (uint32_t)m_procedureCode;
-    os << " LengthOfIEs=" << (uint32_t)m_lengthOfIes;
-    os << " NumberOfIEs=" << (uint32_t)m_numberOfIes;
+    os << "MessageType=" << +m_messageType;
+    os << " ProcedureCode=" << +m_procedureCode;
+    os << " LengthOfIEs=" << static_cast<uint32_t>(m_lengthOfIes);
+    os << " NumberOfIEs=" << static_cast<uint32_t>(m_numberOfIes);
 }
 
 uint8_t
@@ -208,7 +208,7 @@ EpcX2HandoverRequestHeader::Serialize(Buffer::Iterator start) const
 
     std::vector<EpcX2Sap::ErabToBeSetupItem>::size_type sz = m_erabsToBeSetupList.size();
     i.WriteHtonU32(sz); // number of bearers
-    for (int j = 0; j < (int)sz; j++)
+    for (int j = 0; j < static_cast<int>(sz); j++)
     {
         i.WriteHtonU16(m_erabsToBeSetupList[j].erabId);
         i.WriteHtonU16(m_erabsToBeSetupList[j].erabLevelQosParameters.qci);
@@ -306,10 +306,10 @@ EpcX2HandoverRequestHeader::Print(std::ostream& os) const
     {
         os << " [";
     }
-    for (int j = 0; j < (int)sz; j++)
+    for (int j = 0; j < static_cast<int>(sz); j++)
     {
         os << m_erabsToBeSetupList[j].erabId;
-        if (j < (int)sz - 1)
+        if (j < static_cast<int>(sz) - 1)
         {
             os << ", ";
         }
@@ -471,7 +471,7 @@ EpcX2HandoverRequestAckHeader::Serialize(Buffer::Iterator start) const
 
     std::vector<EpcX2Sap::ErabAdmittedItem>::size_type sz = m_erabsAdmittedList.size();
     i.WriteHtonU32(sz);
-    for (int j = 0; j < (int)sz; j++)
+    for (int j = 0; j < static_cast<int>(sz); j++)
     {
         i.WriteHtonU16(m_erabsAdmittedList[j].erabId);
         i.WriteHtonU32(m_erabsAdmittedList[j].ulGtpTeid);
@@ -480,7 +480,7 @@ EpcX2HandoverRequestAckHeader::Serialize(Buffer::Iterator start) const
 
     std::vector<EpcX2Sap::ErabNotAdmittedItem>::size_type sz2 = m_erabsNotAdmittedList.size();
     i.WriteHtonU32(sz2);
-    for (int j = 0; j < (int)sz2; j++)
+    for (int j = 0; j < static_cast<int>(sz2); j++)
     {
         i.WriteHtonU16(m_erabsNotAdmittedList[j].erabId);
         i.WriteHtonU16(m_erabsNotAdmittedList[j].cause);
@@ -546,10 +546,10 @@ EpcX2HandoverRequestAckHeader::Print(std::ostream& os) const
     {
         os << " [";
     }
-    for (int j = 0; j < (int)sz; j++)
+    for (int j = 0; j < static_cast<int>(sz); j++)
     {
         os << m_erabsAdmittedList[j].erabId;
-        if (j < (int)sz - 1)
+        if (j < static_cast<int>(sz) - 1)
         {
             os << ", ";
         }
@@ -565,10 +565,10 @@ EpcX2HandoverRequestAckHeader::Print(std::ostream& os) const
     {
         os << " [";
     }
-    for (int j = 0; j < (int)sz2; j++)
+    for (int j = 0; j < static_cast<int>(sz2); j++)
     {
         os << m_erabsNotAdmittedList[j].erabId;
-        if (j < (int)sz2 - 1)
+        if (j < static_cast<int>(sz2) - 1)
         {
             os << ", ";
         }
@@ -823,7 +823,7 @@ EpcX2SnStatusTransferHeader::Serialize(Buffer::Iterator start) const
         m_erabsSubjectToStatusTransferList.size();
     i.WriteHtonU16(sz); // number of ErabsSubjectToStatusTransferItems
 
-    for (int j = 0; j < (int)sz; j++)
+    for (int j = 0; j < static_cast<int>(sz); j++)
     {
         EpcX2Sap::ErabsSubjectToStatusTransferItem item = m_erabsSubjectToStatusTransferList[j];
 
@@ -898,10 +898,10 @@ EpcX2SnStatusTransferHeader::Print(std::ostream& os) const
     {
         os << " [";
     }
-    for (int j = 0; j < (int)sz; j++)
+    for (int j = 0; j < static_cast<int>(sz); j++)
     {
         os << m_erabsSubjectToStatusTransferList[j].erabId;
-        if (j < (int)sz - 1)
+        if (j < static_cast<int>(sz) - 1)
         {
             os << ", ";
         }
@@ -1121,7 +1121,7 @@ EpcX2LoadInformationHeader::Serialize(Buffer::Iterator start) const
     std::vector<EpcX2Sap::CellInformationItem>::size_type sz = m_cellInformationList.size();
     i.WriteHtonU16(sz); // number of cellInformationItems
 
-    for (int j = 0; j < (int)sz; j++)
+    for (int j = 0; j < static_cast<int>(sz); j++)
     {
         i.WriteHtonU16(m_cellInformationList[j].sourceCellId);
 
@@ -1129,7 +1129,7 @@ EpcX2LoadInformationHeader::Serialize(Buffer::Iterator start) const
         sz2 = m_cellInformationList[j].ulInterferenceOverloadIndicationList.size();
         i.WriteHtonU16(sz2); // number of UlInterferenceOverloadIndicationItem
 
-        for (int k = 0; k < (int)sz2; k++)
+        for (int k = 0; k < static_cast<int>(sz2); k++)
         {
             i.WriteU8(m_cellInformationList[j].ulInterferenceOverloadIndicationList[k]);
         }
@@ -1138,7 +1138,7 @@ EpcX2LoadInformationHeader::Serialize(Buffer::Iterator start) const
         sz3 = m_cellInformationList[j].ulHighInterferenceInformationList.size();
         i.WriteHtonU16(sz3); // number of UlHighInterferenceInformationItem
 
-        for (int k = 0; k < (int)sz3; k++)
+        for (int k = 0; k < static_cast<int>(sz3); k++)
         {
             i.WriteHtonU16(
                 m_cellInformationList[j].ulHighInterferenceInformationList[k].targetCellId);
@@ -1149,7 +1149,7 @@ EpcX2LoadInformationHeader::Serialize(Buffer::Iterator start) const
                       .ulHighInterferenceIndicationList.size();
             i.WriteHtonU16(sz4);
 
-            for (int m = 0; m < (int)sz4; m++)
+            for (int m = 0; m < static_cast<int>(sz4); m++)
             {
                 i.WriteU8(m_cellInformationList[j]
                               .ulHighInterferenceInformationList[k]
@@ -1161,7 +1161,7 @@ EpcX2LoadInformationHeader::Serialize(Buffer::Iterator start) const
         sz5 = m_cellInformationList[j].relativeNarrowbandTxBand.rntpPerPrbList.size();
         i.WriteHtonU16(sz5);
 
-        for (int k = 0; k < (int)sz5; k++)
+        for (int k = 0; k < static_cast<int>(sz5); k++)
         {
             i.WriteU8(m_cellInformationList[j].relativeNarrowbandTxBand.rntpPerPrbList[k]);
         }
@@ -1262,7 +1262,7 @@ EpcX2LoadInformationHeader::SetCellInformationList(
     m_headerLength += 2;
 
     std::vector<EpcX2Sap::CellInformationItem>::size_type sz = m_cellInformationList.size();
-    for (int j = 0; j < (int)sz; j++)
+    for (int j = 0; j < static_cast<int>(sz); j++)
     {
         m_headerLength += 2;
 
@@ -1274,7 +1274,7 @@ EpcX2LoadInformationHeader::SetCellInformationList(
         sz3 = m_cellInformationList[j].ulHighInterferenceInformationList.size();
         m_headerLength += 2;
 
-        for (int k = 0; k < (int)sz3; k++)
+        for (int k = 0; k < static_cast<int>(sz3); k++)
         {
             std::vector<bool>::size_type sz4;
             sz4 = m_cellInformationList[j]
@@ -1357,7 +1357,7 @@ EpcX2ResourceStatusUpdateHeader::Serialize(Buffer::Iterator start) const
         m_cellMeasurementResultList.size();
     i.WriteHtonU16(sz); // number of CellMeasurementResultItem
 
-    for (int j = 0; j < (int)sz; j++)
+    for (int j = 0; j < static_cast<int>(sz); j++)
     {
         EpcX2Sap::CellMeasurementResultItem item = m_cellMeasurementResultList[j];
 

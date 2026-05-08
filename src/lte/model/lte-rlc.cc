@@ -122,14 +122,14 @@ LteRlc::DoDispose()
 void
 LteRlc::SetRnti(uint16_t rnti)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)rnti);
+    NS_LOG_FUNCTION(this << +rnti);
     m_rnti = rnti;
 }
 
 void
 LteRlc::SetLcId(uint8_t lcId)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)lcId);
+    NS_LOG_FUNCTION(this << +lcId);
     m_lcid = lcId;
 }
 
@@ -220,8 +220,8 @@ LteRlcSm::DoReceivePdu(LteMacSapUser::ReceivePduParameters rxPduParams)
     bool ret = rxPduParams.p->FindFirstMatchingByteTag(rlcTag);
     NS_ASSERT_MSG(ret, "RlcTag is missing");
     delay = Simulator::Now() - rlcTag.GetSenderTimestamp();
-    NS_LOG_LOGIC(" RNTI=" << m_rnti << " LCID=" << (uint32_t)m_lcid << " size="
-                          << rxPduParams.p->GetSize() << " delay=" << delay.As(Time::NS));
+    NS_LOG_LOGIC(" RNTI=" << m_rnti << " LCID=" << +m_lcid << " size=" << rxPduParams.p->GetSize()
+                          << " delay=" << delay.As(Time::NS));
     m_rxPdu(m_rnti, m_lcid, rxPduParams.p->GetSize(), delay.GetNanoSeconds());
 }
 
@@ -247,8 +247,7 @@ LteRlcSm::DoNotifyTxOpportunity(LteMacSapUser::TxOpportunityParameters txOpParam
     params.componentCarrierId = txOpParams.componentCarrierId;
 
     // RLC Performance evaluation
-    NS_LOG_LOGIC(" RNTI=" << m_rnti << " LCID=" << (uint32_t)m_lcid
-                          << " size=" << txOpParams.bytes);
+    NS_LOG_LOGIC(" RNTI=" << m_rnti << " LCID=" << +m_lcid << " size=" << txOpParams.bytes);
     m_txPdu(m_rnti, m_lcid, txOpParams.bytes);
 
     m_macSapProvider->TransmitPdu(params);

@@ -549,7 +549,7 @@ LteHelper::InstallSingleEnbDevice(Ptr<Node> n)
 
     for (auto it = ccMap.begin(); it != ccMap.end(); ++it)
     {
-        NS_LOG_DEBUG(this << "component carrier map size " << (uint16_t)ccMap.size());
+        NS_LOG_DEBUG(this << "component carrier map size " << +ccMap.size());
         Ptr<LteSpectrumPhy> dlPhy = CreateObject<LteSpectrumPhy>();
         Ptr<LteSpectrumPhy> ulPhy = CreateObject<LteSpectrumPhy>();
         Ptr<LteEnbPhy> phy = CreateObject<LteEnbPhy>(dlPhy, ulPhy);

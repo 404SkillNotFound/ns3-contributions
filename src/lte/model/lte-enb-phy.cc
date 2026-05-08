@@ -867,7 +867,7 @@ LteEnbPhy::CreatePuschCqiReport(const SpectrumValue& sinr)
 void
 LteEnbPhy::DoSetBandwidth(uint16_t ulBandwidth, uint16_t dlBandwidth)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)ulBandwidth << (uint32_t)dlBandwidth);
+    NS_LOG_FUNCTION(this << +ulBandwidth << +dlBandwidth);
     m_ulBandwidth = ulBandwidth;
     m_dlBandwidth = dlBandwidth;
 
@@ -1038,7 +1038,7 @@ LteEnbPhy::CreateSrsReport(uint16_t rnti, double srs)
     (*it).second++;
     if ((*it).second == m_srsSamplePeriod)
     {
-        m_reportUeSinr(m_cellId, rnti, srs, (uint16_t)m_componentCarrierId);
+        m_reportUeSinr(m_cellId, rnti, srs, static_cast<uint16_t>(m_componentCarrierId));
         (*it).second = 0;
     }
 }
@@ -1046,7 +1046,7 @@ LteEnbPhy::CreateSrsReport(uint16_t rnti, double srs)
 void
 LteEnbPhy::DoSetTransmissionMode(uint16_t rnti, uint8_t txMode)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)txMode);
+    NS_LOG_FUNCTION(this << rnti << +txMode);
     // UL supports only SISO MODE
 }
 

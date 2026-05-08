@@ -377,11 +377,10 @@ LteFfrDistributedAlgorithm::DoGetMinContinuousUlBandwidth()
 void
 LteFfrDistributedAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)measResults.measId);
-    NS_LOG_INFO("CellId: " << m_cellId << " RNTI :" << rnti
-                           << " MeasId: " << (uint16_t)measResults.measId
-                           << " RSRP: " << (uint16_t)measResults.measResultPCell.rsrpResult
-                           << " RSRQ: " << (uint16_t)measResults.measResultPCell.rsrqResult);
+    NS_LOG_FUNCTION(this << rnti << +measResults.measId);
+    NS_LOG_INFO("CellId: " << m_cellId << " RNTI :" << rnti << " MeasId: " << +measResults.measId
+                           << " RSRP: " << +measResults.measResultPCell.rsrpResult
+                           << " RSRQ: " << +measResults.measResultPCell.rsrqResult);
 
     if (measResults.measId == m_rsrqMeasId)
     {
@@ -465,7 +464,7 @@ LteFfrDistributedAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults
     }
     else
     {
-        NS_LOG_WARN("Ignoring measId " << (uint16_t)measResults.measId);
+        NS_LOG_WARN("Ignoring measId " << +measResults.measId);
     }
 }
 
@@ -525,10 +524,9 @@ LteFfrDistributedAlgorithm::Calculate()
                         servingCellMeasures->m_rsrp - neighbourCellMeasures->m_rsrp;
                     NS_LOG_INFO("CellId: " << m_cellId << " UE RNTI: " << it1->first
                                            << " NeighborCellId: " << neighbourCellMeasures->m_cellId
-                                           << " RSRP Serving: " << (int)servingCellMeasures->m_rsrp
-                                           << " RSRP Neighbor: "
-                                           << (int)neighbourCellMeasures->m_rsrp
-                                           << " RSRP Difference: " << (int)rsrpDifference);
+                                           << " RSRP Serving: " << +servingCellMeasures->m_rsrp
+                                           << " RSRP Neighbor: " << +neighbourCellMeasures->m_rsrp
+                                           << " RSRP Difference: " << +rsrpDifference);
 
                     if (rsrpDifference < m_rsrpDifferenceThreshold)
                     {
@@ -658,7 +656,7 @@ LteFfrDistributedAlgorithm::UpdateNeighbourMeasurements(uint16_t rnti,
                                                         uint8_t rsrp,
                                                         uint8_t rsrq)
 {
-    NS_LOG_FUNCTION(this << rnti << cellId << (uint16_t)rsrq);
+    NS_LOG_FUNCTION(this << rnti << cellId << +rsrq);
 
     auto it1 = m_ueMeasures.find(rnti);
 

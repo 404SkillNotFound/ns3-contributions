@@ -326,23 +326,23 @@ LteEpcE2eDataTestCase::DoRun()
                 uint32_t rxBytesDl = ueit->bearers.at(b).dlServerApp->GetTotalRx();
                 uint32_t rxBytesUl = ueit->bearers.at(b).ulServerApp->GetTotalRx();
 
-                NS_TEST_ASSERT_MSG_EQ(txPktsPdcpDl,
-                                      expectedPkts,
-                                      "wrong TX PDCP packets in downlink for IMSI="
-                                          << imsi << " LCID=" << (uint16_t)lcid);
+                NS_TEST_ASSERT_MSG_EQ(
+                    txPktsPdcpDl,
+                    expectedPkts,
+                    "wrong TX PDCP packets in downlink for IMSI=" << imsi << " LCID=" << +lcid);
 
-                NS_TEST_ASSERT_MSG_EQ(rxPktsPdcpDl,
-                                      expectedPkts,
-                                      "wrong RX PDCP packets in downlink for IMSI="
-                                          << imsi << " LCID=" << (uint16_t)lcid);
-                NS_TEST_ASSERT_MSG_EQ(txPktsPdcpUl,
-                                      expectedPkts,
-                                      "wrong TX PDCP packets in uplink for IMSI="
-                                          << imsi << " LCID=" << (uint16_t)lcid);
-                NS_TEST_ASSERT_MSG_EQ(rxPktsPdcpUl,
-                                      expectedPkts,
-                                      "wrong RX PDCP packets in uplink for IMSI="
-                                          << imsi << " LCID=" << (uint16_t)lcid);
+                NS_TEST_ASSERT_MSG_EQ(
+                    rxPktsPdcpDl,
+                    expectedPkts,
+                    "wrong RX PDCP packets in downlink for IMSI=" << imsi << " LCID=" << +lcid);
+                NS_TEST_ASSERT_MSG_EQ(
+                    txPktsPdcpUl,
+                    expectedPkts,
+                    "wrong TX PDCP packets in uplink for IMSI=" << imsi << " LCID=" << +lcid);
+                NS_TEST_ASSERT_MSG_EQ(
+                    rxPktsPdcpUl,
+                    expectedPkts,
+                    "wrong RX PDCP packets in uplink for IMSI=" << imsi << " LCID=" << +lcid);
 
                 NS_TEST_ASSERT_MSG_EQ(rxBytesDl,
                                       expectedBytes,

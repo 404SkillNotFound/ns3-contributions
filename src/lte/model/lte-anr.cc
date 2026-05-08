@@ -114,7 +114,7 @@ LteAnr::DoInitialize()
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_LOGIC(this << " requesting Event A4 measurements"
-                      << " (threshold=" << (uint16_t)m_threshold << ")");
+                      << " (threshold=" << +m_threshold << ")");
     LteRrcSap::ReportConfigEutra reportConfig;
     reportConfig.eventId = LteRrcSap::ReportConfigEutra::EVENT_A4;
     reportConfig.threshold1.choice = LteRrcSap::ThresholdEutra::THRESHOLD_RSRQ;
@@ -136,11 +136,11 @@ void
 LteAnr::DoReportUeMeas(LteRrcSap::MeasResults measResults)
 {
     uint8_t measId = measResults.measId;
-    NS_LOG_FUNCTION(this << m_servingCellId << (uint16_t)measId);
+    NS_LOG_FUNCTION(this << m_servingCellId << +measId);
 
     if (measId != m_measId)
     {
-        NS_LOG_WARN(this << " Skipping unexpected measurement identity " << (uint16_t)measId);
+        NS_LOG_WARN(this << " Skipping unexpected measurement identity " << +measId);
     }
     else
     {

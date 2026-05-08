@@ -234,7 +234,8 @@ NotifyConnectionTimeoutUe(uint64_t imsi, uint16_t cellId, uint16_t rnti, uint8_t
 {
     std::cout << Simulator::Now().As(Time::S) << " IMSI " << imsi << ", RNTI " << rnti
               << ", Cell id " << cellId << ", T300 expiration counter "
-              << (uint16_t)connEstFailCount << ", UE RRC Connection timeout" << std::endl;
+              << static_cast<uint16_t>(connEstFailCount) << ", UE RRC Connection timeout"
+              << std::endl;
 }
 
 /**
@@ -252,8 +253,8 @@ NotifyRaResponseTimeoutUe(uint64_t imsi,
                           uint8_t maxPreambleTxLimit)
 {
     std::cout << Simulator::Now().As(Time::S) << " IMSI " << imsi << ", Contention flag "
-              << contention << ", preamble Tx Counter " << (uint16_t)preambleTxCounter
-              << ", Max Preamble Tx Limit " << (uint16_t)maxPreambleTxLimit
+              << contention << ", preamble Tx Counter " << static_cast<uint16_t>(preambleTxCounter)
+              << ", Max Preamble Tx Limit " << static_cast<uint16_t>(maxPreambleTxLimit)
               << ", UE RA response timeout" << std::endl;
 }
 

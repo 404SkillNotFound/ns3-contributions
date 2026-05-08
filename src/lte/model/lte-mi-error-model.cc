@@ -895,7 +895,7 @@ static const double cEcrTable [9][38] = {
 double
 LteMiErrorModel::Mib(const SpectrumValue& sinr, const std::vector<int>& map, uint8_t mcs)
 {
-    NS_LOG_FUNCTION(sinr << &map << (uint32_t)mcs);
+    NS_LOG_FUNCTION(sinr << &map << +mcs);
 
     double MI;
     double MIsum = 0.0;
@@ -972,7 +972,7 @@ LteMiErrorModel::Mib(const SpectrumValue& sinr, const std::vector<int>& map, uin
             }
         }
         NS_LOG_LOGIC(" RB " << map.at(i) << "Minimum SNR = " << 10 * std::log10(sinrLin) << " dB, "
-                            << sinrLin << " V, MCS = " << (uint16_t)mcs << ", MI = " << MI);
+                            << sinrLin << " V, MCS = " << +mcs << ", MI = " << MI);
         MIsum += MI;
     }
     MI = MIsum / map.size();
@@ -983,19 +983,19 @@ LteMiErrorModel::Mib(const SpectrumValue& sinr, const std::vector<int>& map, uin
 double
 LteMiErrorModel::MappingMiBler(double mib, uint8_t ecrId, uint16_t cbSize)
 {
-    NS_LOG_FUNCTION(mib << (uint32_t)ecrId << (uint32_t)cbSize);
+    NS_LOG_FUNCTION(mib << +ecrId << +cbSize);
     double b = 0;
     double c = 0;
 
-    NS_ASSERT_MSG(ecrId <= MI_64QAM_BLER_MAX_ID, "ECR out of range [0..37]: " << (uint16_t)ecrId);
+    NS_ASSERT_MSG(ecrId <= MI_64QAM_BLER_MAX_ID, "ECR out of range [0..37]: " << +ecrId);
     int cbIndex = 1;
     while ((cbIndex < 9) && (cbMiSizeTable[cbIndex] <= cbSize))
     {
         cbIndex++;
     }
     cbIndex--;
-    NS_LOG_LOGIC(" ECRid " << (uint16_t)ecrId << " ECR " << BlerCurvesEcrMap[ecrId] << " CB size "
-                           << cbSize << " CB size curve " << cbMiSizeTable[cbIndex]);
+    NS_LOG_LOGIC(" ECRid " << +ecrId << " ECR " << BlerCurvesEcrMap[ecrId] << " CB size " << cbSize
+                           << " CB size curve " << cbMiSizeTable[cbIndex]);
 
     b = bEcrTable[cbIndex][ecrId];
     if (b < 0.0)
@@ -1121,7 +1121,7 @@ LteMiErrorModel::GetTbDecodificationStats(const SpectrumValue& sinr,
                                           uint8_t mcs,
                                           HarqProcessInfoList_t miHistory)
 {
-    NS_LOG_FUNCTION(sinr << &map << (uint32_t)size << (uint32_t)mcs);
+    NS_LOG_FUNCTION(sinr << &map << +size << +mcs);
 
     double tbMi = Mib(sinr, map, mcs);
     double MI = 0.0;
@@ -1139,11 +1139,11 @@ LteMiErrorModel::GetTbDecodificationStats(const SpectrumValue& sinr,
             codeBitsSum += miHistory.at(i).m_codeBits;
             miSum += (miHistory.at(i).m_mi * miHistory.at(i).m_codeBits);
         }
-        codeBitsSum += (((double)size * 8.0) / McsEcrTable[mcs]);
-        miSum += (tbMi * (((double)size * 8.0) / McsEcrTable[mcs]));
+        codeBitsSum += ((static_cast<double>(size) * 8.0) / McsEcrTable[mcs]);
+        miSum += (tbMi * ((static_cast<double>(size) * 8.0) / McsEcrTable[mcs]));
         Reff = miHistory.at(0).m_infoBits /
-               (double)codeBitsSum; // information bits are the size of the first TB
-        MI = miSum / (double)codeBitsSum;
+               static_cast<double>(codeBitsSum); // information bits are the size of the first TB
+        MI = miSum / static_cast<double>(codeBitsSum);
     }
     else
     {
@@ -1171,7 +1171,7 @@ LteMiErrorModel::GetTbDecodificationStats(const SpectrumValue& sinr,
     else
     {
         uint32_t L = 24;
-        C = ceil((double)B / ((double)(Z - L)));
+        C = ceil(static_cast<double>(B) / (Z - L));
         B1 = B + C * L;
     }
     // first segmentation: K+ = minimum K in table such that C * K >= B1
@@ -1235,7 +1235,7 @@ LteMiErrorModel::GetTbDecodificationStats(const SpectrumValue& sinr,
         // -fstrict-overflow sensitive, see bug 1868
         Kminus = cbSizeTable[KplusId > 1 ? KplusId - 1 : 0];
         deltaK = Kplus - Kminus;
-        Cminus = floor((((double)C * Kplus) - (double)B1) / (double)deltaK);
+        Cminus = floor(((static_cast<double>(C) * Kplus) - B1) / static_cast<double>(deltaK));
         Cplus = C - Cminus;
     }
     NS_LOG_INFO("--------------------LteMiErrorModel: TB size of "
@@ -1248,7 +1248,7 @@ LteMiErrorModel::GetTbDecodificationStats(const SpectrumValue& sinr,
     {
         // first tx -> get ECR from MCS
         ecrId = McsEcrBlerTableMapping[mcs];
-        NS_LOG_DEBUG("NO HARQ MCS " << (uint16_t)mcs << " ECR id " << (uint16_t)ecrId);
+        NS_LOG_DEBUG("NO HARQ MCS " << +mcs << " ECR id " << +ecrId);
     }
     else
     {
@@ -1284,7 +1284,7 @@ LteMiErrorModel::GetTbDecodificationStats(const SpectrumValue& sinr,
             }
             ecrId = i;
         }
-        NS_LOG_DEBUG("HARQ ECR " << (uint16_t)ecrId);
+        NS_LOG_DEBUG("HARQ ECR " << +ecrId);
     }
 
     if (C != 1)

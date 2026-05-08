@@ -513,7 +513,7 @@ LteTestMac::SetRlcHeaderType(uint8_t rlcHeaderType)
 void
 LteTestMac::SetTxOpportunityMode(uint8_t mode)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)mode);
+    NS_LOG_FUNCTION(this << +mode);
     m_txOpportunityMode = mode;
 
     if (m_txOpportunityMode == RANDOM_MODE)

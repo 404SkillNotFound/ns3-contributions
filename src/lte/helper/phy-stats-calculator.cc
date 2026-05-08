@@ -140,7 +140,7 @@ PhyStatsCalculator::ReportCurrentCellRsrpSinr(uint16_t cellId,
     m_rsrpOutFile << rnti << "\t";
     m_rsrpOutFile << rsrp << "\t";
     m_rsrpOutFile << sinr << "\t";
-    m_rsrpOutFile << (uint32_t)componentCarrierId << std::endl;
+    m_rsrpOutFile << static_cast<uint32_t>(componentCarrierId) << std::endl;
 }
 
 void
@@ -170,7 +170,7 @@ PhyStatsCalculator::ReportUeSinr(uint16_t cellId,
     m_ueSinrOutFile << imsi << "\t";
     m_ueSinrOutFile << rnti << "\t";
     m_ueSinrOutFile << sinrLinear << "\t";
-    m_ueSinrOutFile << (uint32_t)componentCarrierId << std::endl;
+    m_ueSinrOutFile << static_cast<uint32_t>(componentCarrierId) << std::endl;
 }
 
 void

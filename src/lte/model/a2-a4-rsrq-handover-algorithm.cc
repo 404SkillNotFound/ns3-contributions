@@ -92,7 +92,7 @@ A2A4RsrqHandoverAlgorithm::DoInitialize()
     NS_LOG_FUNCTION(this);
 
     NS_LOG_LOGIC(this << " requesting Event A2 measurements"
-                      << " (threshold=" << (uint16_t)m_servingCellThreshold << ")");
+                      << " (threshold=" << +m_servingCellThreshold << ")");
     LteRrcSap::ReportConfigEutra reportConfigA2;
     reportConfigA2.eventId = LteRrcSap::ReportConfigEutra::EVENT_A2;
     reportConfigA2.threshold1.choice = LteRrcSap::ThresholdEutra::THRESHOLD_RSRQ;
@@ -124,7 +124,7 @@ A2A4RsrqHandoverAlgorithm::DoDispose()
 void
 A2A4RsrqHandoverAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)measResults.measId);
+    NS_LOG_FUNCTION(this << rnti << +measResults.measId);
 
     if (std::find(begin(m_a2MeasIds), end(m_a2MeasIds), measResults.measId) !=
         std::end(m_a2MeasIds))
@@ -155,14 +155,14 @@ A2A4RsrqHandoverAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults 
     }
     else
     {
-        NS_LOG_WARN("Ignoring measId " << (uint16_t)measResults.measId);
+        NS_LOG_WARN("Ignoring measId " << +measResults.measId);
     }
 }
 
 void
 A2A4RsrqHandoverAlgorithm::EvaluateHandover(uint16_t rnti, uint8_t servingCellRsrq)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)servingCellRsrq);
+    NS_LOG_FUNCTION(this << rnti << +servingCellRsrq);
 
     auto it1 = m_neighbourCellMeasures.find(rnti);
 
@@ -194,8 +194,8 @@ A2A4RsrqHandoverAlgorithm::EvaluateHandover(uint16_t rnti, uint8_t servingCellRs
             if ((bestNeighbourRsrq - servingCellRsrq) >= m_neighbourCellOffset)
             {
                 NS_LOG_LOGIC("Trigger Handover to cellId " << bestNeighbourCellId);
-                NS_LOG_LOGIC("target cell RSRQ " << (uint16_t)bestNeighbourRsrq);
-                NS_LOG_LOGIC("serving cell RSRQ " << (uint16_t)servingCellRsrq);
+                NS_LOG_LOGIC("target cell RSRQ " << +bestNeighbourRsrq);
+                NS_LOG_LOGIC("serving cell RSRQ " << +servingCellRsrq);
 
                 // Inform eNodeB RRC about handover
                 m_handoverManagementSapUser->TriggerHandover(rnti, bestNeighbourCellId);
@@ -221,7 +221,7 @@ A2A4RsrqHandoverAlgorithm::IsValidNeighbour(uint16_t cellId)
 void
 A2A4RsrqHandoverAlgorithm::UpdateNeighbourMeasurements(uint16_t rnti, uint16_t cellId, uint8_t rsrq)
 {
-    NS_LOG_FUNCTION(this << rnti << cellId << (uint16_t)rsrq);
+    NS_LOG_FUNCTION(this << rnti << cellId << +rsrq);
     auto it1 = m_neighbourCellMeasures.find(rnti);
 
     if (it1 == m_neighbourCellMeasures.end())

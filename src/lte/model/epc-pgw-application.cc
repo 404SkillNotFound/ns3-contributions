@@ -38,7 +38,7 @@ EpcPgwApplication::UeInfo::UeInfo()
 void
 EpcPgwApplication::UeInfo::AddBearer(uint8_t bearerId, uint32_t teid, Ptr<EpcTft> tft)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)bearerId << teid << tft);
+    NS_LOG_FUNCTION(this << +bearerId << teid << tft);
     m_teidByBearerIdMap[bearerId] = teid;
     return m_tftClassifier.Add(tft, teid);
 }
@@ -46,7 +46,7 @@ EpcPgwApplication::UeInfo::AddBearer(uint8_t bearerId, uint32_t teid, Ptr<EpcTft
 void
 EpcPgwApplication::UeInfo::RemoveBearer(uint8_t bearerId)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)bearerId);
+    NS_LOG_FUNCTION(this << +bearerId);
     auto it = m_teidByBearerIdMap.find(bearerId);
     if (it != m_teidByBearerIdMap.end())
     {
@@ -315,7 +315,7 @@ EpcPgwApplication::DoRecvCreateSessionRequest(Ptr<Packet> packet)
     for (auto& bearerContext : bearerContexts)
     {
         uint32_t teid = bearerContext.sgwS5uFteid.teid;
-        NS_LOG_DEBUG("bearerId " << (uint16_t)bearerContext.epsBearerId << " SGW "
+        NS_LOG_DEBUG("bearerId " << +bearerContext.epsBearerId << " SGW "
                                  << bearerContext.sgwS5uFteid.addr << " TEID " << teid);
 
         ueit->second->AddBearer(bearerContext.epsBearerId, teid, bearerContext.tft);
@@ -364,8 +364,8 @@ EpcPgwApplication::DoRecvModifyBearerRequest(Ptr<Packet> packet)
     {
         Ipv4Address sgwAddr = bearerContext.fteid.addr;
         uint32_t teid = bearerContext.fteid.teid;
-        NS_LOG_DEBUG("bearerId " << (uint16_t)bearerContext.epsBearerId << " SGW " << sgwAddr
-                                 << " TEID " << teid);
+        NS_LOG_DEBUG("bearerId " << +bearerContext.epsBearerId << " SGW " << sgwAddr << " TEID "
+                                 << teid);
     }
 
     GtpcModifyBearerResponseMessage msgOut;
@@ -390,7 +390,7 @@ EpcPgwApplication::DoRecvDeleteBearerCommand(Ptr<Packet> packet)
     std::list<uint8_t> epsBearerIds;
     for (auto& bearerContext : msg.GetBearerContexts())
     {
-        NS_LOG_DEBUG("ebid " << (uint16_t)bearerContext.m_epsBearerId);
+        NS_LOG_DEBUG("ebid " << +bearerContext.m_epsBearerId);
         epsBearerIds.push_back(bearerContext.m_epsBearerId);
     }
 
@@ -420,7 +420,7 @@ EpcPgwApplication::DoRecvDeleteBearerResponse(Ptr<Packet> packet)
     for (auto& epsBearerId : msg.GetEpsBearerIds())
     {
         // Remove de-activated bearer contexts from PGW side
-        NS_LOG_INFO("PGW removing bearer " << (uint16_t)epsBearerId << " of IMSI " << imsi);
+        NS_LOG_INFO("PGW removing bearer " << +epsBearerId << " of IMSI " << imsi);
         ueit->second->RemoveBearer(epsBearerId);
     }
 }

@@ -85,7 +85,7 @@ A3RsrpHandoverAlgorithm::DoInitialize()
 
     uint8_t hysteresisIeValue = EutranMeasurementMapping::ActualHysteresis2IeValue(m_hysteresisDb);
     NS_LOG_LOGIC(this << " requesting Event A3 measurements"
-                      << " (hysteresis=" << (uint16_t)hysteresisIeValue << ")"
+                      << " (hysteresis=" << +hysteresisIeValue << ")"
                       << " (ttt=" << m_timeToTrigger.As(Time::MS) << ")");
 
     LteRrcSap::ReportConfigEutra reportConfig;
@@ -111,11 +111,11 @@ A3RsrpHandoverAlgorithm::DoDispose()
 void
 A3RsrpHandoverAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)measResults.measId);
+    NS_LOG_FUNCTION(this << rnti << +measResults.measId);
 
     if (std::find(begin(m_measIds), end(m_measIds), measResults.measId) == std::end(m_measIds))
     {
-        NS_LOG_WARN("Ignoring measId " << (uint16_t)measResults.measId);
+        NS_LOG_WARN("Ignoring measId " << +measResults.measId);
         return;
     }
 
@@ -150,8 +150,8 @@ A3RsrpHandoverAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults me
     if (bestNeighbourCellId > 0)
     {
         NS_LOG_LOGIC("Trigger Handover to cellId " << bestNeighbourCellId);
-        NS_LOG_LOGIC("target cell RSRP " << (uint16_t)bestNeighbourRsrp);
-        NS_LOG_LOGIC("serving cell RSRP " << (uint16_t)measResults.measResultPCell.rsrpResult);
+        NS_LOG_LOGIC("target cell RSRP " << +bestNeighbourRsrp);
+        NS_LOG_LOGIC("serving cell RSRP " << +measResults.measResultPCell.rsrpResult);
 
         // Inform eNodeB RRC about handover
         m_handoverManagementSapUser->TriggerHandover(rnti, bestNeighbourCellId);

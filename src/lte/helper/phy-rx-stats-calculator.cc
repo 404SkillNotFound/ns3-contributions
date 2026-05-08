@@ -110,17 +110,17 @@ PhyRxStatsCalculator::DlPhyReception(PhyReceptionStatParameters params)
     }
 
     m_dlRxOutFile << params.m_timestamp << "\t";
-    m_dlRxOutFile << (uint32_t)params.m_cellId << "\t";
+    m_dlRxOutFile << static_cast<uint32_t>(params.m_cellId) << "\t";
     m_dlRxOutFile << params.m_imsi << "\t";
     m_dlRxOutFile << params.m_rnti << "\t";
-    m_dlRxOutFile << (uint32_t)params.m_txMode << "\t";
-    m_dlRxOutFile << (uint32_t)params.m_layer << "\t";
-    m_dlRxOutFile << (uint32_t)params.m_mcs << "\t";
+    m_dlRxOutFile << static_cast<uint32_t>(params.m_txMode) << "\t";
+    m_dlRxOutFile << static_cast<uint32_t>(params.m_layer) << "\t";
+    m_dlRxOutFile << static_cast<uint32_t>(params.m_mcs) << "\t";
     m_dlRxOutFile << params.m_size << "\t";
-    m_dlRxOutFile << (uint32_t)params.m_rv << "\t";
-    m_dlRxOutFile << (uint32_t)params.m_ndi << "\t";
-    m_dlRxOutFile << (uint32_t)params.m_correctness << "\t";
-    m_dlRxOutFile << (uint32_t)params.m_ccId << std::endl;
+    m_dlRxOutFile << static_cast<uint32_t>(params.m_rv) << "\t";
+    m_dlRxOutFile << static_cast<uint32_t>(params.m_ndi) << "\t";
+    m_dlRxOutFile << static_cast<uint32_t>(params.m_correctness) << "\t";
+    m_dlRxOutFile << static_cast<uint32_t>(params.m_ccId) << std::endl;
 }
 
 void
@@ -145,16 +145,16 @@ PhyRxStatsCalculator::UlPhyReception(PhyReceptionStatParameters params)
     }
 
     m_ulRxOutFile << params.m_timestamp << "\t";
-    m_ulRxOutFile << (uint32_t)params.m_cellId << "\t";
+    m_ulRxOutFile << static_cast<uint32_t>(params.m_cellId) << "\t";
     m_ulRxOutFile << params.m_imsi << "\t";
     m_ulRxOutFile << params.m_rnti << "\t";
-    m_ulRxOutFile << (uint32_t)params.m_layer << "\t";
-    m_ulRxOutFile << (uint32_t)params.m_mcs << "\t";
+    m_ulRxOutFile << static_cast<uint32_t>(params.m_layer) << "\t";
+    m_ulRxOutFile << static_cast<uint32_t>(params.m_mcs) << "\t";
     m_ulRxOutFile << params.m_size << "\t";
-    m_ulRxOutFile << (uint32_t)params.m_rv << "\t";
-    m_ulRxOutFile << (uint32_t)params.m_ndi << "\t";
-    m_ulRxOutFile << (uint32_t)params.m_correctness << "\t";
-    m_ulRxOutFile << (uint32_t)params.m_ccId << std::endl;
+    m_ulRxOutFile << static_cast<uint32_t>(params.m_rv) << "\t";
+    m_ulRxOutFile << static_cast<uint32_t>(params.m_ndi) << "\t";
+    m_ulRxOutFile << static_cast<uint32_t>(params.m_correctness) << "\t";
+    m_ulRxOutFile << static_cast<uint32_t>(params.m_ccId) << std::endl;
 }
 
 void

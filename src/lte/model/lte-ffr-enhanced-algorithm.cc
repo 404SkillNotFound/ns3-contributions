@@ -473,7 +473,7 @@ LteFfrEnhancedAlgorithm::DoGetAvailableDlRbg()
         std::vector<bool> rbgAvailableMap = it->second;
         for (uint32_t i = 0; i < rbgMap.size(); i++)
         {
-            NS_LOG_INFO("\t rbgId: " << i << " available " << (int)rbgAvailableMap.at(i));
+            NS_LOG_INFO("\t rbgId: " << i << " available " << +rbgAvailableMap.at(i));
             if (rbgAvailableMap.at(i))
             {
                 rbgMap.at(i) = false;
@@ -568,7 +568,7 @@ LteFfrEnhancedAlgorithm::DoGetAvailableUlRbg()
         std::vector<bool> rbAvailableMap = it->second;
         for (uint32_t i = 0; i < rbgMap.size(); i++)
         {
-            NS_LOG_INFO("\t rbgId: " << i << " available " << (int)rbAvailableMap.at(i));
+            NS_LOG_INFO("\t rbgId: " << i << " available " << +rbAvailableMap.at(i));
             if (rbAvailableMap.at(i))
             {
                 rbgMap.at(i) = false;
@@ -707,7 +707,7 @@ LteFfrEnhancedAlgorithm::DoReportDlCqiInfo(
             {
                 continue;
             }
-            NS_LOG_INFO(this << " RNTI " << rnti << " RBG  " << i << " DL-CQI: " << (int)rbgCqi);
+            NS_LOG_INFO(this << " RNTI " << rnti << " RBG  " << i << " DL-CQI: " << +rbgCqi);
 
             bool rbgAvailable = (rbgCqi > m_dlCqiThreshold);
 
@@ -867,7 +867,7 @@ LteFfrEnhancedAlgorithm::DoGetMinContinuousUlBandwidth()
             ? m_ulReuse1SubBandwidth
             : minContinuousUlBandwidth;
 
-    NS_LOG_INFO("minContinuousUlBandwidth: " << (int)minContinuousUlBandwidth);
+    NS_LOG_INFO("minContinuousUlBandwidth: " << +minContinuousUlBandwidth);
 
     return minContinuousUlBandwidth;
 }
@@ -875,14 +875,14 @@ LteFfrEnhancedAlgorithm::DoGetMinContinuousUlBandwidth()
 void
 LteFfrEnhancedAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)measResults.measId);
-    NS_LOG_INFO("RNTI :" << rnti << " MeasId: " << (uint16_t)measResults.measId
-                         << " RSRP: " << (uint16_t)measResults.measResultPCell.rsrpResult
-                         << " RSRQ: " << (uint16_t)measResults.measResultPCell.rsrqResult);
+    NS_LOG_FUNCTION(this << rnti << +measResults.measId);
+    NS_LOG_INFO("RNTI :" << rnti << " MeasId: " << +measResults.measId
+                         << " RSRP: " << +measResults.measResultPCell.rsrpResult
+                         << " RSRQ: " << +measResults.measResultPCell.rsrqResult);
 
     if (measResults.measId != m_measId)
     {
-        NS_LOG_WARN("Ignoring measId " << (uint16_t)measResults.measId);
+        NS_LOG_WARN("Ignoring measId " << +measResults.measId);
     }
     else
     {

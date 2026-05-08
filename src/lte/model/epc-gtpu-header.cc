@@ -100,7 +100,7 @@ GtpuHeader::Deserialize(Buffer::Iterator start)
 void
 GtpuHeader::Print(std::ostream& os) const
 {
-    os << " version=" << (uint32_t)m_version << " [";
+    os << " version=" << +m_version << " [";
     if (m_protocolType)
     {
         os << " PT ";
@@ -117,10 +117,9 @@ GtpuHeader::Print(std::ostream& os) const
     {
         os << " PN ";
     }
-    os << "], messageType=" << (uint32_t)m_messageType << ", length=" << (uint32_t)m_length;
-    os << ", teid=" << (uint32_t)m_teid << ", sequenceNumber=" << (uint32_t)m_sequenceNumber;
-    os << ", nPduNumber=" << (uint32_t)m_nPduNumber
-       << ", nextExtensionType=" << (uint32_t)m_nextExtensionType;
+    os << "], messageType=" << +m_messageType << ", length=" << +m_length;
+    os << ", teid=" << +m_teid << ", sequenceNumber=" << +m_sequenceNumber;
+    os << ", nPduNumber=" << +m_nPduNumber << ", nextExtensionType=" << +m_nextExtensionType;
 }
 
 bool

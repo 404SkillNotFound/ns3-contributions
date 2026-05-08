@@ -319,7 +319,7 @@ LteUeMac::DoTransmitPdu(LteMacSapProvider::TransmitPduParameters params)
 void
 LteUeMac::DoReportBufferStatus(LteMacSapProvider::ReportBufferStatusParameters params)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)params.lcid);
+    NS_LOG_FUNCTION(this << +params.lcid);
 
     auto it = m_ulBsrReceived.find(params.lcid);
     if (it != m_ulBsrReceived.end())
@@ -400,7 +400,7 @@ LteUeMac::RandomlySelectAndSendRaPreamble()
 void
 LteUeMac::SendRaPreamble(bool contention)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)m_raPreambleId << contention);
+    NS_LOG_FUNCTION(this << +m_raPreambleId << contention);
     // Since regular UL LteControlMessages need m_ulConfigured = true in
     // order to be sent by the UE, the rach preamble needs to be sent
     // with a dedicated primitive (not
@@ -411,8 +411,7 @@ LteUeMac::SendRaPreamble(bool contention)
     NS_ASSERT(m_subframeNo > 0); // sanity check for subframe starting at 1
     m_raRnti = m_subframeNo - 1;
     m_uePhySapProvider->SendRachPreamble(m_raPreambleId, m_raRnti);
-    NS_LOG_INFO(this << " sent preamble id " << (uint32_t)m_raPreambleId << ", RA-RNTI "
-                     << (uint32_t)m_raRnti);
+    NS_LOG_INFO(this << " sent preamble id " << +m_raPreambleId << ", RA-RNTI " << +m_raRnti);
     // 3GPP 36.321 5.1.4
     Time raWindowBegin = MilliSeconds(3);
     Time raWindowEnd = MilliSeconds(3 + m_rachConfig.raResponseWindowSize);
@@ -434,7 +433,7 @@ LteUeMac::RecvRaResponse(BuildRarListElement_s raResponse)
     NS_LOG_FUNCTION(this);
     m_waitingForRaResponse = false;
     m_noRaResponseReceivedEvent.Cancel();
-    NS_LOG_INFO("got RAR for RAPID " << (uint32_t)m_raPreambleId
+    NS_LOG_INFO("got RAR for RAPID " << +m_raPreambleId
                                      << ", setting T-C-RNTI = " << raResponse.m_rnti);
     m_rnti = raResponse.m_rnti;
     m_cmacSapUser->SetTemporaryCellRnti(m_rnti);
@@ -540,9 +539,9 @@ LteUeMac::DoStartNonContentionBasedRandomAccessProcedure(uint16_t rnti,
                                                          uint8_t preambleId,
                                                          uint8_t prachMask)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)preambleId << (uint16_t)prachMask);
+    NS_LOG_FUNCTION(this << rnti << +preambleId << +prachMask);
     NS_ASSERT_MSG(prachMask == 0,
-                  "requested PRACH MASK = " << (uint32_t)prachMask
+                  "requested PRACH MASK = " << +prachMask
                                             << ", but only PRACH MASK = 0 is supported");
     m_rnti = rnti;
     m_raPreambleId = preambleId;
@@ -556,9 +555,9 @@ LteUeMac::DoAddLc(uint8_t lcId,
                   LteUeCmacSapProvider::LogicalChannelConfig lcConfig,
                   LteMacSapUser* msu)
 {
-    NS_LOG_FUNCTION(this << " lcId" << (uint32_t)lcId);
+    NS_LOG_FUNCTION(this << " lcId" << +lcId);
     NS_ASSERT_MSG(m_lcInfoMap.find(lcId) == m_lcInfoMap.end(),
-                  "cannot add channel because LCID " << (uint16_t)lcId << " is already present");
+                  "cannot add channel because LCID " << +lcId << " is already present");
 
     LcInfo lcInfo;
     lcInfo.lcConfig = lcConfig;
@@ -627,7 +626,7 @@ LteUeMac::DoReceivePhyPdu(Ptr<Packet> p)
         }
         else
         {
-            NS_LOG_WARN("received packet with unknown lcid " << (uint32_t)tag.GetLcid());
+            NS_LOG_WARN("received packet with unknown lcid " << +tag.GetLcid());
         }
     }
 }
@@ -693,8 +692,8 @@ LteUeMac::DoReceiveLteControlMessage(Ptr<LteControlMessage> msg)
             for (auto it = m_lcInfoMap.begin(); it != m_lcInfoMap.end(); it++)
             {
                 auto itBsr = m_ulBsrReceived.find((*it).first);
-                NS_LOG_DEBUG(this << " Processing LC " << (uint32_t)(*it).first
-                                  << " bytesPerActiveLc " << bytesPerActiveLc);
+                NS_LOG_DEBUG(this << " Processing LC " << +(*it).first << " bytesPerActiveLc "
+                                  << bytesPerActiveLc);
                 if ((itBsr != m_ulBsrReceived.end()) &&
                     (((*itBsr).second.statusPduSize > 0) || ((*itBsr).second.retxQueueSize > 0) ||
                      ((*itBsr).second.txQueueSize > 0)))
@@ -710,7 +709,7 @@ LteUeMac::DoReceiveLteControlMessage(Ptr<LteControlMessage> msg)
                         (*it).second.macSapUser->NotifyTxOpportunity(txOpParams);
                         NS_LOG_LOGIC(this << "\t" << bytesPerActiveLc << " send  "
                                           << (*itBsr).second.statusPduSize << " status bytes to LC "
-                                          << (uint32_t)(*it).first << " statusQueue "
+                                          << +(*it).first << " statusQueue "
                                           << (*itBsr).second.statusPduSize << " retxQueue"
                                           << (*itBsr).second.retxQueueSize << " txQueue"
                                           << (*itBsr).second.txQueueSize);
@@ -721,7 +720,7 @@ LteUeMac::DoReceiveLteControlMessage(Ptr<LteControlMessage> msg)
                     {
                         uint32_t bytesForThisLc = bytesPerActiveLc;
                         NS_LOG_LOGIC(this << "\t" << bytesPerActiveLc << " bytes to LC "
-                                          << (uint32_t)(*it).first << " statusQueue "
+                                          << +(*it).first << " statusQueue "
                                           << (*itBsr).second.statusPduSize << " retxQueue"
                                           << (*itBsr).second.retxQueueSize << " txQueue"
                                           << (*itBsr).second.txQueueSize);
@@ -817,7 +816,7 @@ LteUeMac::DoReceiveLteControlMessage(Ptr<LteControlMessage> msg)
                             }
                         }
                         NS_LOG_LOGIC(this << "\t" << bytesPerActiveLc << "\t new queues "
-                                          << (uint32_t)(*it).first << " statusQueue "
+                                          << +(*it).first << " statusQueue "
                                           << (*itBsr).second.statusPduSize << " retxQueue"
                                           << (*itBsr).second.retxQueueSize << " txQueue"
                                           << (*itBsr).second.txQueueSize);
@@ -828,7 +827,7 @@ LteUeMac::DoReceiveLteControlMessage(Ptr<LteControlMessage> msg)
         else
         {
             // HARQ retransmission -> retrieve data from HARQ buffer
-            NS_LOG_DEBUG(this << " UE MAC RETX HARQ " << (uint16_t)m_harqProcessId);
+            NS_LOG_DEBUG(this << " UE MAC RETX HARQ " << +m_harqProcessId);
             Ptr<PacketBurst> pb = m_miUlHarqProcessesPacket.at(m_harqProcessId);
             for (auto j = pb->Begin(); j != pb->End(); ++j)
             {
@@ -844,8 +843,7 @@ LteUeMac::DoReceiveLteControlMessage(Ptr<LteControlMessage> msg)
         {
             Ptr<RarLteControlMessage> rarMsg = DynamicCast<RarLteControlMessage>(msg);
             uint16_t raRnti = rarMsg->GetRaRnti();
-            NS_LOG_LOGIC(this << "got RAR with RA-RNTI " << (uint32_t)raRnti << ", expecting "
-                              << (uint32_t)m_raRnti);
+            NS_LOG_LOGIC(this << "got RAR with RA-RNTI " << +raRnti << ", expecting " << +m_raRnti);
             if (raRnti == m_raRnti) // RAR corresponds to TX subframe of preamble
             {
                 for (auto it = rarMsg->RarListBegin(); it != rarMsg->RarListEnd(); ++it)

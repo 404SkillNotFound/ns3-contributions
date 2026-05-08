@@ -104,14 +104,14 @@ LtePdcp::DoDispose()
 void
 LtePdcp::SetRnti(uint16_t rnti)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)rnti);
+    NS_LOG_FUNCTION(this << +rnti);
     m_rnti = rnti;
 }
 
 void
 LtePdcp::SetLcId(uint8_t lcId)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)lcId);
+    NS_LOG_FUNCTION(this << +lcId);
     m_lcid = lcId;
 }
 
@@ -164,7 +164,7 @@ LtePdcp::SetStatus(Status s)
 void
 LtePdcp::DoTransmitPdcpSdu(LtePdcpSapProvider::TransmitPdcpSduParameters params)
 {
-    NS_LOG_FUNCTION(this << m_rnti << static_cast<uint16_t>(m_lcid) << params.pdcpSdu->GetSize());
+    NS_LOG_FUNCTION(this << m_rnti << +m_lcid << params.pdcpSdu->GetSize());
     Ptr<Packet> p = params.pdcpSdu;
 
     // Sender timestamp
@@ -197,7 +197,7 @@ LtePdcp::DoTransmitPdcpSdu(LtePdcpSapProvider::TransmitPdcpSduParameters params)
 void
 LtePdcp::DoReceivePdu(Ptr<Packet> p)
 {
-    NS_LOG_FUNCTION(this << m_rnti << (uint32_t)m_lcid << p->GetSize());
+    NS_LOG_FUNCTION(this << m_rnti << +m_lcid << p->GetSize());
 
     // Receiver timestamp
     PdcpTag pdcpTag;

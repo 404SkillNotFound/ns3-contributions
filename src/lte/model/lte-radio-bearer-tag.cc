@@ -125,7 +125,7 @@ LteRadioBearerTag::GetLayer() const
 void
 LteRadioBearerTag::Print(std::ostream& os) const
 {
-    os << "rnti=" << m_rnti << ", lcid=" << (uint16_t)m_lcid << ", layer=" << (uint16_t)m_layer;
+    os << "rnti=" << m_rnti << ", lcid=" << +m_lcid << ", layer=" << +m_layer;
 }
 
 } // namespace ns3

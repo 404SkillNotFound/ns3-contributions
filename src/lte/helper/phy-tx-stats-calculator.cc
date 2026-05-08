@@ -109,16 +109,16 @@ PhyTxStatsCalculator::DlPhyTransmission(PhyTransmissionStatParameters params)
     }
 
     m_dlTxOutFile << params.m_timestamp << "\t";
-    m_dlTxOutFile << (uint32_t)params.m_cellId << "\t";
+    m_dlTxOutFile << static_cast<uint32_t>(params.m_cellId) << "\t";
     m_dlTxOutFile << params.m_imsi << "\t";
     m_dlTxOutFile << params.m_rnti << "\t";
     // m_dlTxOutFile << (uint32_t) params.m_txMode << "\t"; // txMode is not available at dl tx side
-    m_dlTxOutFile << (uint32_t)params.m_layer << "\t";
-    m_dlTxOutFile << (uint32_t)params.m_mcs << "\t";
+    m_dlTxOutFile << static_cast<uint32_t>(params.m_layer) << "\t";
+    m_dlTxOutFile << static_cast<uint32_t>(params.m_mcs) << "\t";
     m_dlTxOutFile << params.m_size << "\t";
-    m_dlTxOutFile << (uint32_t)params.m_rv << "\t";
-    m_dlTxOutFile << (uint32_t)params.m_ndi << "\t";
-    m_dlTxOutFile << (uint32_t)params.m_ccId << std::endl;
+    m_dlTxOutFile << static_cast<uint32_t>(params.m_rv) << "\t";
+    m_dlTxOutFile << static_cast<uint32_t>(params.m_ndi) << "\t";
+    m_dlTxOutFile << static_cast<uint32_t>(params.m_ccId) << std::endl;
 }
 
 void
@@ -144,16 +144,16 @@ PhyTxStatsCalculator::UlPhyTransmission(PhyTransmissionStatParameters params)
     }
 
     m_ulTxOutFile << params.m_timestamp << "\t";
-    m_ulTxOutFile << (uint32_t)params.m_cellId << "\t";
+    m_ulTxOutFile << static_cast<uint32_t>(params.m_cellId) << "\t";
     m_ulTxOutFile << params.m_imsi << "\t";
     m_ulTxOutFile << params.m_rnti << "\t";
     // m_ulTxOutFile << (uint32_t) params.m_txMode << "\t";
-    m_ulTxOutFile << (uint32_t)params.m_layer << "\t";
-    m_ulTxOutFile << (uint32_t)params.m_mcs << "\t";
+    m_ulTxOutFile << static_cast<uint32_t>(params.m_layer) << "\t";
+    m_ulTxOutFile << static_cast<uint32_t>(params.m_mcs) << "\t";
     m_ulTxOutFile << params.m_size << "\t";
-    m_ulTxOutFile << (uint32_t)params.m_rv << "\t";
-    m_ulTxOutFile << (uint32_t)params.m_ndi << "\t";
-    m_ulTxOutFile << (uint32_t)params.m_ccId << std::endl;
+    m_ulTxOutFile << static_cast<uint32_t>(params.m_rv) << "\t";
+    m_ulTxOutFile << static_cast<uint32_t>(params.m_ndi) << "\t";
+    m_ulTxOutFile << static_cast<uint32_t>(params.m_ccId) << std::endl;
 }
 
 void

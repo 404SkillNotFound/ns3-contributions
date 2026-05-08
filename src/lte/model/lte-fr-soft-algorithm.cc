@@ -506,7 +506,7 @@ LteFrSoftAlgorithm::DoGetMinContinuousUlBandwidth()
                                    ? rightBandwidth
                                    : minContinuousUlBandwidth;
 
-    NS_LOG_INFO("minContinuousUlBandwidth: " << (int)minContinuousUlBandwidth);
+    NS_LOG_INFO("minContinuousUlBandwidth: " << +minContinuousUlBandwidth);
 
     return minContinuousUlBandwidth;
 }
@@ -514,14 +514,14 @@ LteFrSoftAlgorithm::DoGetMinContinuousUlBandwidth()
 void
 LteFrSoftAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults)
 {
-    NS_LOG_FUNCTION(this << rnti << (uint16_t)measResults.measId);
-    NS_LOG_INFO("RNTI :" << rnti << " MeasId: " << (uint16_t)measResults.measId
-                         << " RSRP: " << (uint16_t)measResults.measResultPCell.rsrpResult
-                         << " RSRQ: " << (uint16_t)measResults.measResultPCell.rsrqResult);
+    NS_LOG_FUNCTION(this << rnti << +measResults.measId);
+    NS_LOG_INFO("RNTI :" << rnti << " MeasId: " << +measResults.measId
+                         << " RSRP: " << +measResults.measResultPCell.rsrpResult
+                         << " RSRQ: " << +measResults.measResultPCell.rsrqResult);
 
     if (measResults.measId != m_measId)
     {
-        NS_LOG_WARN("Ignoring measId " << (uint16_t)measResults.measId);
+        NS_LOG_WARN("Ignoring measId " << +measResults.measId);
     }
     else
     {

@@ -596,8 +596,7 @@ LteUePhy::GenerateCqiRsrpRsrq(const SpectrumValue& sinr)
         double avSinr = ComputeAvgSinr(sinr);
 
         NS_LOG_INFO(this << " cellId " << m_cellId << " rnti " << m_rnti << " RSRP " << rsrp
-                         << " SINR " << avSinr << " ComponentCarrierId "
-                         << (uint16_t)m_componentCarrierId);
+                         << " SINR " << avSinr << " ComponentCarrierId " << +m_componentCarrierId);
         // trigger RLF detection only when UE has an active RRC connection
         // and RLF detection attribute is set to true
         if (m_isConnected && m_enableRlfDetection)
@@ -610,7 +609,7 @@ LteUePhy::GenerateCqiRsrpRsrq(const SpectrumValue& sinr)
                                          m_rnti,
                                          rsrp,
                                          avSinr,
-                                         (uint16_t)m_componentCarrierId);
+                                         static_cast<uint16_t>(m_componentCarrierId));
         m_rsrpSinrSampleCounter = 0;
     }
 
@@ -837,7 +836,7 @@ LteUePhy::CreateDlCqiFeedbackMessage(const SpectrumValue& sinr)
         {
             if (activeSubChannels > 0)
             {
-                dlcqi.m_wbCqi.push_back((uint16_t)cqiSum / activeSubChannels);
+                dlcqi.m_wbCqi.push_back(static_cast<uint16_t>(cqiSum / activeSubChannels));
             }
             else
             {
@@ -877,7 +876,7 @@ LteUePhy::CreateDlCqiFeedbackMessage(const SpectrumValue& sinr)
                 hlCqi.m_sbPmi = 0; // not yet used
                 for (uint8_t i = 0; i < nLayer; i++)
                 {
-                    hlCqi.m_sbCqi.push_back((uint16_t)cqiSum / rbgSize);
+                    hlCqi.m_sbCqi.push_back(static_cast<uint16_t>(cqiSum / rbgSize));
                 }
                 rbgMeas.m_higherLayerSelected.push_back(hlCqi);
                 cqiSum = 0.0;
@@ -906,18 +905,17 @@ LteUePhy::ReportUeMeasurements()
 
     for (auto it = m_ueMeasurementsMap.begin(); it != m_ueMeasurementsMap.end(); it++)
     {
-        double avg_rsrp = (*it).second.rsrpSum / (double)(*it).second.rsrpNum;
-        double avg_rsrq = (*it).second.rsrqSum / (double)(*it).second.rsrqNum;
+        double avg_rsrp = (*it).second.rsrpSum / static_cast<double>((*it).second.rsrpNum);
+        double avg_rsrq = (*it).second.rsrqSum / static_cast<double>((*it).second.rsrqNum);
         /*
          * In CELL_SEARCH state, this may result in avg_rsrq = 0/0 = -nan.
          * UE RRC must take this into account when receiving measurement reports.
          * TODO remove this shortcoming by calculating RSRQ during CELL_SEARCH
          */
         NS_LOG_DEBUG(this << " CellId " << (*it).first << " RSRP " << avg_rsrp << " (nSamples "
-                          << (uint16_t)(*it).second.rsrpNum << ")"
-                          << " RSRQ " << avg_rsrq << " (nSamples " << (uint16_t)(*it).second.rsrqNum
-                          << ")"
-                          << " ComponentCarrierID " << (uint16_t)m_componentCarrierId);
+                          << +(*it).second.rsrpNum << ")"
+                          << " RSRQ " << avg_rsrq << " (nSamples " << +(*it).second.rsrqNum << ")"
+                          << " ComponentCarrierID " << +m_componentCarrierId);
 
         LteUeCphySapUser::UeMeasurementsElement newEl;
         newEl.m_cellId = (*it).first;
@@ -992,8 +990,7 @@ LteUePhy::ReceiveLteControlMessageList(std::list<Ptr<LteControlMessage>> msgList
 {
     NS_LOG_FUNCTION(this);
 
-    NS_LOG_DEBUG(this << " I am rnti = " << m_rnti << " and I received msgs "
-                      << (uint16_t)msgList.size());
+    NS_LOG_DEBUG(this << " I am rnti = " << m_rnti << " and I received msgs " << +msgList.size());
     for (auto it = msgList.begin(); it != msgList.end(); it++)
     {
         Ptr<LteControlMessage> msg = (*it);
@@ -1160,7 +1157,7 @@ LteUePhy::ReceivePss(uint16_t cellId, Ptr<SpectrumValue> p)
     sum *= (180000.0 / 12.0);
 
     // measure instantaneous RSRP now
-    double rsrp_dBm = 10 * log10(1000 * (sum / (double)nRB));
+    double rsrp_dBm = 10 * log10(1000 * (sum / static_cast<double>(nRB)));
     NS_LOG_INFO(this << " PSS RNTI " << m_rnti << " cellId " << m_cellId << " has RSRP " << rsrp_dBm
                      << " and RBnum " << nRB);
     // note that m_pssReceptionThreshold does not apply here
@@ -1300,7 +1297,7 @@ LteUePhy::SubframeIndication(uint32_t frameNo, uint32_t subframeNo)
 void
 LteUePhy::SendSrs()
 {
-    NS_LOG_FUNCTION(this << " UE " << m_rnti << " start tx SRS, cell Id " << (uint32_t)m_cellId);
+    NS_LOG_FUNCTION(this << " UE " << m_rnti << " start tx SRS, cell Id " << +m_cellId);
     NS_ASSERT(m_cellId > 0);
     // set the current tx power spectral density (full bandwidth)
     std::vector<int> dlRb;
@@ -1423,7 +1420,7 @@ LteUePhy::DoGetDlEarfcn()
 void
 LteUePhy::DoSetDlBandwidth(uint16_t dlBandwidth)
 {
-    NS_LOG_FUNCTION(this << (uint32_t)dlBandwidth);
+    NS_LOG_FUNCTION(this << +dlBandwidth);
     if (m_dlBandwidth != dlBandwidth or !m_dlConfigured)
     {
         m_dlBandwidth = dlBandwidth;
@@ -1481,7 +1478,7 @@ LteUePhy::DoSetRnti(uint16_t rnti)
 void
 LteUePhy::DoSetTransmissionMode(uint8_t txMode)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)txMode);
+    NS_LOG_FUNCTION(this << +txMode);
     m_transmissionMode = txMode;
     m_downlinkSpectrumPhy->SetTransmissionMode(txMode);
 }
@@ -1511,7 +1508,7 @@ LteUePhy::DoSetPa(double pa)
 void
 LteUePhy::DoSetRsrpFilterCoefficient(uint8_t rsrpFilterCoefficient)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)(rsrpFilterCoefficient));
+    NS_LOG_FUNCTION(this << +rsrpFilterCoefficient);
     m_powerControl->SetRsrpFilterCoefficient(rsrpFilterCoefficient);
 }
 

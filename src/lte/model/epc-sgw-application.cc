@@ -309,7 +309,7 @@ EpcSgwApplication::DoRecvModifyBearerRequest(Ptr<Packet> packet)
                       "Wrong FTEID in ModifyBearerRequest msg");
         uint32_t teid = bearerContext.fteid.teid;
         Ipv4Address enbAddr = bearerContext.fteid.addr;
-        NS_LOG_DEBUG("bearerId " << (uint16_t)bearerContext.epsBearerId << " TEID " << teid);
+        NS_LOG_DEBUG("bearerId " << +bearerContext.epsBearerId << " TEID " << teid);
         auto addrit = m_enbByTeidMap.find(teid);
         NS_ASSERT_MSG(addrit != m_enbByTeidMap.end(), "unknown TEID " << teid);
         addrit->second = enbAddr;
@@ -342,7 +342,7 @@ EpcSgwApplication::DoRecvDeleteBearerCommand(Ptr<Packet> packet)
     std::list<GtpcDeleteBearerCommandMessage::BearerContext> bearerContextsOut;
     for (auto& bearerContext : msg.GetBearerContexts())
     {
-        NS_LOG_DEBUG("ebid " << (uint16_t)bearerContext.m_epsBearerId);
+        NS_LOG_DEBUG("ebid " << +bearerContext.m_epsBearerId);
         GtpcDeleteBearerCommandMessage::BearerContext bearerContextOut;
         bearerContextOut.m_epsBearerId = bearerContext.m_epsBearerId;
         bearerContextsOut.push_back(bearerContextOut);

@@ -217,7 +217,7 @@ EpcMmeApplication::DoErabReleaseIndication(
     std::list<GtpcDeleteBearerCommandMessage::BearerContext> bearerContexts;
     for (auto& erab : erabToBeReleaseIndication)
     {
-        NS_LOG_DEBUG("erabId " << (uint16_t)erab.erabId);
+        NS_LOG_DEBUG("erabId " << +erab.erabId);
         GtpcDeleteBearerCommandMessage::BearerContext bearerContext;
         bearerContext.m_epsBearerId = erab.erabId;
         bearerContexts.push_back(bearerContext);

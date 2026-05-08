@@ -43,7 +43,7 @@ class TestUtils
         pkt->CopyData(buffer.data(), buffer.size());
         for (auto b : buffer)
         {
-            oss << std::setfill('0') << std::setw(2) << std::hex << (uint32_t)b;
+            oss << std::setfill('0') << std::setw(2) << std::hex << +b;
         }
         return oss.str();
     }

@@ -458,7 +458,7 @@ LteSpectrumPhy::StartTxDataFrame(Ptr<PacketBurst> pb,
 bool
 LteSpectrumPhy::StartTxDlCtrlFrame(std::list<Ptr<LteControlMessage>> ctrlMsgList, bool pss)
 {
-    NS_LOG_FUNCTION(this << " PSS " << (uint16_t)pss);
+    NS_LOG_FUNCTION(this << " PSS " << +pss);
     NS_LOG_LOGIC(this << " state: " << m_state);
 
     switch (m_state)
@@ -897,9 +897,8 @@ LteSpectrumPhy::AddExpectedTb(uint16_t rnti,
                               uint8_t rv,
                               bool downlink)
 {
-    NS_LOG_FUNCTION(this << " rnti: " << rnti << " NDI " << (uint16_t)ndi << " size " << size
-                         << " mcs " << (uint16_t)mcs << " layer " << (uint16_t)layer << " rv "
-                         << (uint16_t)rv);
+    NS_LOG_FUNCTION(this << " rnti: " << rnti << " NDI " << +ndi << " size " << size << " mcs "
+                         << +mcs << " layer " << +layer << " rv " << +rv);
     TbId_t tbId;
     tbId.m_rnti = rnti;
     tbId.m_layer = layer;
@@ -948,7 +947,7 @@ LteSpectrumPhy::EndRxData()
     auto itTb = m_expectedTbs.begin();
 
     // apply transmission mode gain
-    NS_LOG_DEBUG(this << " txMode " << (uint16_t)m_transmissionMode << " gain "
+    NS_LOG_DEBUG(this << " txMode " << +m_transmissionMode << " gain "
                       << m_txModeGain.at(m_transmissionMode));
     NS_ASSERT(m_transmissionMode < m_txModeGain.size());
     m_sinrPerceived *= m_txModeGain.at(m_transmissionMode);
@@ -985,9 +984,9 @@ LteSpectrumPhy::EndRxData()
             (*itTb).second.mi = tbStats.mi;
             (*itTb).second.corrupt = !(m_random->GetValue() > tbStats.tbler);
             NS_LOG_DEBUG(this << "RNTI " << (*itTb).first.m_rnti << " size " << (*itTb).second.size
-                              << " mcs " << (uint32_t)(*itTb).second.mcs << " bitmap "
+                              << " mcs " << +(*itTb).second.mcs << " bitmap "
                               << (*itTb).second.rbBitmap.size() << " layer "
-                              << (uint16_t)(*itTb).first.m_layer << " TBLER " << tbStats.tbler
+                              << +(*itTb).first.m_layer << " TBLER " << tbStats.tbler
                               << " corrupted " << (*itTb).second.corrupt);
             // fire traces on DL/UL reception PHY stats
             PhyReceptionStatParameters params;
@@ -1030,8 +1029,7 @@ LteSpectrumPhy::EndRxData()
             tbId.m_rnti = tag.GetRnti();
             tbId.m_layer = tag.GetLayer();
             itTb = m_expectedTbs.find(tbId);
-            NS_LOG_INFO(this << " Packet of " << tbId.m_rnti << " layer "
-                             << (uint16_t)tag.GetLayer());
+            NS_LOG_INFO(this << " Packet of " << tbId.m_rnti << " layer " << +tag.GetLayer());
             if (itTb == m_expectedTbs.end())
             {
                 continue;
@@ -1099,8 +1097,8 @@ LteSpectrumPhy::EndRxData()
                     {
                         harqDlInfo.m_harqStatus.at(tbId.m_layer) = DlInfoListElement_s::NACK;
                         NS_LOG_DEBUG(this << " RNTI " << tbId.m_rnti << " harqId "
-                                          << (uint16_t)(*itTb).second.harqProcessId << " layer "
-                                          << (uint16_t)tbId.m_layer << " send DL-HARQ-NACK");
+                                          << +(*itTb).second.harqProcessId << " layer "
+                                          << +tbId.m_layer << " send DL-HARQ-NACK");
                         m_harqPhyModule->UpdateDlHarqProcessStatus(
                             (*itTb).second.harqProcessId,
                             tbId.m_layer,
@@ -1112,9 +1110,9 @@ LteSpectrumPhy::EndRxData()
                     {
                         harqDlInfo.m_harqStatus.at(tbId.m_layer) = DlInfoListElement_s::ACK;
                         NS_LOG_DEBUG(this << " RNTI " << tbId.m_rnti << " harqId "
-                                          << (uint16_t)(*itTb).second.harqProcessId << " layer "
-                                          << (uint16_t)tbId.m_layer << " size "
-                                          << (*itTb).second.size << " send DL-HARQ-ACK");
+                                          << +(*itTb).second.harqProcessId << " layer "
+                                          << +tbId.m_layer << " size " << (*itTb).second.size
+                                          << " send DL-HARQ-ACK");
                         m_harqPhyModule->ResetDlHarqProcessStatus((*itTb).second.harqProcessId);
                     }
                     harqDlInfoMap.insert(
@@ -1126,8 +1124,8 @@ LteSpectrumPhy::EndRxData()
                     {
                         (*itHarq).second.m_harqStatus.at(tbId.m_layer) = DlInfoListElement_s::NACK;
                         NS_LOG_DEBUG(this << " RNTI " << tbId.m_rnti << " harqId "
-                                          << (uint16_t)(*itTb).second.harqProcessId << " layer "
-                                          << (uint16_t)tbId.m_layer << " size "
+                                          << +(*itTb).second.harqProcessId << " layer "
+                                          << +tbId.m_layer << " size "
                                           << (*itHarq).second.m_harqStatus.size()
                                           << " send DL-HARQ-NACK");
                         m_harqPhyModule->UpdateDlHarqProcessStatus(
@@ -1140,11 +1138,11 @@ LteSpectrumPhy::EndRxData()
                     else
                     {
                         NS_ASSERT_MSG(tbId.m_layer < (*itHarq).second.m_harqStatus.size(),
-                                      " layer " << (uint16_t)tbId.m_layer);
+                                      " layer " << +tbId.m_layer);
                         (*itHarq).second.m_harqStatus.at(tbId.m_layer) = DlInfoListElement_s::ACK;
                         NS_LOG_DEBUG(this << " RNTI " << tbId.m_rnti << " harqId "
-                                          << (uint16_t)(*itTb).second.harqProcessId << " layer "
-                                          << (uint16_t)tbId.m_layer << " size "
+                                          << +(*itTb).second.harqProcessId << " layer "
+                                          << +tbId.m_layer << " size "
                                           << (*itHarq).second.m_harqStatus.size()
                                           << " send DL-HARQ-ACK");
                         m_harqPhyModule->ResetDlHarqProcessStatus((*itTb).second.harqProcessId);
@@ -1188,7 +1186,7 @@ LteSpectrumPhy::EndRxDlCtrl()
     // as a side effect, the error model should update the error status of all TBs
     m_interferenceCtrl->EndRx();
     // apply transmission mode gain
-    NS_LOG_DEBUG(this << " txMode " << (uint16_t)m_transmissionMode << " gain "
+    NS_LOG_DEBUG(this << " txMode " << +m_transmissionMode << " gain "
                       << m_txModeGain.at(m_transmissionMode));
     NS_ASSERT(m_transmissionMode < m_txModeGain.size());
     if (m_transmissionMode > 0)
@@ -1286,7 +1284,7 @@ LteSpectrumPhy::AddCtrlSinrChunkProcessor(Ptr<LteChunkProcessor> p)
 void
 LteSpectrumPhy::SetTransmissionMode(uint8_t txMode)
 {
-    NS_LOG_FUNCTION(this << (uint16_t)txMode);
+    NS_LOG_FUNCTION(this << +txMode);
     NS_ASSERT_MSG(txMode < m_txModeGain.size(),
                   "TransmissionMode not available: 1.." << m_txModeGain.size());
     m_transmissionMode = txMode;
@@ -1296,7 +1294,7 @@ LteSpectrumPhy::SetTransmissionMode(uint8_t txMode)
 void
 LteSpectrumPhy::SetTxModeGain(uint8_t txMode, double gain)
 {
-    NS_LOG_FUNCTION(this << " txmode " << (uint16_t)txMode << " gain " << gain);
+    NS_LOG_FUNCTION(this << " txmode " << +txMode << " gain " << gain);
     if (txMode > 0)
     {
         // convert to linear

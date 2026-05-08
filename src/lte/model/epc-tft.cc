@@ -58,8 +58,8 @@ operator<<(std::ostream& os, const EpcTft::PacketFilter& f)
        << " localIpv6Prefix: " << f.localIpv6Prefix << " remotePortStart: " << f.remotePortStart
        << " remotePortEnd: " << f.remotePortEnd << " localPortStart: " << f.localPortStart
        << " localPortEnd: " << f.localPortEnd << " typeOfService: 0x" << std::hex
-       << (uint16_t)f.typeOfService << std::dec << " typeOfServiceMask: 0x" << std::hex
-       << (uint16_t)f.typeOfServiceMask << std::dec;
+       << +f.typeOfService << std::dec << " typeOfServiceMask: 0x" << std::hex
+       << +f.typeOfServiceMask << std::dec;
     return os;
 }
 
@@ -86,7 +86,7 @@ EpcTft::PacketFilter::Matches(Direction d,
                               uint16_t lp,
                               uint8_t tos)
 {
-    NS_LOG_FUNCTION(this << d << ra << la << rp << lp << (uint16_t)tos);
+    NS_LOG_FUNCTION(this << d << ra << la << rp << lp << +tos);
     if (d & direction)
     {
         NS_LOG_LOGIC("d matches");
@@ -154,7 +154,7 @@ EpcTft::PacketFilter::Matches(Direction d,
                               uint16_t lp,
                               uint8_t tos)
 {
-    NS_LOG_FUNCTION(this << d << ra << la << rp << lp << (uint16_t)tos);
+    NS_LOG_FUNCTION(this << d << ra << la << rp << lp << +tos);
     if (d & direction)
     {
         NS_LOG_LOGIC("d matches");
@@ -253,7 +253,7 @@ EpcTft::Matches(Direction direction,
                 uint8_t typeOfService)
 {
     NS_LOG_FUNCTION(this << direction << remoteAddress << localAddress << std::dec << remotePort
-                         << localPort << (uint16_t)typeOfService);
+                         << localPort << +typeOfService);
     for (auto it = m_filters.begin(); it != m_filters.end(); ++it)
     {
         if (it->Matches(direction,
@@ -278,7 +278,7 @@ EpcTft::Matches(Direction direction,
                 uint8_t typeOfService)
 {
     NS_LOG_FUNCTION(this << direction << remoteAddress << localAddress << std::dec << remotePort
-                         << localPort << (uint16_t)typeOfService);
+                         << localPort << +typeOfService);
     for (auto it = m_filters.begin(); it != m_filters.end(); ++it)
     {
         if (it->Matches(direction,
