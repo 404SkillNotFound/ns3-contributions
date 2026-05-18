@@ -131,10 +131,9 @@ main(int argc, char* argv[])
 {
     std::string outputFile = "cake-fig3-validation.dat";
     DataRate bottleneckRate("10Mbps");
-    // Bandwidth=0 disables CAKE's software shaper.  The PointToPoint link
-    // at bottleneckRate is the physical bottleneck; CAKE's DRR scheduler
-    // alone enforces per-flow fairness, which is what Figure 3 validates.
-    DataRate cakeBandwidth("0bps");
+    // CAKE shaper set to bottleneck rate so the software shaper is the
+    // active bottleneck, not the physical link. Required to reproduce Figure 3.
+    DataRate cakeBandwidth("10Mbps");
     Time bottleneckDelay("5ms");
     Time accessDelay("1ms");
     DataRate accessRate("100Mbps");
