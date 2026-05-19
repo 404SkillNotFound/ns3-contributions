@@ -161,6 +161,15 @@ class CakeQueueDisc : public QueueDisc
         uint8_t tinIndex{0};      //!< DiffServ tin this flow belongs to.
         bool active{false};       //!< Whether the flow has queued packets.
 
+        // COBALT (CoDel + BLUE) AQM state — per-flow, matches Linux cobalt_vars in cake_flow.
+        bool cobaltDropping{false}; //!< CoDel dropping state active.
+        Time cobaltFirstAboveTime{
+            Seconds(0)};                 //!< When sojourn first exceeded target; 0 = not above.
+        Time cobaltDropNext{Seconds(0)}; //!< Scheduled time of next CoDel drop.
+        uint32_t cobaltCount{0};         //!< Drop count for CoDel control law.
+        double blueProb{0.0};            //!< BLUE drop probability in [0, 1].
+        Time blueTimer{Seconds(0)};      //!< Last BLUE probability update time.
+
         // Most-recently measured sojourn time for this flow.
         // Populated by DoDequeue() using CakeSojournTag.
         Time sojournTime{Seconds(0)}; //!< Last measured queue sojourn time.
@@ -186,15 +195,6 @@ class CakeQueueDisc : public QueueDisc
         Time cobaltInterval{MilliSeconds(100)}; //!< COBALT control interval.
         uint32_t backlogBytes{0}; //!< Total bytes queued across all flows in this tin.
         uint32_t quantum{1514};   //!< DRR quantum for flows in this tin.
-
-        // COBALT (CoDel + BLUE) AQM state — one instance per tin.
-        bool cobaltDropping{false}; //!< CoDel dropping state active.
-        Time cobaltFirstAboveTime{
-            Seconds(0)};                 //!< When sojourn first exceeded target; 0 = not above.
-        Time cobaltDropNext{Seconds(0)}; //!< Scheduled time of next CoDel drop.
-        uint32_t cobaltCount{0};         //!< Drop count for CoDel control law.
-        double blueProb{0.0};            //!< BLUE drop probability in [0, 1].
-        Time blueTimer{Seconds(0)};      //!< Last BLUE probability update time.
     };
 
     /**
@@ -314,7 +314,7 @@ class CakeQueueDisc : public QueueDisc
      * @param item The dequeued packet (may be ECN-marked in-place).
      * @return True if the packet should be dropped.
      */
-    bool CobaltShouldDrop(uint32_t tin, Time sojourn, Ptr<QueueDiscItem> item);
+    bool CobaltShouldDrop(uint32_t tin, uint32_t flowIndex, Time sojourn, Ptr<QueueDiscItem> item);
 
     DataRate m_bandwidth;     //!< Target shaper rate.
     Time m_target;            //!< AQM sojourn target.

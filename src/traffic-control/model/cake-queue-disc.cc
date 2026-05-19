@@ -444,77 +444,81 @@ CakeQueueDisc::CobaltControlLaw(Time t, Time interval, uint32_t count) const
 }
 
 bool
-CakeQueueDisc::CobaltShouldDrop(uint32_t tin, Time sojourn, Ptr<QueueDiscItem> item)
+CakeQueueDisc::CobaltShouldDrop(uint32_t tin,
+                                uint32_t flowIndex,
+                                Time sojourn,
+                                Ptr<QueueDiscItem> item)
 {
     CakeTin& tk = m_tins[tin];
+    CakeFlow& flow = m_flowBuckets[flowIndex];
     Time now = Simulator::Now();
     bool drop = false;
 
     // CoDel: track how long sojourn has been above target.
     if (sojourn > tk.cobaltTarget)
     {
-        if (tk.cobaltFirstAboveTime == Seconds(0))
+        if (flow.cobaltFirstAboveTime == Seconds(0))
         {
-            tk.cobaltFirstAboveTime = now + tk.cobaltInterval;
+            flow.cobaltFirstAboveTime = now + tk.cobaltInterval;
         }
-        else if (now >= tk.cobaltFirstAboveTime)
+        else if (now >= flow.cobaltFirstAboveTime)
         {
             drop = true;
         }
     }
     else
     {
-        tk.cobaltFirstAboveTime = Seconds(0);
+        flow.cobaltFirstAboveTime = Seconds(0);
     }
 
-    if (tk.cobaltDropping)
+    if (flow.cobaltDropping)
     {
         if (!drop)
         {
             // Sojourn recovered — leave dropping state.
-            tk.cobaltDropping = false;
+            flow.cobaltDropping = false;
         }
-        else if (now >= tk.cobaltDropNext)
+        else if (now >= flow.cobaltDropNext)
         {
-            tk.cobaltCount++;
-            tk.cobaltDropNext =
-                CobaltControlLaw(tk.cobaltDropNext, tk.cobaltInterval, tk.cobaltCount);
+            flow.cobaltCount++;
+            flow.cobaltDropNext =
+                CobaltControlLaw(flow.cobaltDropNext, tk.cobaltInterval, flow.cobaltCount);
             // BLUE: persist probability while queue stays full.
-            if (now - tk.blueTimer >= MilliSeconds(1))
+            if (now - flow.blueTimer >= MilliSeconds(1))
             {
-                tk.blueProb = std::min(tk.blueProb + 0.0025, 1.0);
-                tk.blueTimer = now;
+                flow.blueProb = std::min(flow.blueProb + 0.0025, 1.0);
+                flow.blueTimer = now;
             }
             // Prefer ECN mark over hard drop.
             return !item->Mark();
         }
     }
-    else if (drop && now >= tk.cobaltDropNext)
+    else if (drop && now >= flow.cobaltDropNext)
     {
         // Enter dropping state; back-calculate count from how overdue we are.
-        tk.cobaltDropping = true;
-        tk.cobaltDropNext = CobaltControlLaw(now, tk.cobaltInterval, tk.cobaltCount);
-        if (tk.cobaltCount == 0)
+        flow.cobaltDropping = true;
+        flow.cobaltDropNext = CobaltControlLaw(now, tk.cobaltInterval, flow.cobaltCount);
+        if (flow.cobaltCount == 0)
         {
-            tk.cobaltCount = 1;
+            flow.cobaltCount = 1;
         }
-        if (now - tk.blueTimer >= MilliSeconds(1))
+        if (now - flow.blueTimer >= MilliSeconds(1))
         {
-            tk.blueProb = std::min(tk.blueProb + 0.0025, 1.0);
-            tk.blueTimer = now;
+            flow.blueProb = std::min(flow.blueProb + 0.0025, 1.0);
+            flow.blueTimer = now;
         }
         return !item->Mark();
     }
 
     // BLUE: decay probability when the tin drains.
-    if (tk.backlogBytes == 0 && tk.blueProb > 0.0 && now - tk.blueTimer >= MilliSeconds(1))
+    if (tk.backlogBytes == 0 && flow.blueProb > 0.0 && now - flow.blueTimer >= MilliSeconds(1))
     {
-        tk.blueProb = std::max(tk.blueProb - 0.00025, 0.0);
-        tk.blueTimer = now;
+        flow.blueProb = std::max(flow.blueProb - 0.00025, 0.0);
+        flow.blueTimer = now;
     }
 
     // BLUE: probabilistic drop (not ECN — BLUE is a safety valve, not a hint).
-    if (tk.blueProb > 0.0 && m_uv->GetValue() < tk.blueProb)
+    if (flow.blueProb > 0.0 && m_uv->GetValue() < flow.blueProb)
     {
         return true;
     }
@@ -608,7 +612,7 @@ CakeQueueDisc::DoDequeue()
 
                 // COBALT AQM decision — backlog already decremented for accurate
                 // BLUE empty-queue detection.
-                if (CobaltShouldDrop(tin, sojourn, pkt))
+                if (CobaltShouldDrop(tin, fi, sojourn, pkt))
                 {
                     DropAfterDequeue(pkt, COBALT_DROP);
                     continue;
