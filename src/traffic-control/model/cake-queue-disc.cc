@@ -493,14 +493,11 @@ CakeQueueDisc::CobaltShouldDrop(uint32_t tin, Time sojourn, Ptr<QueueDiscItem> i
     {
         // Enter dropping state; back-calculate count from how overdue we are.
         tk.cobaltDropping = true;
-        uint32_t delta = 0;
-        if (tk.cobaltCount > 0 && tk.cobaltDropNext > Seconds(0))
-        {
-            Time overdue = now - tk.cobaltDropNext;
-            delta = static_cast<uint32_t>((overdue / tk.cobaltInterval).GetHigh());
-        }
-        tk.cobaltCount = (delta > 1) ? delta : 1;
         tk.cobaltDropNext = CobaltControlLaw(now, tk.cobaltInterval, tk.cobaltCount);
+        if (tk.cobaltCount == 0)
+        {
+            tk.cobaltCount = 1;
+        }
         if (now - tk.blueTimer >= MilliSeconds(1))
         {
             tk.blueProb = std::min(tk.blueProb + 0.0025, 1.0);
